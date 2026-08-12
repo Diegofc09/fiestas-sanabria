@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { categoryLabel, formatDate, type PostSummary } from "@/lib/posts";
+import { categoryLabel, formatDate, timelineDate, type PostSummary } from "@/lib/posts";
 import { Reveal } from "@/components/site/Reveal";
 import { EmptyState } from "@/components/site/EmptyState";
 import { cn } from "@/lib/utils";
@@ -68,7 +68,7 @@ function CalendarPage() {
   const byDay = useMemo(() => {
     const map = new Map<string, PostSummary[]>();
     for (const post of posts) {
-      const key = dayKey(post.published_at ?? post.created_at);
+      const key = dayKey(timelineDate(post));
       const list = map.get(key);
       if (list) list.push(post);
       else map.set(key, [post]);
@@ -88,13 +88,13 @@ function CalendarPage() {
 
   const monthPosts = posts
     .filter((p) => {
-      const d = new Date(p.published_at ?? p.created_at);
+      const d = new Date(timelineDate(p));
       return d.getFullYear() === year && d.getMonth() === month;
     })
     .sort(
       (a, b) =>
-        new Date(a.published_at ?? a.created_at).getTime() -
-        new Date(b.published_at ?? b.created_at).getTime(),
+        new Date(timelineDate(a)).getTime() -
+        new Date(timelineDate(b)).getTime(),
     );
 
   const selectedPosts = selected ? (byDay.get(selected) ?? []) : null;
@@ -207,10 +207,10 @@ function CalendarPage() {
                         <span className="eyebrow text-primary">{categoryLabel(post.category)}</span>
                         <span className="h-3 w-px bg-rule" aria-hidden="true" />
                         <time
-                          dateTime={post.published_at ?? post.created_at}
+                          dateTime={timelineDate(post)}
                           className="text-xs text-muted-foreground"
                         >
-                          {formatDate(post.published_at ?? post.created_at)}
+                          {formatDate(timelineDate(post))}
                         </time>
                       </div>
                       <h3 className="text-lg leading-snug">
