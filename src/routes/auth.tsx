@@ -16,13 +16,13 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Acceso a la redacción — TodoSanabria" },
+      { title: "Acceso a la redacción — FiestasSanabria" },
       {
         name: "description",
-        content: "Acceso privado para la redacción de TodoSanabria.",
+        content: "Acceso privado para la redacción de FiestasSanabria.",
       },
-      { property: "og:title", content: "Acceso a la redacción — TodoSanabria" },
-      { property: "og:description", content: "Acceso privado para la redacción de TodoSanabria." },
+      { property: "og:title", content: "Acceso a la redacción — FiestasSanabria" },
+      { property: "og:description", content: "Acceso privado para la redacción de FiestasSanabria." },
       { property: "og:url", content: "/auth" },
       { name: "robots", content: "noindex" },
     ],
@@ -100,7 +100,7 @@ function AuthPage() {
       <p className="eyebrow text-primary">Redacción</p>
       <h1 className="mt-3 text-3xl md:text-4xl">Acceso privado</h1>
       <p className="mt-3 font-[family-name:var(--font-serif)] text-muted-foreground">
-        Área reservada a la administración de TodoSanabria.
+        Área reservada a la administración de FiestasSanabria.
       </p>
 
       <form onSubmit={submit} className="mt-8 space-y-4">

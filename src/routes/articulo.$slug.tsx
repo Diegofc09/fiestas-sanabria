@@ -26,7 +26,7 @@ export const Route = createFileRoute("/articulo/$slug")({
     const data = loaderData as ArticlePayload | undefined;
     if (!data) {
       return {
-        meta: [{ title: "Publicación no disponible — TodoSanabria" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Publicación no disponible — FiestasSanabria" }, { name: "robots", content: "noindex" }],
       };
     }
     const { post } = data;
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/articulo/$slug")({
     const url = `/articulo/${params.slug}`;
     return {
       meta: [
-        { title: `${post.title} — TodoSanabria` },
+        { title: `${post.title} — FiestasSanabria` },
         { name: "description", content: description },
         { property: "og:title", content: post.title },
         { property: "og:description", content: description },
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/articulo/$slug")({
             datePublished: post.published_at ?? post.created_at,
             dateModified: post.updated_at,
             articleSection: categoryLabel(post.category),
-            publisher: { "@type": "Organization", name: "TodoSanabria" },
+            publisher: { "@type": "Organization", name: "FiestasSanabria" },
           }),
         },
       ],

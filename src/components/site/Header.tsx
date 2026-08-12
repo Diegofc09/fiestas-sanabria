@@ -41,7 +41,7 @@ export function Header() {
               scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-4xl",
             )}
           >
-            TodoSanabria
+            FiestasSanabria
           </span>
           <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-primary">
             Anuncios · Fiestas · Comarca
