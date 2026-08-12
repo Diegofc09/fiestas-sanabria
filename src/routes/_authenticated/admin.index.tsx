@@ -7,6 +7,7 @@ import { adminDeletePost, adminListPosts, adminSetPostStatus, getAdminContext } 
 import { categoryLabel, formatDateShort, statusLabel, type Post } from "@/lib/posts";
 import { PostRankings } from "@/components/admin/PostRankings";
 import { InviteCodes } from "@/components/admin/InviteCodes";
+import { CommentsModeration } from "@/components/admin/CommentsModeration";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminIndex,
