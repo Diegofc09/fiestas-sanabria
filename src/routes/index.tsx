@@ -23,10 +23,10 @@ export const Route = createFileRoute("/")({
         content:
           "Portada de Fiestas Sanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
       },
-      { property: "og:title", content: "Fiestas Sanabria" },
+      { property: "og:title", content: "Fiestas Sanabria — Fiestas, eventos y noticias de la comarca" },
       {
         property: "og:description",
-        content: "Fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
+        content: "Portada de Fiestas Sanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
       },
       { property: "og:url", content: "/" },
     ],
