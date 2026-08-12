@@ -4,10 +4,35 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { categoryLabel, formatDate, timelineDate, type PostSummary } from "@/lib/posts";
+import {
+  categoryLabel,
+  eventPhase,
+  formatDate,
+  timelineDate,
+  type EventPhase,
+  type PostSummary,
+} from "@/lib/posts";
 import { Reveal } from "@/components/site/Reveal";
 import { EmptyState } from "@/components/site/EmptyState";
+import { EventPhaseBadge } from "@/components/site/EventPhaseBadge";
 import { cn } from "@/lib/utils";
+
+/** Color del semáforo para el punto del día. */
+const PHASE_DOT: Record<EventPhase, string> = {
+  upcoming: "bg-phase-upcoming",
+  ongoing: "bg-phase-ongoing",
+  finished: "bg-phase-finished",
+};
+
+/** Fase dominante de un día: en curso > sin empezar > terminada. */
+function dayPhase(posts: PostSummary[]): EventPhase | null {
+  const phases = posts.map((p) => eventPhase(p)).filter(Boolean) as EventPhase[];
+  if (phases.includes("ongoing")) return "ongoing";
+  if (phases.includes("upcoming")) return "upcoming";
+  if (phases.includes("finished")) return "finished";
+  return null;
+}
+
 
 const calendarQuery = queryOptions({
   queryKey: ["posts", "calendar"],
@@ -151,7 +176,9 @@ function CalendarPage() {
             {cells.map((day, i) => {
               if (day === null) return <span key={`empty-${i}`} className="aspect-square" />;
               const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-              const count = byDay.get(key)?.length ?? 0;
+              const dayPosts = byDay.get(key) ?? [];
+              const count = dayPosts.length;
+              const phase = dayPhase(dayPosts);
               const isToday = key === dayKey(today.toISOString());
               const isSelected = selected === key;
               return (
@@ -167,6 +194,9 @@ function CalendarPage() {
                       ? "border-rule bg-paper text-foreground hover:bg-secondary"
                       : "border-transparent text-muted-foreground/60",
                     isToday && "font-semibold",
+                    phase === "upcoming" && "border-phase-upcoming/50",
+                    phase === "ongoing" && "border-phase-ongoing/60",
+                    phase === "finished" && "border-phase-finished/40",
                     isSelected && "border-primary bg-secondary text-primary",
                   )}
                 >
@@ -174,7 +204,13 @@ function CalendarPage() {
                   {count > 0 && (
                     <span className="mt-1 flex gap-0.5" aria-hidden="true">
                       {Array.from({ length: Math.min(count, 3) }, (_, k) => (
-                        <span key={k} className="h-1 w-1 rounded-full bg-primary" />
+                        <span
+                          key={k}
+                          className={cn(
+                            "h-1 w-1 rounded-full",
+                            phase ? PHASE_DOT[phase] : "bg-primary",
+                          )}
+                        />
                       ))}
                     </span>
                   )}
@@ -182,6 +218,22 @@ function CalendarPage() {
               );
             })}
           </div>
+
+          <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-muted-foreground md:text-xs">
+            {(
+              [
+                ["upcoming", "Sin empezar"],
+                ["ongoing", "En curso"],
+                ["finished", "Terminada"],
+              ] as [EventPhase, string][]
+            ).map(([p, label]) => (
+              <li key={p} className="inline-flex items-center gap-1.5">
+                <span className={cn("h-2 w-2 rounded-full", PHASE_DOT[p])} aria-hidden="true" />
+                {label}
+              </li>
+            ))}
+          </ul>
+
         </section>
 
         <section className="lg:col-span-5">
@@ -212,7 +264,9 @@ function CalendarPage() {
                         >
                           {formatDate(timelineDate(post))}
                         </time>
+                        <EventPhaseBadge post={post} />
                       </div>
+
                       <h3 className="text-lg leading-snug">
                         <span className="bg-gradient-to-r from-primary to-primary bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
                           {post.title}

@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 import { listPostComments, submitComment } from "@/lib/engagement.functions";
-import { commentSchema, formatRating, type PostComment } from "@/lib/engagement";
+import {
+  commentCooldownLeft,
+  commentSchema,
+  formatRating,
+  markCommentSent,
+  type PostComment,
+} from "@/lib/engagement";
 import { formatDate } from "@/lib/posts";
 import { StarPicker, Stars } from "./Stars";
 
@@ -20,6 +26,14 @@ export function CommentsSection({
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
   const [rating, setRating] = useState<number | null>(null);
+  const [honeypot, setHoneypot] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    setCooldown(commentCooldownLeft());
+    const timer = window.setInterval(() => setCooldown(commentCooldownLeft()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const { data: comments, isLoading } = useQuery({
     queryKey: ["comments", postId],
@@ -34,12 +48,15 @@ export function CommentsSection({
           authorName: name,
           body,
           rating: withRating ? rating : null,
+          honeypot,
         }),
       }),
     onSuccess: async () => {
       setName("");
       setBody("");
       setRating(null);
+      markCommentSent();
+      setCooldown(commentCooldownLeft());
       toast.success("Comentario enviado. Se publicará cuando la redacción lo revise.");
       await queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
@@ -50,6 +67,7 @@ export function CommentsSection({
           : "Revisa el nombre y el comentario.",
       ),
   });
+
 
   const rated = (comments ?? []).filter((c) => c.rating != null);
   const average = rated.length
@@ -73,11 +91,16 @@ export function CommentsSection({
         className="mt-6 rounded-sm border border-rule p-4 md:p-5"
         onSubmit={(event) => {
           event.preventDefault();
+          if (cooldown > 0) {
+            toast.error(`Espera ${cooldown} s antes de enviar otro comentario.`);
+            return;
+          }
           const parsed = commentSchema.safeParse({
             postId,
             authorName: name,
             body,
             rating: withRating ? rating : null,
+            honeypot,
           });
           if (!parsed.success) {
             toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos.");
@@ -111,19 +134,30 @@ export function CommentsSection({
             className="rounded-sm border border-rule bg-background px-3 py-2.5 text-base md:text-sm"
           />
         </div>
+        {/* Campo trampa anti spam: invisible para personas */}
+        <input
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[-9999px] h-0 w-0 opacity-0"
+        />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="text-[0.8125rem] text-muted-foreground">
             Los comentarios se revisan antes de publicarse.
+            {cooldown > 0 && ` Podrás comentar de nuevo en ${cooldown} s.`}
           </p>
           <button
             type="submit"
-            disabled={send.isPending}
+            disabled={send.isPending || cooldown > 0}
             className="inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-5 text-sm font-medium text-primary-foreground transition-all hover:opacity-95 active:scale-[0.99] disabled:opacity-60"
           >
             {send.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            Enviar comentario
+            {cooldown > 0 ? `Espera ${cooldown} s` : "Enviar comentario"}
           </button>
         </div>
+
       </form>
 
       <div className="mt-8">

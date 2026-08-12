@@ -15,16 +15,24 @@ export function EventPhaseBadge({
     <span
       className={cn(
         "eyebrow inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5",
-        phase === "ongoing" && "border-primary/40 bg-secondary text-primary",
-        phase === "upcoming" && "border-rule text-muted-foreground",
-        phase === "finished" && "border-rule text-muted-foreground opacity-80",
+        phase === "upcoming" &&
+          "border-phase-upcoming/45 bg-phase-upcoming/12 text-phase-upcoming",
+        phase === "ongoing" && "border-phase-ongoing/45 bg-phase-ongoing/12 text-phase-ongoing",
+        phase === "finished" && "border-phase-finished/40 bg-phase-finished/10 text-phase-finished",
         className,
       )}
     >
-      {phase === "ongoing" && (
-        <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-      )}
+      <span
+        className={cn(
+          "h-1.5 w-1.5 rounded-full",
+          phase === "upcoming" && "bg-phase-upcoming",
+          phase === "ongoing" && "animate-pulse bg-phase-ongoing",
+          phase === "finished" && "bg-phase-finished",
+        )}
+        aria-hidden="true"
+      />
       {eventPhaseLabel(phase)}
     </span>
   );
 }
+
