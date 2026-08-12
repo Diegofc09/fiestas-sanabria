@@ -176,7 +176,9 @@ function CalendarPage() {
             {cells.map((day, i) => {
               if (day === null) return <span key={`empty-${i}`} className="aspect-square" />;
               const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-              const count = byDay.get(key)?.length ?? 0;
+              const dayPosts = byDay.get(key) ?? [];
+              const count = dayPosts.length;
+              const phase = dayPhase(dayPosts);
               const isToday = key === dayKey(today.toISOString());
               const isSelected = selected === key;
               return (
@@ -192,6 +194,9 @@ function CalendarPage() {
                       ? "border-rule bg-paper text-foreground hover:bg-secondary"
                       : "border-transparent text-muted-foreground/60",
                     isToday && "font-semibold",
+                    phase === "upcoming" && "border-phase-upcoming/50",
+                    phase === "ongoing" && "border-phase-ongoing/60",
+                    phase === "finished" && "border-phase-finished/40",
                     isSelected && "border-primary bg-secondary text-primary",
                   )}
                 >
@@ -199,7 +204,13 @@ function CalendarPage() {
                   {count > 0 && (
                     <span className="mt-1 flex gap-0.5" aria-hidden="true">
                       {Array.from({ length: Math.min(count, 3) }, (_, k) => (
-                        <span key={k} className="h-1 w-1 rounded-full bg-primary" />
+                        <span
+                          key={k}
+                          className={cn(
+                            "h-1 w-1 rounded-full",
+                            phase ? PHASE_DOT[phase] : "bg-primary",
+                          )}
+                        />
                       ))}
                     </span>
                   )}
@@ -207,6 +218,22 @@ function CalendarPage() {
               );
             })}
           </div>
+
+          <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-muted-foreground md:text-xs">
+            {(
+              [
+                ["upcoming", "Sin empezar"],
+                ["ongoing", "En curso"],
+                ["finished", "Terminada"],
+              ] as [EventPhase, string][]
+            ).map(([p, label]) => (
+              <li key={p} className="inline-flex items-center gap-1.5">
+                <span className={cn("h-2 w-2 rounded-full", PHASE_DOT[p])} aria-hidden="true" />
+                {label}
+              </li>
+            ))}
+          </ul>
+
         </section>
 
         <section className="lg:col-span-5">
