@@ -5,8 +5,8 @@ import { attendanceSchema, commentSchema } from "./engagement";
 
 /** Resumen público por publicación: comentarios aprobados, media de estrellas y asistentes. */
 export const listEngagement = createServerFn({ method: "GET" }).handler(async () => {
-  const { createPublicServerClient } = await import("./supabase-public.server");
-  const { data, error } = await createPublicServerClient().rpc("post_engagement");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("post_engagement");
   if (error) throw new Error(error.message);
   return data ?? [];
 });
