@@ -116,6 +116,14 @@ export function PostForm({ post }: { post?: Post }) {
       toast.error("El cuerpo del artículo está vacío.");
       return;
     }
+    if (form.event_end_date && form.event_date && form.event_end_date < form.event_date) {
+      toast.error("La fecha de fin no puede ser anterior al inicio.");
+      return;
+    }
+    if (form.event_end_date && !form.event_date) {
+      toast.error("Indica primero la fecha de inicio del evento.");
+      return;
+    }
     save.mutate(status);
   };
 
