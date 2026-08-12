@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      post_views: {
+        Row: {
+          id: string
+          post_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string | null
