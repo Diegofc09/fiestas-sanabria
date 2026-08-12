@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -143,6 +144,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useLocation({ select: (location) => location.pathname });
+
+  // Contador de visitas diarias del sitio (una por navegación).
+  useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
+    void trackSiteView({ data: { path: pathname } }).catch(() => {});
+  }, [pathname]);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {

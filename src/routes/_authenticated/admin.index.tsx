@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { adminDeletePost, adminListPosts, adminSetPostStatus, getAdminContext } from "@/lib/posts.functions";
 import { categoryLabel, formatDateShort, statusLabel, type Post } from "@/lib/posts";
 import { PostRankings } from "@/components/admin/PostRankings";
+import { SiteTraffic } from "@/components/admin/SiteTraffic";
 import { InviteCodes } from "@/components/admin/InviteCodes";
 import { CommentsModeration } from "@/components/admin/CommentsModeration";
 
@@ -73,6 +74,7 @@ function AdminIndex() {
         </Link>
       </div>
 
+      {isAdmin && <SiteTraffic />}
       {isAdmin && <PostRankings />}
 
       {isLoading ? (
