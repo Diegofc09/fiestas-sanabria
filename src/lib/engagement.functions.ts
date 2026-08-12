@@ -87,12 +87,19 @@ export const submitComment = createServerFn({ method: "POST" })
       .maybeSingle();
     if (duplicate) throw new Error("Ese comentario ya se ha enviado.");
 
+    // Doble comprobación en servidor: nada ofensivo se publica.
+    const { PROFANITY_MESSAGE, containsProfanity } = await import("./profanity");
+    if (containsProfanity(data.body) || containsProfanity(data.authorName)) {
+      throw new Error(PROFANITY_MESSAGE);
+    }
+
+    // Sin moderación manual: si pasa el filtro, se publica al instante.
     const { error } = await supabaseAdmin.from("post_comments").insert({
       post_id: data.postId,
       author_name: data.authorName,
       body: data.body,
       rating: data.rating ?? null,
-      approved: false,
+      approved: true,
     });
     if (error) throw new Error(error.message);
     return { ok: true };

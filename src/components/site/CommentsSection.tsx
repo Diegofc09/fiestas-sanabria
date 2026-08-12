@@ -57,7 +57,7 @@ export function CommentsSection({
       setRating(null);
       markCommentSent();
       setCooldown(commentCooldownLeft());
-      toast.success("Comentario enviado. Se publicará cuando la redacción lo revise.");
+      toast.success("¡Comentario publicado!");
       await queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
     onError: (error) =>
@@ -145,7 +145,7 @@ export function CommentsSection({
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="text-[0.8125rem] text-muted-foreground">
-            Los comentarios se revisan antes de publicarse.
+            Los comentarios se publican al instante; un filtro bloquea el lenguaje ofensivo.
             {cooldown > 0 && ` Podrás comentar de nuevo en ${cooldown} s.`}
           </p>
           <button
