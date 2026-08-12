@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      post_views: {
+        Row: {
+          id: string
+          post_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string | null
@@ -100,6 +126,19 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      post_view_rankings: {
+        Args: never
+        Returns: {
+          category: Database["public"]["Enums"]["post_category"]
+          post_id: string
+          slug: string
+          status: Database["public"]["Enums"]["post_status"]
+          title: string
+          views_last_30: number
+          views_prev_30: number
+          views_total: number
+        }[]
       }
     }
     Enums: {

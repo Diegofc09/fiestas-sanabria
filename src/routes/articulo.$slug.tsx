@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
+
+import { trackPostView } from "@/lib/analytics.functions";
 
 import { getPublishedPost } from "@/lib/posts.functions";
 import { categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
@@ -73,6 +76,10 @@ function ArticlePage() {
   const { data } = useSuspenseQuery(articleQuery(slug));
   const { post, related } = data;
   const date = post.published_at ?? post.created_at;
+
+  useEffect(() => {
+    void trackPostView({ data: { postId: post.id } }).catch(() => {});
+  }, [post.id]);
 
   return (
     <article className="pb-10">
