@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { adminDeletePost, adminListPosts } from "@/lib/posts.functions";
 import { categoryLabel, formatDateShort, type Post } from "@/lib/posts";
+import { PostRankings } from "@/components/admin/PostRankings";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminIndex,
