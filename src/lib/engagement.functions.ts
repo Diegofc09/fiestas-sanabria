@@ -55,6 +55,38 @@ export const submitComment = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!post || post.status !== "published") throw new Error("Publicación no disponible.");
 
+    // Anti spam: límite por publicación, por autor y sin duplicados recientes.
+    const minuteAgo = new Date(Date.now() - 60_000).toISOString();
+    const tenMinutesAgo = new Date(Date.now() - 600_000).toISOString();
+
+    const { count: perPost } = await supabaseAdmin
+      .from("post_comments")
+      .select("id", { count: "exact", head: true })
+      .eq("post_id", data.postId)
+      .gte("created_at", minuteAgo);
+    if ((perPost ?? 0) >= 8) {
+      throw new Error("Demasiados comentarios en poco tiempo. Inténtalo en unos minutos.");
+    }
+
+    const { count: perAuthor } = await supabaseAdmin
+      .from("post_comments")
+      .select("id", { count: "exact", head: true })
+      .eq("post_id", data.postId)
+      .eq("author_name", data.authorName)
+      .gte("created_at", tenMinutesAgo);
+    if ((perAuthor ?? 0) >= 3) {
+      throw new Error("Ya has enviado varios comentarios. Espera unos minutos.");
+    }
+
+    const { data: duplicate } = await supabaseAdmin
+      .from("post_comments")
+      .select("id")
+      .eq("post_id", data.postId)
+      .eq("body", data.body)
+      .gte("created_at", tenMinutesAgo)
+      .maybeSingle();
+    if (duplicate) throw new Error("Ese comentario ya se ha enviado.");
+
     const { error } = await supabaseAdmin.from("post_comments").insert({
       post_id: data.postId,
       author_name: data.authorName,
@@ -65,6 +97,7 @@ export const submitComment = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 export const getAttendance = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
