@@ -3,6 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import { categoryLabel, formatDate, type PostSummary } from "@/lib/posts";
 import { cn } from "@/lib/utils";
+import { CommentTeaser } from "./CommentTeaser";
+
 
 function Cover({
   post,
@@ -76,11 +78,7 @@ export function LeadCard({ post }: { post: PostSummary }) {
               {post.title}
             </span>
           </h2>
-          {post.excerpt && (
-            <p className="mt-4 max-w-prose font-[family-name:var(--font-serif)] text-[1.0625rem] leading-relaxed text-muted-foreground">
-              {post.excerpt}
-            </p>
-          )}
+          <CommentTeaser postId={post.id} category={post.category} className="mt-4 max-w-prose" lines={3} />
           <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-foreground">
             Leer el artículo
             <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -112,11 +110,7 @@ export function PostCard({ post, compact = false }: { post: PostSummary; compact
             {post.title}
           </span>
         </h3>
-        {post.excerpt && !compact && (
-          <p className="mt-2 line-clamp-3 font-[family-name:var(--font-serif)] text-base md:text-[0.9375rem] leading-relaxed text-muted-foreground">
-            {post.excerpt}
-          </p>
-        )}
+        <CommentTeaser postId={post.id} category={post.category} lines={compact ? 2 : 3} />
       </Link>
     </article>
   );
@@ -141,11 +135,7 @@ export function PostRow({ post, index }: { post: PostSummary; index: number }) {
               {post.title}
             </span>
           </h3>
-          {post.excerpt && (
-            <p className="mt-1.5 line-clamp-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground md:text-[0.9375rem]">
-              {post.excerpt}
-            </p>
-          )}
+          <CommentTeaser postId={post.id} category={post.category} className="mt-2" />
         </div>
         <div className="h-20 w-24 shrink-0 overflow-hidden rounded-sm bg-secondary sm:h-24 sm:w-36">
           <Cover post={post} sizes="160px" />

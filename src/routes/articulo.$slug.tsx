@@ -11,6 +11,9 @@ import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { PostCard } from "@/components/site/PostCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ShareBar } from "@/components/site/ShareBar";
+import { AttendanceBox } from "@/components/site/AttendanceBox";
+import { CommentsSection } from "@/components/site/CommentsSection";
+import { supportsEvent } from "@/lib/engagement";
 
 type ArticlePayload = { post: Post; related: PostSummary[] };
 
@@ -149,6 +152,12 @@ function ArticlePage() {
         />
 
         <ShareBar title={post.title} slug={post.slug} />
+
+        {supportsEvent(post.category) && (
+          <AttendanceBox postId={post.id} eventDate={post.event_date} />
+        )}
+
+        <CommentsSection postId={post.id} withRating={supportsEvent(post.category)} />
       </div>
 
       {related.length > 0 && (
