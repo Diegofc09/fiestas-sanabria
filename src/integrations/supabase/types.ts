@@ -53,6 +53,76 @@ export type Database = {
         }
         Relationships: []
       }
+      post_attendance: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          visitor_token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          visitor_token: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          visitor_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_attendance_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_comments: {
+        Row: {
+          approved: boolean
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          author_name: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          rating?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_views: {
         Row: {
           id: string
@@ -165,6 +235,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      post_engagement: {
+        Args: never
+        Returns: {
+          attendance_count: number
+          comments_count: number
+          post_id: string
+          rating_avg: number
+          rating_count: number
+        }[]
       }
       post_view_rankings: {
         Args: never
