@@ -127,6 +127,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      post_view_rankings: {
+        Args: never
+        Returns: {
+          category: Database["public"]["Enums"]["post_category"]
+          post_id: string
+          slug: string
+          status: Database["public"]["Enums"]["post_status"]
+          title: string
+          views_last_30: number
+          views_prev_30: number
+          views_total: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor"
