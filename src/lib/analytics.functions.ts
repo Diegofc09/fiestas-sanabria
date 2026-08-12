@@ -37,3 +37,32 @@ export const adminPostRankings = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return (data ?? []) as PostRanking[];
   });
+
+/** Registra una visita a cualquier página pública del sitio. */
+export const trackSiteView = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z.object({ path: z.string().trim().min(1).max(300) }).parse(data),
+  )
+  .handler(async ({ data }) => {
+    const path = data.path.split("?")[0]?.slice(0, 300) ?? "/";
+    if (path.startsWith("/admin") || path.startsWith("/api")) return { ok: false };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("site_views").insert({ path });
+    return { ok: true };
+  });
+
+export type DailyViews = { day: string; views: number };
+
+/** Visitas diarias del sitio para el gráfico del panel. */
+export const adminSiteViewDaily = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ days: z.number().int().min(7).max(180).optional() }).parse(data ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: rows, error } = await context.supabase.rpc("site_view_daily", {
+      _days: data.days ?? 30,
+    });
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as DailyViews[];
+  });
