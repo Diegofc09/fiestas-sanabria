@@ -264,7 +264,9 @@ function CalendarPage() {
                         >
                           {formatDate(timelineDate(post))}
                         </time>
+                        <EventPhaseBadge post={post} />
                       </div>
+
                       <h3 className="text-lg leading-snug">
                         <span className="bg-gradient-to-r from-primary to-primary bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
                           {post.title}
