@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 import { listPostComments, submitComment } from "@/lib/engagement.functions";
-import { commentSchema, formatRating, type PostComment } from "@/lib/engagement";
+import {
+  commentCooldownLeft,
+  commentSchema,
+  formatRating,
+  markCommentSent,
+  type PostComment,
+} from "@/lib/engagement";
 import { formatDate } from "@/lib/posts";
 import { StarPicker, Stars } from "./Stars";
 
@@ -20,6 +26,14 @@ export function CommentsSection({
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
   const [rating, setRating] = useState<number | null>(null);
+  const [honeypot, setHoneypot] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    setCooldown(commentCooldownLeft());
+    const timer = window.setInterval(() => setCooldown(commentCooldownLeft()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const { data: comments, isLoading } = useQuery({
     queryKey: ["comments", postId],
@@ -34,12 +48,15 @@ export function CommentsSection({
           authorName: name,
           body,
           rating: withRating ? rating : null,
+          honeypot,
         }),
       }),
     onSuccess: async () => {
       setName("");
       setBody("");
       setRating(null);
+      markCommentSent();
+      setCooldown(commentCooldownLeft());
       toast.success("Comentario enviado. Se publicará cuando la redacción lo revise.");
       await queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
@@ -50,6 +67,7 @@ export function CommentsSection({
           : "Revisa el nombre y el comentario.",
       ),
   });
+
 
   const rated = (comments ?? []).filter((c) => c.rating != null);
   const average = rated.length
