@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { sanitizeArticleHtml } from "./sanitize";
 
 const listSchema = z.object({
   category: z.enum(["fiestas", "eventos", "noticias", "otros"]).optional(),
