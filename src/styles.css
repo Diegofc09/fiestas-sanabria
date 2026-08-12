@@ -46,6 +46,9 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-paper: var(--paper);
   --color-rule: var(--rule);
+  --color-phase-upcoming: var(--phase-upcoming);
+  --color-phase-ongoing: var(--phase-ongoing);
+  --color-phase-finished: var(--phase-finished);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
