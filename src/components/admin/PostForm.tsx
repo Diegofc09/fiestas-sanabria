@@ -17,6 +17,7 @@ type FormState = {
   category: PostCategory;
   featured: boolean;
   status: PostStatus;
+  event_date: string;
   cover_image_url: string | null;
   cover_image_alt: string;
 };
@@ -39,6 +40,7 @@ export function PostForm({ post }: { post?: Post }) {
     category: post?.category ?? "fiestas",
     featured: post?.featured ?? false,
     status: post?.status ?? "draft",
+    event_date: post?.event_date ?? "",
     cover_image_url: post?.cover_image_url ?? null,
     cover_image_alt: post?.cover_image_alt ?? "",
   });
@@ -58,6 +60,7 @@ export function PostForm({ post }: { post?: Post }) {
           category: form.category,
           featured: form.featured,
           status,
+          event_date: form.event_date ? form.event_date : null,
           cover_image_url: form.cover_image_url,
           cover_image_alt: form.cover_image_alt.trim() || null,
           published_at: post?.published_at ?? null,
@@ -171,6 +174,21 @@ export function PostForm({ post }: { post?: Post }) {
                 className={fieldClass}
               />
               <p className="mt-1 truncate text-xs text-muted-foreground">/articulo/{form.slug || "…"}</p>
+            </div>
+            <div>
+              <label htmlFor="event_date" className="mb-1.5 block text-sm font-medium">
+                Fecha del evento
+              </label>
+              <input
+                id="event_date"
+                type="date"
+                value={form.event_date}
+                onChange={(e) => set("event_date", e.target.value)}
+                className={fieldClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Opcional. Se usa en el calendario y en el artículo.
+              </p>
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input

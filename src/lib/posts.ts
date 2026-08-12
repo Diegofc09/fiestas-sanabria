@@ -12,6 +12,7 @@ export type Post = {
   category: PostCategory;
   featured: boolean;
   status: PostStatus;
+  event_date: string | null;
   published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -60,6 +61,11 @@ export function formatDateShort(value: string | null | undefined): string {
     year: "numeric",
     timeZone: "Europe/Madrid",
   }).format(new Date(value));
+}
+
+/** Fecha del evento si existe, si no la de publicación. */
+export function timelineDate(post: { event_date?: string | null; published_at?: string | null; created_at?: string }): string {
+  return post.event_date ? `${post.event_date}T12:00:00Z` : (post.published_at ?? post.created_at ?? "");
 }
 
 export function stripHtml(html: string): string {
