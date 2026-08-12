@@ -10,33 +10,183 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as FiestasRouteImport } from './routes/fiestas'
+import { Route as NoticiasRouteImport } from './routes/noticias'
+import { Route as OtrosRouteImport } from './routes/otros'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminNuevoRouteImport } from './routes/_authenticated/admin.nuevo'
+import { Route as AuthenticatedAdminEditarIdRouteImport } from './routes/_authenticated/admin.editar.$id'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FiestasRoute = FiestasRouteImport.update({
+  id: '/fiestas',
+  path: '/fiestas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasRoute = NoticiasRouteImport.update({
+  id: '/noticias',
+  path: '/noticias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtrosRoute = OtrosRouteImport.update({
+  id: '/otros',
+  path: '/otros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ArticuloSlugRoute = ArticuloSlugRouteImport.update({
+  id: '/articulo/$slug',
+  path: '/articulo/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminNuevoRoute = AuthenticatedAdminNuevoRouteImport.update({
+  id: '/nuevo',
+  path: '/nuevo',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminEditarIdRoute =
+  AuthenticatedAdminEditarIdRouteImport.update({
+    id: '/editar/$id',
+    path: '/editar/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
+  '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/articulo/$slug': typeof ArticuloSlugRoute
+  '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/admin'
+    | '/articulo/$slug'
+    | '/admin/nuevo'
+    | '/admin/'
+    | '/admin/editar/$id'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/articulo/$slug'
+    | '/admin/nuevo'
+    | '/admin'
+    | '/admin/editar/$id'
+    | '/api/public/media/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/_authenticated/admin'
+    | '/articulo/$slug'
+    | '/_authenticated/admin/nuevo'
+    | '/_authenticated/admin/'
+    | '/_authenticated/admin/editar/$id'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  EventosRoute: typeof EventosRoute
+  FiestasRoute: typeof FiestasRoute
+  NoticiasRoute: typeof NoticiasRoute
+  OtrosRoute: typeof OtrosRoute
+  ArticuloSlugRoute: typeof ArticuloSlugRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +198,129 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fiestas': {
+      id: '/fiestas'
+      path: '/fiestas'
+      fullPath: '/fiestas'
+      preLoaderRoute: typeof FiestasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticias': {
+      id: '/noticias'
+      path: '/noticias'
+      fullPath: '/noticias'
+      preLoaderRoute: typeof NoticiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/otros': {
+      id: '/otros'
+      path: '/otros'
+      fullPath: '/otros'
+      preLoaderRoute: typeof OtrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/articulo/$slug': {
+      id: '/articulo/$slug'
+      path: '/articulo/$slug'
+      fullPath: '/articulo/$slug'
+      preLoaderRoute: typeof ArticuloSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/nuevo': {
+      id: '/_authenticated/admin/nuevo'
+      path: '/nuevo'
+      fullPath: '/admin/nuevo'
+      preLoaderRoute: typeof AuthenticatedAdminNuevoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/editar/$id': {
+      id: '/_authenticated/admin/editar/$id'
+      path: '/editar/$id'
+      fullPath: '/admin/editar/$id'
+      preLoaderRoute: typeof AuthenticatedAdminEditarIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminNuevoRoute: typeof AuthenticatedAdminNuevoRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminEditarIdRoute: typeof AuthenticatedAdminEditarIdRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminNuevoRoute: AuthenticatedAdminNuevoRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminEditarIdRoute: AuthenticatedAdminEditarIdRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  EventosRoute: EventosRoute,
+  FiestasRoute: FiestasRoute,
+  NoticiasRoute: NoticiasRoute,
+  OtrosRoute: OtrosRoute,
+  ArticuloSlugRoute: ArticuloSlugRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
