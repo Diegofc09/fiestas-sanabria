@@ -18,6 +18,7 @@ type FormState = {
   featured: boolean;
   status: PostStatus;
   event_date: string;
+  event_end_date: string;
   cover_image_url: string | null;
   cover_image_alt: string;
 };
@@ -47,6 +48,7 @@ export function PostForm({ post }: { post?: Post }) {
     featured: post?.featured ?? false,
     status: post?.status ?? "draft",
     event_date: post?.event_date ?? "",
+    event_end_date: post?.event_end_date ?? "",
     cover_image_url: post?.cover_image_url ?? null,
     cover_image_alt: post?.cover_image_alt ?? "",
   });
@@ -67,6 +69,7 @@ export function PostForm({ post }: { post?: Post }) {
           featured: form.featured,
           status,
           event_date: form.event_date ? form.event_date : null,
+          event_end_date: form.event_end_date ? form.event_end_date : null,
           cover_image_url: form.cover_image_url,
           cover_image_alt: form.cover_image_alt.trim() || null,
           published_at: post?.published_at ?? null,

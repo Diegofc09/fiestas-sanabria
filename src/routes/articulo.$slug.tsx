@@ -13,6 +13,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { ShareBar } from "@/components/site/ShareBar";
 import { AttendanceBox } from "@/components/site/AttendanceBox";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import { EventPhaseBadge } from "@/components/site/EventPhaseBadge";
 import { supportsEvent } from "@/lib/engagement";
 
 type ArticlePayload = { post: Post; related: PostSummary[] };
