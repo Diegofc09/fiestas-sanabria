@@ -36,6 +36,14 @@ export function Footer() {
                 Acceso administración
               </Link>
             </li>
+            <li>
+              <a
+                href="mailto:fiestassanabria@gmail.com"
+                className="text-ink-foreground/80 transition-colors hover:text-ink-foreground"
+              >
+                fiestassanabria@gmail.com
+              </a>
+            </li>
           </ul>
           <p className="mt-8 text-xs text-ink-foreground/50">
             © {new Date().getFullYear()} FiestasSanabria
