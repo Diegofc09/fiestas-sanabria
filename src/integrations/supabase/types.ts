@@ -22,6 +22,7 @@ export type Database = {
           cover_image_alt: string | null
           cover_image_url: string | null
           created_at: string
+          event_date: string | null
           excerpt: string | null
           featured: boolean
           id: string
@@ -38,6 +39,7 @@ export type Database = {
           cover_image_alt?: string | null
           cover_image_url?: string | null
           created_at?: string
+          event_date?: string | null
           excerpt?: string | null
           featured?: boolean
           id?: string
@@ -54,6 +56,7 @@ export type Database = {
           cover_image_alt?: string | null
           cover_image_url?: string | null
           created_at?: string
+          event_date?: string | null
           excerpt?: string | null
           featured?: boolean
           id?: string
