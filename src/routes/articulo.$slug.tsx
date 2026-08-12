@@ -94,7 +94,16 @@ function ArticlePage() {
           </time>
           <span className="h-3 w-px bg-rule" aria-hidden="true" />
           <span className="text-sm text-muted-foreground">{readingMinutes(post.content)} min de lectura</span>
+          {post.event_date && (
+            <>
+              <span className="h-3 w-px bg-rule" aria-hidden="true" />
+              <span className="eyebrow rounded-full border border-rule px-3 py-1 text-foreground">
+                Evento: {formatDate(`${post.event_date}T12:00:00Z`)}
+              </span>
+            </>
+          )}
         </div>
+
 
         <h1 className="mt-4 text-[2.1rem] leading-[1.06] sm:text-5xl md:text-[3.25rem]">{post.title}</h1>
 
