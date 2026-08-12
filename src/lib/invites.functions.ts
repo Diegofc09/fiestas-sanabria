@@ -10,9 +10,6 @@ function generateCode(): string {
   return `${chars.slice(0, 4).join("")}-${chars.slice(4, 8).join("")}-${chars.slice(8, 12).join("")}`;
 }
 
-type AuthedSupabase = Awaited<ReturnType<typeof requireSupabaseAuth.options.server>> extends never
-  ? never
-  : never;
 
 async function assertAdmin(
   supabase: {
