@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as FiestasRouteImport } from './routes/fiestas'
 import { Route as NoticiasRouteImport } from './routes/noticias'
@@ -35,6 +36,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarioRoute = CalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosRoute = EventosRouteImport.update({
@@ -92,6 +98,7 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/calendario'
     | '/eventos'
     | '/fiestas'
     | '/noticias'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/calendario'
     | '/eventos'
     | '/fiestas'
     | '/noticias'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/calendario'
     | '/eventos'
     | '/fiestas'
     | '/noticias'
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CalendarioRoute: typeof CalendarioRoute
   EventosRoute: typeof EventosRoute
   FiestasRoute: typeof FiestasRoute
   NoticiasRoute: typeof NoticiasRoute
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendario': {
+      id: '/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof CalendarioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos': {
@@ -315,6 +335,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CalendarioRoute: CalendarioRoute,
   EventosRoute: EventosRoute,
   FiestasRoute: FiestasRoute,
   NoticiasRoute: NoticiasRoute,
