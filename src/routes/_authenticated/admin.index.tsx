@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ExternalLink, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, ExternalLink, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { adminDeletePost, adminListPosts } from "@/lib/posts.functions";
-import { categoryLabel, formatDateShort, type Post } from "@/lib/posts";
+import { adminDeletePost, adminListPosts, adminSetPostStatus, getAdminContext } from "@/lib/posts.functions";
+import { categoryLabel, formatDateShort, statusLabel, type Post } from "@/lib/posts";
 import { PostRankings } from "@/components/admin/PostRankings";
+import { InviteCodes } from "@/components/admin/InviteCodes";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminIndex,
@@ -18,6 +19,23 @@ function AdminIndex() {
     queryFn: () => adminListPosts() as Promise<Post[]>,
   });
 
+  const { data: ctx } = useQuery({
+    queryKey: ["admin-context"],
+    queryFn: () => getAdminContext(),
+    staleTime: 60_000,
+  });
+  const isAdmin = Boolean(ctx?.isAdmin);
+
+  const approve = useMutation({
+    mutationFn: (id: string) => adminSetPostStatus({ data: { id, status: "published" } }),
+    onSuccess: async () => {
+      toast.success("Publicación aprobada y publicada.");
+      await queryClient.invalidateQueries({ queryKey: ["admin-posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "No se ha podido aprobar."),
+  });
+
   const remove = useMutation({
     mutationFn: (id: string) => adminDeletePost({ data: { id } }),
     onSuccess: async () => {
@@ -28,6 +46,7 @@ function AdminIndex() {
   });
 
   const drafts = posts?.filter((p) => p.status === "draft").length ?? 0;
+  const pending = posts?.filter((p) => p.status === "pending").length ?? 0;
   const published = posts?.filter((p) => p.status === "published").length ?? 0;
 
   return (
@@ -36,6 +55,9 @@ function AdminIndex() {
         <div className="flex gap-6 text-sm text-muted-foreground">
           <span>
             <strong className="text-foreground">{published}</strong> publicadas
+          </span>
+          <span>
+            <strong className="text-foreground">{pending}</strong> en revisión
           </span>
           <span>
             <strong className="text-foreground">{drafts}</strong> borradores
@@ -50,7 +72,7 @@ function AdminIndex() {
         </Link>
       </div>
 
-      <PostRankings />
+      {isAdmin && <PostRankings />}
 
       {isLoading ? (
         <div className="flex items-center gap-2 py-20 text-muted-foreground">
@@ -70,10 +92,12 @@ function AdminIndex() {
                     className={
                       post.status === "published"
                         ? "eyebrow rounded-full bg-secondary px-2.5 py-0.5 text-primary"
-                        : "eyebrow rounded-full bg-muted px-2.5 py-0.5 text-muted-foreground"
+                        : post.status === "pending"
+                          ? "eyebrow rounded-full bg-primary px-2.5 py-0.5 text-primary-foreground"
+                          : "eyebrow rounded-full bg-muted px-2.5 py-0.5 text-muted-foreground"
                     }
                   >
-                    {post.status === "published" ? "Publicado" : "Borrador"}
+                    {statusLabel(post.status)}
                   </span>
                   <span className="text-xs text-muted-foreground">{categoryLabel(post.category)}</span>
                   {post.featured && <span className="text-xs text-primary">Destacado</span>}
@@ -84,6 +108,16 @@ function AdminIndex() {
                 </p>
               </div>
               <div className="flex items-center gap-1.5">
+                {isAdmin && post.status === "pending" && (
+                  <button
+                    type="button"
+                    onClick={() => approve.mutate(post.id)}
+                    disabled={approve.isPending}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-medium text-primary-foreground transition-all hover:opacity-95 disabled:opacity-60"
+                  >
+                    <Check className="h-4 w-4" /> Aprobar
+                  </button>
+                )}
                 {post.status === "published" && (
                   <Link
                     to="/articulo/$slug"
@@ -122,6 +156,8 @@ function AdminIndex() {
           ))}
         </ul>
       )}
+
+      {isAdmin && <InviteCodes />}
     </div>
   );
 }
