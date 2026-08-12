@@ -20,6 +20,7 @@ const saveSchema = z.object({
   featured: z.boolean(),
   status: z.enum(["draft", "pending", "published"]),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  event_end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   published_at: z.string().nullable().optional(),
 });
 
@@ -157,6 +158,7 @@ export const adminSavePost = createServerFn({ method: "POST" })
       featured: data.featured,
       status: data.status,
       event_date: data.event_date ?? null,
+      event_end_date: data.event_end_date ?? null,
       published_at:
         data.status === "published" ? (data.published_at ?? new Date().toISOString()) : data.published_at ?? null,
     };

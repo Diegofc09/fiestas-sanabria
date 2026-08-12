@@ -21,4 +21,4 @@ export function createPublicServerClient() {
 }
 
 export const POST_SUMMARY_COLUMNS =
-  "id, title, slug, cover_image_url, cover_image_alt, excerpt, category, featured, status, event_date, published_at, created_at, updated_at";
+  "id, title, slug, cover_image_url, cover_image_alt, excerpt, category, featured, status, event_date, event_end_date, published_at, created_at, updated_at";
