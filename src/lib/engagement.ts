@@ -34,13 +34,19 @@ export function countLinks(text: string): number {
 
 export const commentSchema = z.object({
   postId: z.string().uuid(),
-  authorName: z.string().trim().min(2, "Escribe tu nombre").max(60),
+  authorName: z
+    .string()
+    .trim()
+    .min(2, "Escribe tu nombre")
+    .max(60)
+    .refine((v) => !containsProfanity(v), "Usa un nombre sin palabras ofensivas"),
   body: z
     .string()
     .trim()
     .min(2, "Escribe un comentario")
     .max(2000)
-    .refine((v) => countLinks(v) <= MAX_LINKS, "Demasiados enlaces en el comentario"),
+    .refine((v) => countLinks(v) <= MAX_LINKS, "Demasiados enlaces en el comentario")
+    .refine((v) => !containsProfanity(v), PROFANITY_MESSAGE),
   rating: z.number().int().min(1).max(5).nullable().optional(),
   visitorToken: z.string().trim().max(100).optional(),
   /** Campo trampa: sólo lo rellenan los bots. */
