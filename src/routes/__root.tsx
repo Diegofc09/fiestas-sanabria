@@ -4,12 +4,14 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { trackSiteView } from "@/lib/analytics.functions";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -142,6 +144,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useLocation({ select: (location) => location.pathname });
+
+  // Contador de visitas diarias del sitio (una por navegación).
+  useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
+    void trackSiteView({ data: { path: pathname } }).catch(() => {});
+  }, [pathname]);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
