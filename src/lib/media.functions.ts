@@ -27,7 +27,13 @@ export const uploadImage = createServerFn({ method: "POST" })
       _user_id: context.userId,
       _role: "admin",
     });
-    if (!isAdmin) throw new Error("Solo la administración puede subir imágenes.");
+    const { data: isSubscriber } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "subscriber",
+    });
+    if (!isAdmin && !isSubscriber) {
+      throw new Error("No tienes permiso para subir imágenes.");
+    }
 
     const { file } = data;
     if (file.size === 0) throw new Error("El archivo está vacío.");
