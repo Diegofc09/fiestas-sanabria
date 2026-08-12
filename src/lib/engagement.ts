@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { PROFANITY_MESSAGE, containsProfanity } from "./profanity";
+
 export type PostComment = {
   id: string;
   post_id: string;
