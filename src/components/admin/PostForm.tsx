@@ -192,7 +192,7 @@ export function PostForm({ post }: { post?: Post }) {
             </div>
             <div>
               <label htmlFor="event_date" className="mb-1.5 block text-sm font-medium">
-                Fecha del evento
+                Inicio del evento
               </label>
               <input
                 id="event_date"
@@ -204,6 +204,33 @@ export function PostForm({ post }: { post?: Post }) {
               <p className="mt-1 text-xs text-muted-foreground">
                 Opcional. Se usa en el calendario y en el artículo.
               </p>
+            </div>
+            <div>
+              <label htmlFor="event_end_date" className="mb-1.5 block text-sm font-medium">
+                Fin del evento
+              </label>
+              <input
+                id="event_end_date"
+                type="date"
+                value={form.event_end_date}
+                min={form.event_date || undefined}
+                onChange={(e) => set("event_end_date", e.target.value)}
+                className={fieldClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Si se deja vacío se usa la fecha de inicio. Estado: “Sin empezar”, “En curso” y
+                “Terminada”; 14 días después del fin la publicación se elimina automáticamente.
+              </p>
+              {phase && (
+                <p className="mt-2 text-xs font-medium text-foreground">
+                  Estado actual: {eventPhaseLabel(phase)}
+                  {phase === "finished" && removalDays !== null
+                    ? removalDays > 0
+                      ? ` · se eliminará en ${removalDays} día${removalDays === 1 ? "" : "s"}`
+                      : " · pendiente de eliminación automática"
+                    : ""}
+                </p>
+              )}
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input
