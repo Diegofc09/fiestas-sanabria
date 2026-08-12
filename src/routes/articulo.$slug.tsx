@@ -7,6 +7,7 @@ import { trackPostView } from "@/lib/analytics.functions";
 
 import { getPublishedPost } from "@/lib/posts.functions";
 import { categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
+import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { PostCard } from "@/components/site/PostCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ShareBar } from "@/components/site/ShareBar";
@@ -143,8 +144,8 @@ function ArticlePage() {
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <div
           className="article-body mt-10 md:mt-14"
-          // El contenido lo redacta únicamente la administración desde el panel privado.
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          // El HTML se sanea al guardar y también aquí antes de renderizarse.
+          dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(post.content) }}
         />
 
         <ShareBar title={post.title} slug={post.slug} />

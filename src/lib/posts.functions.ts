@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { sanitizeArticleHtml } from "./sanitize";
 
 const listSchema = z.object({
   category: z.enum(["fiestas", "eventos", "noticias", "otros"]).optional(),
@@ -151,7 +152,7 @@ export const adminSavePost = createServerFn({ method: "POST" })
       cover_image_url: data.cover_image_url ?? null,
       cover_image_alt: data.cover_image_alt ?? null,
       excerpt: data.excerpt ?? null,
-      content: data.content,
+      content: sanitizeArticleHtml(data.content),
       category: data.category,
       featured: data.featured,
       status: data.status,
