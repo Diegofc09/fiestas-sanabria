@@ -8,7 +8,7 @@ export const Route = createFileRoute("/otros")({
   loader: ({ context }) => context.queryClient.ensureQueryData(categoryQuery("otros")),
   head: () => ({
     meta: [
-      { title: "Otros en Sanabria — Fiestas Sanabria" },
+      { title: "Otros en Sanabria — TodoSanabria" },
       { name: "description", content: "Anuncios, avisos y otros asuntos de interés para los vecinos de Sanabria." },
       { property: "og:title", content: "Otros en Sanabria" },
       { property: "og:description", content: "Anuncios, avisos y otros asuntos de interés para los vecinos de Sanabria." },

@@ -8,7 +8,7 @@ export const Route = createFileRoute("/fiestas")({
   loader: ({ context }) => context.queryClient.ensureQueryData(categoryQuery("fiestas")),
   head: () => ({
     meta: [
-      { title: "Fiestas en Sanabria — Fiestas Sanabria" },
+      { title: "Fiestas en Sanabria — TodoSanabria" },
       { name: "description", content: "Fiestas patronales, verbenas y romerías de los pueblos de la comarca de Sanabria." },
       { property: "og:title", content: "Fiestas en Sanabria" },
       { property: "og:description", content: "Fiestas patronales, verbenas y romerías de los pueblos de la comarca de Sanabria." },

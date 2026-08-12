@@ -17,16 +17,16 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
   head: () => ({
     meta: [
-      { title: "Fiestas Sanabria — Fiestas, eventos y noticias de la comarca" },
+      { title: "TodoSanabria — Fiestas, eventos y noticias de la comarca" },
       {
         name: "description",
         content:
-          "Portada de Fiestas Sanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
+          "Portada de TodoSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
       },
-      { property: "og:title", content: "Fiestas Sanabria — Fiestas, eventos y noticias de la comarca" },
+      { property: "og:title", content: "TodoSanabria — Fiestas, eventos y noticias de la comarca" },
       {
         property: "og:description",
-        content: "Portada de Fiestas Sanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
+        content: "Portada de TodoSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
       },
       { property: "og:url", content: "/" },
     ],
