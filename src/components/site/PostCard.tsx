@@ -3,6 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import { categoryLabel, formatDate, type PostSummary } from "@/lib/posts";
 import { cn } from "@/lib/utils";
+import { CommentTeaser } from "./CommentTeaser";
+
 
 function Cover({
   post,
