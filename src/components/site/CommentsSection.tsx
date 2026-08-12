@@ -57,7 +57,7 @@ export function CommentsSection({
       setRating(null);
       markCommentSent();
       setCooldown(commentCooldownLeft());
-      toast.success("Comentario enviado. Se publicará cuando la redacción lo revise.");
+      toast.success("¡Comentario publicado!");
       await queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
     onError: (error) =>
