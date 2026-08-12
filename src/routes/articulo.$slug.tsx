@@ -87,7 +87,7 @@ function ArticlePage() {
       <div className="mx-auto max-w-3xl px-5 pt-8 md:px-8 md:pt-14">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-2 text-[0.9375rem] text-muted-foreground transition-colors md:text-sm hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Portada
@@ -97,11 +97,11 @@ function ArticlePage() {
           <span className="eyebrow rounded-full bg-secondary px-3 py-1 text-primary">
             {categoryLabel(post.category)}
           </span>
-          <time dateTime={date} className="text-sm text-muted-foreground">
+          <time dateTime={date} className="text-[0.9375rem] text-muted-foreground md:text-sm">
             {formatDate(date)}
           </time>
           <span className="h-3 w-px bg-rule" aria-hidden="true" />
-          <span className="text-sm text-muted-foreground">{readingMinutes(post.content)} min de lectura</span>
+          <span className="text-[0.9375rem] text-muted-foreground md:text-sm">{readingMinutes(post.content)} min de lectura</span>
           {post.event_date && (
             <>
               <span className="h-3 w-px bg-rule" aria-hidden="true" />
@@ -134,7 +134,7 @@ function ArticlePage() {
             />
           </div>
           {post.cover_image_alt && (
-            <figcaption className="mx-auto mt-3 max-w-3xl px-5 text-xs text-muted-foreground md:px-0">
+            <figcaption className="mx-auto mt-3 max-w-3xl px-5 text-[0.8125rem] text-muted-foreground md:px-0 md:text-xs">
               {post.cover_image_alt}
             </figcaption>
           )}

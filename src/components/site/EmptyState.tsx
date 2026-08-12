@@ -13,7 +13,7 @@ export function EmptyState({
         <Newspaper className="h-6 w-6" />
       </span>
       <h2 className="mt-6 text-2xl md:text-3xl">{title}</h2>
-      <p className="mt-3 max-w-md font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
+      <p className="mt-3 max-w-md font-[family-name:var(--font-serif)] text-base md:text-[0.9375rem] leading-relaxed text-muted-foreground">
         {description}
       </p>
     </div>
