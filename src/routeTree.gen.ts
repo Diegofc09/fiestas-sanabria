@@ -18,6 +18,7 @@ import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -64,6 +65,11 @@ const ArticuloSlugRoute = ArticuloSlugRouteImport.update({
   path: '/articulo/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -77,8 +83,9 @@ export interface FileRoutesByFullPath {
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
@@ -88,8 +95,8 @@ export interface FileRoutesByTo {
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
@@ -101,8 +108,9 @@ export interface FileRoutesById {
   '/fiestas': typeof FiestasRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +124,7 @@ export interface FileRouteTypes {
     | '/otros'
     | '/admin'
     | '/articulo/$slug'
+    | '/admin/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -125,8 +134,8 @@ export interface FileRouteTypes {
     | '/fiestas'
     | '/noticias'
     | '/otros'
-    | '/admin'
     | '/articulo/$slug'
+    | '/admin'
     | '/api/public/media/$'
   id:
     | '__root__'
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/otros'
     | '/_authenticated/admin'
     | '/articulo/$slug'
+    | '/_authenticated/admin/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
@@ -219,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -229,12 +246,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
