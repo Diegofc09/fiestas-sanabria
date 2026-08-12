@@ -1,0 +1,151 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
+
+import { getPublishedPost } from "@/lib/posts.functions";
+import { categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
+import { PostCard } from "@/components/site/PostCard";
+import { Reveal } from "@/components/site/Reveal";
+import { ShareBar } from "@/components/site/ShareBar";
+
+type ArticlePayload = { post: Post; related: PostSummary[] };
+
+const articleQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["post", slug],
+    queryFn: async () => {
+      const result = (await getPublishedPost({ data: { slug } })) as ArticlePayload | null;
+      if (!result) throw notFound();
+      return result;
+    },
+  });
+
+export const Route = createFileRoute("/articulo/$slug")({
+  loader: ({ context, params }) => context.queryClient.ensureQueryData(articleQuery(params.slug)),
+  head: ({ params, loaderData }) => {
+    const data = loaderData as ArticlePayload | undefined;
+    if (!data) {
+      return {
+        meta: [{ title: "Publicación no disponible — Fiestas Sanabria" }, { name: "robots", content: "noindex" }],
+      };
+    }
+    const { post } = data;
+    const description = (post.excerpt ?? stripHtml(post.content)).slice(0, 155);
+    const url = `/articulo/${params.slug}`;
+    return {
+      meta: [
+        { title: `${post.title} — Fiestas Sanabria` },
+        { name: "description", content: description },
+        { property: "og:title", content: post.title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        ...(post.cover_image_url
+          ? [
+              { property: "og:image", content: post.cover_image_url },
+              { name: "twitter:image", content: post.cover_image_url },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: post.title,
+            description,
+            datePublished: post.published_at ?? post.created_at,
+            dateModified: post.updated_at,
+            articleSection: categoryLabel(post.category),
+            publisher: { "@type": "Organization", name: "Fiestas Sanabria" },
+          }),
+        },
+      ],
+    };
+  },
+  component: ArticlePage,
+});
+
+function ArticlePage() {
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(articleQuery(slug));
+  const { post, related } = data;
+  const date = post.published_at ?? post.created_at;
+
+  return (
+    <article className="pb-10">
+      <div className="mx-auto max-w-3xl px-5 pt-8 md:px-8 md:pt-14">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Portada
+        </Link>
+
+        <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="eyebrow rounded-full bg-secondary px-3 py-1 text-primary">
+            {categoryLabel(post.category)}
+          </span>
+          <time dateTime={date} className="text-sm text-muted-foreground">
+            {formatDate(date)}
+          </time>
+          <span className="h-3 w-px bg-rule" aria-hidden="true" />
+          <span className="text-sm text-muted-foreground">{readingMinutes(post.content)} min de lectura</span>
+        </div>
+
+        <h1 className="mt-4 text-[2.1rem] leading-[1.06] sm:text-5xl md:text-[3.25rem]">{post.title}</h1>
+
+        {post.excerpt && (
+          <p className="mt-5 font-[family-name:var(--font-serif)] text-lg leading-relaxed text-muted-foreground md:text-xl">
+            {post.excerpt}
+          </p>
+        )}
+      </div>
+
+      {post.cover_image_url && (
+        <figure className="mx-auto mt-9 max-w-5xl px-0 md:px-8">
+          <div className="overflow-hidden bg-secondary md:rounded-sm">
+            <img
+              src={post.cover_image_url}
+              alt={post.cover_image_alt ?? post.title}
+              className="h-full w-full object-cover"
+              sizes="(max-width: 768px) 100vw, 1024px"
+              decoding="async"
+            />
+          </div>
+          {post.cover_image_alt && (
+            <figcaption className="mx-auto mt-3 max-w-3xl px-5 text-xs text-muted-foreground md:px-0">
+              {post.cover_image_alt}
+            </figcaption>
+          )}
+        </figure>
+      )}
+
+      <div className="mx-auto max-w-3xl px-5 md:px-8">
+        <div
+          className="article-body mt-10 md:mt-14"
+          // El contenido lo redacta únicamente la administración desde el panel privado.
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        <ShareBar title={post.title} slug={post.slug} />
+      </div>
+
+      {related.length > 0 && (
+        <section className="mx-auto mt-20 max-w-6xl border-t border-rule px-5 pt-10 md:px-8">
+          <h2 className="text-xl md:text-2xl">Más en {categoryLabel(post.category)}</h2>
+          <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((item, i) => (
+              <Reveal key={item.id} delay={i * 0.06}>
+                <PostCard post={item} compact />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
+  );
+}
