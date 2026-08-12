@@ -10,12 +10,36 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as FiestasRouteImport } from './routes/fiestas'
+import { Route as NoticiasRouteImport } from './routes/noticias'
+import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FiestasRoute = FiestasRouteImport.update({
+  id: '/fiestas',
+  path: '/fiestas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasRoute = NoticiasRouteImport.update({
+  id: '/noticias',
+  path: '/noticias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtrosRoute = OtrosRouteImport.update({
+  id: '/otros',
+  path: '/otros',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArticuloSlugRoute = ArticuloSlugRouteImport.update({
@@ -31,30 +55,68 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/eventos': typeof EventosRoute
+  '/fiestas': typeof FiestasRoute
+  '/noticias': typeof NoticiasRoute
+  '/otros': typeof OtrosRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/articulo/$slug' | '/api/public/media/$'
+  fullPaths:
+    | '/'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/articulo/$slug'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/articulo/$slug' | '/api/public/media/$'
-  id: '__root__' | '/' | '/articulo/$slug' | '/api/public/media/$'
+  to:
+    | '/'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/articulo/$slug'
+    | '/api/public/media/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/eventos'
+    | '/fiestas'
+    | '/noticias'
+    | '/otros'
+    | '/articulo/$slug'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EventosRoute: typeof EventosRoute
+  FiestasRoute: typeof FiestasRoute
+  NoticiasRoute: typeof NoticiasRoute
+  OtrosRoute: typeof OtrosRoute
   ArticuloSlugRoute: typeof ArticuloSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -66,6 +128,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fiestas': {
+      id: '/fiestas'
+      path: '/fiestas'
+      fullPath: '/fiestas'
+      preLoaderRoute: typeof FiestasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticias': {
+      id: '/noticias'
+      path: '/noticias'
+      fullPath: '/noticias'
+      preLoaderRoute: typeof NoticiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/otros': {
+      id: '/otros'
+      path: '/otros'
+      fullPath: '/otros'
+      preLoaderRoute: typeof OtrosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/articulo/$slug': {
@@ -87,6 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EventosRoute: EventosRoute,
+  FiestasRoute: FiestasRoute,
+  NoticiasRoute: NoticiasRoute,
+  OtrosRoute: OtrosRoute,
   ArticuloSlugRoute: ArticuloSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
