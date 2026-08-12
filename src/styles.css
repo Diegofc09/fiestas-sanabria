@@ -95,6 +95,12 @@
 
   --border: oklch(0.885 0.012 80);
   --rule: oklch(0.845 0.014 80);
+
+  /* Semáforo de estado del evento */
+  --phase-upcoming: oklch(0.72 0.15 85);
+  --phase-ongoing: oklch(0.52 0.14 150);
+  --phase-finished: oklch(0.55 0.19 25);
+
   --input: oklch(0.885 0.012 80);
   --ring: oklch(0.33 0.048 155);
 
