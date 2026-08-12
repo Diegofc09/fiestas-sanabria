@@ -17,7 +17,7 @@ const saveSchema = z.object({
   content: z.string().max(200000),
   category: z.enum(["fiestas", "eventos", "noticias", "otros"]),
   featured: z.boolean(),
-  status: z.enum(["draft", "published"]),
+  status: z.enum(["draft", "pending", "published"]),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   published_at: z.string().nullable().optional(),
 });
@@ -75,13 +75,21 @@ export const getAdminContext = createServerFn({ method: "GET" })
       _user_id: context.userId,
       _role: "admin",
     });
-    if (isAdmin) return { isAdmin: true as const, canClaim: false };
+    const { data: isSubscriber } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "subscriber",
+    });
+    if (isAdmin) return { isAdmin: true as const, isSubscriber: Boolean(isSubscriber), canClaim: false };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { count } = await supabaseAdmin
       .from("user_roles")
       .select("id", { count: "exact", head: true })
       .eq("role", "admin");
-    return { isAdmin: false as const, canClaim: (count ?? 0) === 0 };
+    return {
+      isAdmin: false as const,
+      isSubscriber: Boolean(isSubscriber),
+      canClaim: (count ?? 0) === 0,
+    };
   });
 
 /** Bootstrap: el primer usuario registrado puede reclamar el rol de administrador. */
@@ -129,6 +137,14 @@ export const adminSavePost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => saveSchema.parse(data))
   .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin && data.status === "published") {
+      throw new Error("Tu publicación debe pasar por revisión antes de publicarse.");
+    }
+
     const payload = {
       title: data.title,
       slug: data.slug,
@@ -171,4 +187,35 @@ export const adminDeletePost = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("posts").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+/** Un administrador aprueba (publica) o devuelve a revisión una publicación. */
+export const adminSetPostStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["draft", "pending", "published"]),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Solo la administración puede cambiar el estado.");
+
+    const { data: updated, error } = await context.supabase
+      .from("posts")
+      .update({
+        status: data.status,
+        published_at: data.status === "published" ? new Date().toISOString() : null,
+      })
+      .eq("id", data.id)
+      .select("id, slug, status")
+      .single();
+    if (error) throw new Error(error.message);
+    return updated;
   });

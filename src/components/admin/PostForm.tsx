@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { adminSavePost } from "@/lib/posts.functions";
+import { adminSavePost, getAdminContext } from "@/lib/posts.functions";
 import { CATEGORIES, slugify, type Post, type PostCategory, type PostStatus } from "@/lib/posts";
 import { uploadPostImage } from "@/lib/upload";
 
@@ -31,6 +31,12 @@ export function PostForm({ post }: { post?: Post }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [slugEdited, setSlugEdited] = useState(Boolean(post));
+  const { data: ctx } = useQuery({
+    queryKey: ["admin-context"],
+    queryFn: () => getAdminContext(),
+    staleTime: 60_000,
+  });
+  const isAdmin = Boolean(ctx?.isAdmin);
 
   const [form, setForm] = useState<FormState>({
     title: post?.title ?? "",
@@ -67,7 +73,13 @@ export function PostForm({ post }: { post?: Post }) {
         },
       }),
     onSuccess: async (_data, status) => {
-      toast.success(status === "published" ? "Publicación publicada." : "Borrador guardado.");
+      toast.success(
+        status === "published"
+          ? "Publicación publicada."
+          : status === "pending"
+            ? "Enviada a revisión: la administración la revisará antes de publicarla."
+            : "Borrador guardado.",
+      );
       await queryClient.invalidateQueries({ queryKey: ["admin-posts"] });
       await queryClient.invalidateQueries({ queryKey: ["posts"] });
       navigate({ to: "/admin" });
@@ -251,12 +263,16 @@ export function PostForm({ post }: { post?: Post }) {
         <div className="space-y-2">
           <button
             type="button"
-            onClick={() => submit("published")}
+            onClick={() => submit(isAdmin ? "published" : "pending")}
             disabled={save.isPending}
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-sm bg-primary text-sm font-medium text-primary-foreground transition-all hover:opacity-95 active:scale-[0.99] disabled:opacity-60"
           >
             {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {form.status === "published" ? "Actualizar publicación" : "Publicar"}
+            {isAdmin
+              ? form.status === "published"
+                ? "Actualizar publicación"
+                : "Publicar"
+              : "Enviar a revisión"}
           </button>
           <button
             type="button"
@@ -266,6 +282,11 @@ export function PostForm({ post }: { post?: Post }) {
           >
             Guardar como borrador
           </button>
+          {!isAdmin && (
+            <p className="pt-1 text-xs text-muted-foreground">
+              Tu publicación quedará en revisión; un administrador la aprobará para publicarla.
+            </p>
+          )}
         </div>
       </aside>
     </div>

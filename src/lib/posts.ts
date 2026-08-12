@@ -1,5 +1,13 @@
 export type PostCategory = "fiestas" | "eventos" | "noticias" | "otros";
-export type PostStatus = "draft" | "published";
+export type PostStatus = "draft" | "pending" | "published";
+export type AppRole = "admin" | "editor" | "subscriber";
+
+export function statusLabel(status: PostStatus): string {
+  if (status === "published") return "Publicado";
+  if (status === "pending") return "En revisión";
+  return "Borrador";
+}
+
 
 export type Post = {
   id: string;
