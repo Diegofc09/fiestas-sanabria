@@ -40,7 +40,7 @@ export const Route = createFileRoute("/articulo/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(post.cover_image_url
+        ...(post.cover_image_url?.startsWith("https://")
           ? [
               { property: "og:image", content: post.cover_image_url },
               { name: "twitter:image", content: post.cover_image_url },
