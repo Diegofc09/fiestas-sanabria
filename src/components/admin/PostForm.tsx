@@ -65,6 +65,13 @@ export function PostForm({ post }: { post?: Post }) {
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
+  const eventDates = {
+    event_date: form.event_date || null,
+    event_end_date: form.event_end_date || null,
+  };
+  const phase = eventPhase(eventDates);
+  const removalDays = daysUntilRemoval(eventDates);
+
   const save = useMutation({
     mutationFn: (status: PostStatus) =>
       adminSavePost({
