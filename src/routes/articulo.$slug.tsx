@@ -143,8 +143,8 @@ function ArticlePage() {
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <div
           className="article-body mt-10 md:mt-14"
-          // El contenido lo redacta únicamente la administración desde el panel privado.
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          // El HTML se sanea al guardar y también aquí antes de renderizarse.
+          dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(post.content) }}
         />
 
         <ShareBar title={post.title} slug={post.slug} />
