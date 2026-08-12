@@ -19,6 +19,7 @@ import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminNuevoRouteImport } from './routes/_authenticated/admin.nuevo'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -70,6 +71,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminNuevoRoute = AuthenticatedAdminNuevoRouteImport.update({
+  id: '/nuevo',
+  path: '/nuevo',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/otros': typeof OtrosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/otros': typeof OtrosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
+  '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/otros'
     | '/admin'
     | '/articulo/$slug'
+    | '/admin/nuevo'
     | '/admin/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/otros'
     | '/articulo/$slug'
+    | '/admin/nuevo'
     | '/admin'
     | '/api/public/media/$'
   id:
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/otros'
     | '/_authenticated/admin'
     | '/articulo/$slug'
+    | '/_authenticated/admin/nuevo'
     | '/_authenticated/admin/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
@@ -236,6 +248,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/nuevo': {
+      id: '/_authenticated/admin/nuevo'
+      path: '/nuevo'
+      fullPath: '/admin/nuevo'
+      preLoaderRoute: typeof AuthenticatedAdminNuevoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -247,10 +266,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminNuevoRoute: typeof AuthenticatedAdminNuevoRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminNuevoRoute: AuthenticatedAdminNuevoRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
