@@ -74,6 +74,7 @@ const BAD_WORDS = [
   "matate",
   "ojala te mueras",
   "fuck",
+  "fck",
   "fucking",
   "shit",
   "bitch",
