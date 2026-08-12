@@ -129,7 +129,7 @@ function Toolbar({ editor }: { editor: Editor }) {
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml,image/*"
         className="hidden"
         onChange={(e) => void onFile(e.target.files?.[0])}
       />
