@@ -72,5 +72,14 @@ export const uploadImage = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    return { url: `/api/public/media/${path}` };
+    // URL firmada de larga duración: no expone el bucket y funciona también
+    // para borradores y publicaciones en revisión.
+    const { data: signed, error: signError } = await supabaseAdmin.storage
+      .from("post-images")
+      .createSignedUrl(path, 60 * 60 * 24 * 3650);
+    if (signError || !signed?.signedUrl) {
+      throw new Error(signError?.message ?? "No se ha podido preparar la imagen.");
+    }
+
+    return { url: signed.signedUrl };
   });
