@@ -110,7 +110,11 @@ function ArticlePage() {
               <span className="h-3 w-px bg-rule" aria-hidden="true" />
               <span className="eyebrow rounded-full border border-rule px-3 py-1 text-foreground">
                 Evento: {formatDate(`${post.event_date}T12:00:00Z`)}
+                {post.event_end_date && post.event_end_date !== post.event_date
+                  ? ` – ${formatDate(`${post.event_end_date}T12:00:00Z`)}`
+                  : ""}
               </span>
+              <EventPhaseBadge post={post} className="px-3 py-1" />
             </>
           )}
         </div>
