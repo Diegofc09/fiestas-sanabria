@@ -1,27 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { attendanceSchema, commentSchema } from "./engagement";
 
-const uuid = z.string().uuid();
-
-const commentSchema = z.object({
-  postId: uuid,
-  authorName: z.string().trim().min(2).max(60),
-  body: z.string().trim().min(2).max(2000),
-  rating: z.number().int().min(1).max(5).nullable().optional(),
-});
-
-const attendanceSchema = z.object({
-  postId: uuid,
-  visitorToken: z.string().trim().min(10).max(100),
-  attending: z.boolean(),
-});
+const COMMENT_COLUMNS = "id, post_id, author_name, body, rating, created_at";
 
 /** Resumen público por publicación: comentarios aprobados, media de estrellas y asistentes. */
 export const listEngagement = createServerFn({ method: "GET" }).handler(async () => {
   const { createPublicServerClient } = await import("./supabase-public.server");
-  const client = createPublicServerClient();
-  const { data, error } = await client.rpc("post_engagement");
+  const { data, error } = await createPublicServerClient().rpc("post_engagement");
   if (error) throw new Error(error.message);
   return data ?? [];
 });
@@ -33,8 +20,7 @@ export const listRecentComments = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const { createPublicServerClient } = await import("./supabase-public.server");
-    const client = createPublicServerClient();
-    const { data: rows, error } = await client
+    const { data: rows, error } = await createPublicServerClient()
       .from("post_comments")
       .select("id, post_id, author_name, body, rating, created_at")
       .eq("approved", true)
@@ -45,11 +31,10 @@ export const listRecentComments = createServerFn({ method: "GET" })
   });
 
 export const listPostComments = createServerFn({ method: "GET" })
-  .inputValidator((data: unknown) => z.object({ postId: uuid }).parse(data))
+  .inputValidator((data: unknown) => z.object({ postId: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
     const { createPublicServerClient } = await import("./supabase-public.server");
-    const client = createPublicServerClient();
-    const { data: rows, error } = await client
+    const { data: rows, error } = await createPublicServerClient()
       .from("post_comments")
       .select("id, post_id, author_name, body, rating, created_at")
       .eq("post_id", data.postId)
@@ -85,7 +70,9 @@ export const submitComment = createServerFn({ method: "POST" })
 
 export const getAttendance = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
-    z.object({ postId: uuid, visitorToken: z.string().trim().max(100).optional() }).parse(data),
+    z
+      .object({ postId: z.string().uuid(), visitorToken: z.string().trim().max(100).optional() })
+      .parse(data),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -134,23 +121,17 @@ export const setAttendance = createServerFn({ method: "POST" })
     return { count: count ?? 0, attending: data.attending };
   });
 
-/* ---------------- Moderación (solo administración) ---------------- */
-
-async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data: isAdmin } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (!isAdmin) throw new Error("Solo la administración puede moderar comentarios.");
-}
-
 export const adminListComments = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Solo la administración puede moderar comentarios.");
     const { data, error } = await context.supabase
       .from("post_comments")
-      .select("id, post_id, author_name, body, rating, approved, created_at, posts(title, slug)")
+      .select(`${COMMENT_COLUMNS}, approved, posts(title, slug)`)
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);
@@ -159,9 +140,15 @@ export const adminListComments = createServerFn({ method: "GET" })
 
 export const adminSetCommentApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ id: uuid, approved: z.boolean() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z.object({ id: z.string().uuid(), approved: z.boolean() }).parse(data),
+  )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Solo la administración puede moderar comentarios.");
     const { error } = await context.supabase
       .from("post_comments")
       .update({ approved: data.approved })
@@ -172,9 +159,13 @@ export const adminSetCommentApproval = createServerFn({ method: "POST" })
 
 export const adminDeleteComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ id: uuid }).parse(data))
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Solo la administración puede moderar comentarios.");
     const { error } = await context.supabase.from("post_comments").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
