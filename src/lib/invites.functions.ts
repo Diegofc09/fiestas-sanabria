@@ -10,10 +10,23 @@ function generateCode(): string {
   return `${chars.slice(0, 4).join("")}-${chars.slice(4, 8).join("")}-${chars.slice(8, 12).join("")}`;
 }
 
-async function assertAdmin(supabase: { rpc: (fn: "has_role", args: { _user_id: string; _role: "admin" }) => Promise<{ data: unknown }> }, userId: string) {
+type AuthedSupabase = Awaited<ReturnType<typeof requireSupabaseAuth.options.server>> extends never
+  ? never
+  : never;
+
+async function assertAdmin(
+  supabase: {
+    rpc: (
+      fn: "has_role",
+      args: { _user_id: string; _role: "admin" },
+    ) => PromiseLike<{ data: unknown }>;
+  },
+  userId: string,
+) {
   const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (!data) throw new Error("Solo la administración puede gestionar códigos.");
 }
+
 
 /** Genera un código de invitación de suscriptor. */
 export const adminCreateInviteCode = createServerFn({ method: "POST" })
