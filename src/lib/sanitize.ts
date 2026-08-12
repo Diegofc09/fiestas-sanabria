@@ -87,7 +87,7 @@ function sanitizeAttributes(raw: string): string {
   ATTR_RE.lastIndex = 0;
   let match: RegExpExecArray | null;
   while ((match = ATTR_RE.exec(raw))) {
-    const name = match[1].toLowerCase();
+    const name = (match[1] ?? "").toLowerCase();
     const value = (match[2] ?? match[3] ?? match[4] ?? "").trim();
     if (!ALLOWED_ATTR.has(name)) continue;
     if (URL_ATTR.has(name)) {
