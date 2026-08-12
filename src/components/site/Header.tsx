@@ -6,7 +6,11 @@ import { AnimatePresence, motion } from "motion/react";
 import { CATEGORIES } from "@/lib/posts";
 import { cn } from "@/lib/utils";
 
-const NAV = [{ label: "Inicio", path: "/" }, ...CATEGORIES.map((c) => ({ label: c.label, path: c.path }))];
+const NAV = [
+  { label: "Inicio", path: "/" },
+  ...CATEGORIES.map((c) => ({ label: c.label, path: c.path })),
+  { label: "Calendario", path: "/calendario" },
+];
 
 export function Header() {
   const [open, setOpen] = useState(false);
