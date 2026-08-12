@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminNuevoRouteImport } from './routes/_authenticated/admin.nuevo'
+import { Route as AuthenticatedAdminEditarIdRouteImport } from './routes/_authenticated/admin.editar.$id'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -76,6 +77,12 @@ const AuthenticatedAdminNuevoRoute = AuthenticatedAdminNuevoRouteImport.update({
   path: '/nuevo',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminEditarIdRoute =
+  AuthenticatedAdminEditarIdRouteImport.update({
+    id: '/editar/$id',
+    path: '/editar/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
@@ -105,6 +113,7 @@ export interface FileRoutesByTo {
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
@@ -120,6 +129,7 @@ export interface FileRoutesById {
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/editar/$id': typeof AuthenticatedAdminEditarIdRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/articulo/$slug'
     | '/admin/nuevo'
     | '/admin/'
+    | '/admin/editar/$id'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/articulo/$slug'
     | '/admin/nuevo'
     | '/admin'
+    | '/admin/editar/$id'
     | '/api/public/media/$'
   id:
     | '__root__'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
     | '/articulo/$slug'
     | '/_authenticated/admin/nuevo'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/editar/$id'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminNuevoRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/editar/$id': {
+      id: '/_authenticated/admin/editar/$id'
+      path: '/editar/$id'
+      fullPath: '/admin/editar/$id'
+      preLoaderRoute: typeof AuthenticatedAdminEditarIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -268,11 +288,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminNuevoRoute: typeof AuthenticatedAdminNuevoRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminEditarIdRoute: typeof AuthenticatedAdminEditarIdRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminNuevoRoute: AuthenticatedAdminNuevoRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminEditarIdRoute: AuthenticatedAdminEditarIdRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
