@@ -4,10 +4,35 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { categoryLabel, formatDate, timelineDate, type PostSummary } from "@/lib/posts";
+import {
+  categoryLabel,
+  eventPhase,
+  formatDate,
+  timelineDate,
+  type EventPhase,
+  type PostSummary,
+} from "@/lib/posts";
 import { Reveal } from "@/components/site/Reveal";
 import { EmptyState } from "@/components/site/EmptyState";
+import { EventPhaseBadge } from "@/components/site/EventPhaseBadge";
 import { cn } from "@/lib/utils";
+
+/** Color del semáforo para el punto del día. */
+const PHASE_DOT: Record<EventPhase, string> = {
+  upcoming: "bg-phase-upcoming",
+  ongoing: "bg-phase-ongoing",
+  finished: "bg-phase-finished",
+};
+
+/** Fase dominante de un día: en curso > sin empezar > terminada. */
+function dayPhase(posts: PostSummary[]): EventPhase | null {
+  const phases = posts.map((p) => eventPhase(p)).filter(Boolean) as EventPhase[];
+  if (phases.includes("ongoing")) return "ongoing";
+  if (phases.includes("upcoming")) return "upcoming";
+  if (phases.includes("finished")) return "finished";
+  return null;
+}
+
 
 const calendarQuery = queryOptions({
   queryKey: ["posts", "calendar"],
