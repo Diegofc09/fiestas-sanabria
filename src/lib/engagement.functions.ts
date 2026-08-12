@@ -3,8 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { attendanceSchema, commentSchema } from "./engagement";
 
-const COMMENT_COLUMNS = "id, post_id, author_name, body, rating, created_at";
-
 /** Resumen público por publicación: comentarios aprobados, media de estrellas y asistentes. */
 export const listEngagement = createServerFn({ method: "GET" }).handler(async () => {
   const { createPublicServerClient } = await import("./supabase-public.server");
@@ -131,7 +129,7 @@ export const adminListComments = createServerFn({ method: "GET" })
     if (!isAdmin) throw new Error("Solo la administración puede moderar comentarios.");
     const { data, error } = await context.supabase
       .from("post_comments")
-      .select(`${COMMENT_COLUMNS}, approved, posts(title, slug)`)
+      .select("id, post_id, author_name, body, rating, created_at, approved, posts(title, slug)")
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);
