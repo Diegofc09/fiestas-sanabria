@@ -77,21 +77,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TodoSanabria — Fiestas, eventos y noticias de la comarca" },
+      { title: "FiestasSanabria — Fiestas, eventos y noticias de la comarca" },
       {
         name: "description",
         content:
-          "Portada de TodoSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
+          "Portada de FiestasSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria.",
       },
-      { property: "og:site_name", content: "TodoSanabria" },
+      { property: "og:site_name", content: "FiestasSanabria" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#f7f4ee" },
-      { property: "og:title", content: "TodoSanabria — Fiestas, eventos y noticias de la comarca" },
-      { name: "twitter:title", content: "TodoSanabria — Fiestas, eventos y noticias de la comarca" },
-      { property: "og:description", content: "Portada de TodoSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria." },
-      { name: "twitter:description", content: "Portada de TodoSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria." },
+      { property: "og:title", content: "FiestasSanabria — Fiestas, eventos y noticias de la comarca" },
+      { name: "twitter:title", content: "FiestasSanabria — Fiestas, eventos y noticias de la comarca" },
+      { property: "og:description", content: "Portada de FiestasSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria." },
+      { name: "twitter:description", content: "Portada de FiestasSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6952ddbf12f618fb85421582e85672d1/id-preview-3b309694--0f141a7c-5b49-416e-93fa-825e2d52c267.lovable.app-1786540333382.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6952ddbf12f618fb85421582e85672d1/id-preview-3b309694--0f141a7c-5b49-416e-93fa-825e2d52c267.lovable.app-1786540333382.png" },
     ],
@@ -111,7 +111,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "NewsMediaOrganization",
-          name: "TodoSanabria",
+          name: "FiestasSanabria",
           description:
             "Medio digital de anuncios, fiestas, celebraciones y noticias de la comarca de Sanabria.",
           areaServed: "Sanabria, Zamora, España",
