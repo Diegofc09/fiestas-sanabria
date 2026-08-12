@@ -141,7 +141,14 @@ function RootComponent() {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event !== "SIGNED_OUT") {
+        queryClient.invalidateQueries();
+        const saved = sessionStorage.getItem("fs_redirect");
+        if (saved?.startsWith("/") && !saved.startsWith("//")) {
+          sessionStorage.removeItem("fs_redirect");
+          void router.navigate({ to: saved, replace: true });
+        }
+      }
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
