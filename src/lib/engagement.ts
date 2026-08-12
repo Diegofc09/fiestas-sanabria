@@ -22,12 +22,47 @@ export type Engagement = {
   attendance_count: number;
 };
 
+/** Máximo de enlaces permitidos en un comentario (anti spam). */
+const MAX_LINKS = 1;
+
+export function countLinks(text: string): number {
+  return (text.match(/https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|ru|xyz|top|info|biz)\b/gi) ?? [])
+    .length;
+}
+
 export const commentSchema = z.object({
   postId: z.string().uuid(),
   authorName: z.string().trim().min(2, "Escribe tu nombre").max(60),
-  body: z.string().trim().min(2, "Escribe un comentario").max(2000),
+  body: z
+    .string()
+    .trim()
+    .min(2, "Escribe un comentario")
+    .max(2000)
+    .refine((v) => countLinks(v) <= MAX_LINKS, "Demasiados enlaces en el comentario"),
   rating: z.number().int().min(1).max(5).nullable().optional(),
+  visitorToken: z.string().trim().max(100).optional(),
+  /** Campo trampa: sólo lo rellenan los bots. */
+  honeypot: z.string().max(0, "Envío no válido").optional(),
 });
+
+/** Espera mínima entre comentarios del mismo navegador (ms). */
+export const COMMENT_COOLDOWN_MS = 60_000;
+const COOLDOWN_KEY = "fs-comment-last";
+
+/** Segundos que faltan para poder comentar de nuevo. */
+export function commentCooldownLeft(): number {
+  if (typeof window === "undefined") return 0;
+  const last = Number(window.localStorage.getItem(COOLDOWN_KEY) ?? 0);
+  if (!last) return 0;
+  return Math.max(0, Math.ceil((COMMENT_COOLDOWN_MS - (Date.now() - last)) / 1000));
+}
+
+export function markCommentSent(): void {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(COOLDOWN_KEY, String(Date.now()));
+  }
+}
+
 
 export const attendanceSchema = z.object({
   postId: z.string().uuid(),
