@@ -149,10 +149,15 @@
 
 @utility eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
+
+  @media (min-width: 768px) {
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+  }
 }
 
 @utility rule-top {
@@ -171,8 +176,8 @@
 @layer components {
   .article-body {
     font-family: var(--font-serif);
-    font-size: 1.0625rem;
-    line-height: 1.75;
+    font-size: 1.125rem;
+    line-height: 1.78;
     color: color-mix(in oklab, var(--foreground) 92%, transparent);
   }
 

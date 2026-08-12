@@ -162,7 +162,7 @@ function CalendarPage() {
                   onClick={() => setSelected(isSelected ? null : key)}
                   aria-label={`${day} de ${MONTHS[month]}${count ? `, ${count} publicaciones` : ", sin publicaciones"}`}
                   className={cn(
-                    "relative flex aspect-square flex-col items-center justify-center rounded-sm border text-sm transition-colors",
+                    "relative flex aspect-square flex-col items-center justify-center rounded-sm border text-base transition-colors md:text-sm",
                     count > 0
                       ? "border-rule bg-paper text-foreground hover:bg-secondary"
                       : "border-transparent text-muted-foreground/60",
@@ -208,7 +208,7 @@ function CalendarPage() {
                         <span className="h-3 w-px bg-rule" aria-hidden="true" />
                         <time
                           dateTime={timelineDate(post)}
-                          className="text-xs text-muted-foreground"
+                          className="text-[0.8125rem] text-muted-foreground md:text-xs"
                         >
                           {formatDate(timelineDate(post))}
                         </time>
@@ -219,7 +219,7 @@ function CalendarPage() {
                         </span>
                       </h3>
                       {post.excerpt && (
-                        <p className="line-clamp-2 font-[family-name:var(--font-serif)] text-sm leading-relaxed text-muted-foreground">
+                        <p className="line-clamp-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground md:text-sm">
                           {post.excerpt}
                         </p>
                       )}
@@ -233,7 +233,7 @@ function CalendarPage() {
             <button
               type="button"
               onClick={() => setSelected(null)}
-              className="mt-4 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="mt-4 text-[0.9375rem] font-medium text-primary md:text-sm underline-offset-4 hover:underline"
             >
               Ver todo el mes
             </button>

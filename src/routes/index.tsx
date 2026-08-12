@@ -115,7 +115,7 @@ function Masthead() {
         <h1 className="max-w-3xl text-[2.1rem] leading-[1.05] sm:text-5xl md:text-[3.4rem]">
           Todo lo que se celebra en Sanabria
         </h1>
-        <p className="max-w-sm font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
+        <p className="max-w-sm font-[family-name:var(--font-serif)] text-base md:text-[0.9375rem] leading-relaxed text-muted-foreground">
           Fiestas patronales, verbenas, romerías, eventos culturales y anuncios de interés de la
           comarca, contados con calma.
         </p>

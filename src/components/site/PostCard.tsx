@@ -48,7 +48,7 @@ function Meta({ post, className }: { post: PostSummary; className?: string }) {
     <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1", className)}>
       <span className="eyebrow text-primary">{categoryLabel(post.category)}</span>
       <span className="h-3 w-px bg-rule" aria-hidden="true" />
-      <time dateTime={post.published_at ?? post.created_at} className="text-xs text-muted-foreground">
+      <time dateTime={post.published_at ?? post.created_at} className="text-[0.8125rem] text-muted-foreground md:text-xs">
         {formatDate(post.published_at ?? post.created_at)}
       </time>
     </div>
@@ -113,7 +113,7 @@ export function PostCard({ post, compact = false }: { post: PostSummary; compact
           </span>
         </h3>
         {post.excerpt && !compact && (
-          <p className="mt-2 line-clamp-3 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
+          <p className="mt-2 line-clamp-3 font-[family-name:var(--font-serif)] text-base md:text-[0.9375rem] leading-relaxed text-muted-foreground">
             {post.excerpt}
           </p>
         )}
@@ -142,7 +142,7 @@ export function PostRow({ post, index }: { post: PostSummary; index: number }) {
             </span>
           </h3>
           {post.excerpt && (
-            <p className="mt-1.5 line-clamp-2 font-[family-name:var(--font-serif)] text-sm leading-relaxed text-muted-foreground md:text-[0.9375rem]">
+            <p className="mt-1.5 line-clamp-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground md:text-[0.9375rem]">
               {post.excerpt}
             </p>
           )}
