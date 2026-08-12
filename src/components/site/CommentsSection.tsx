@@ -91,11 +91,16 @@ export function CommentsSection({
         className="mt-6 rounded-sm border border-rule p-4 md:p-5"
         onSubmit={(event) => {
           event.preventDefault();
+          if (cooldown > 0) {
+            toast.error(`Espera ${cooldown} s antes de enviar otro comentario.`);
+            return;
+          }
           const parsed = commentSchema.safeParse({
             postId,
             authorName: name,
             body,
             rating: withRating ? rating : null,
+            honeypot,
           });
           if (!parsed.success) {
             toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos.");
@@ -129,19 +134,30 @@ export function CommentsSection({
             className="rounded-sm border border-rule bg-background px-3 py-2.5 text-base md:text-sm"
           />
         </div>
+        {/* Campo trampa anti spam: invisible para personas */}
+        <input
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[-9999px] h-0 w-0 opacity-0"
+        />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="text-[0.8125rem] text-muted-foreground">
             Los comentarios se revisan antes de publicarse.
+            {cooldown > 0 && ` Podrás comentar de nuevo en ${cooldown} s.`}
           </p>
           <button
             type="submit"
-            disabled={send.isPending}
+            disabled={send.isPending || cooldown > 0}
             className="inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-5 text-sm font-medium text-primary-foreground transition-all hover:opacity-95 active:scale-[0.99] disabled:opacity-60"
           >
             {send.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            Enviar comentario
+            {cooldown > 0 ? `Espera ${cooldown} s` : "Enviar comentario"}
           </button>
         </div>
+
       </form>
 
       <div className="mt-8">
