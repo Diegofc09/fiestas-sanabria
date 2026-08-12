@@ -1,25 +1,21 @@
-import { supabase } from "@/integrations/supabase/client";
+import { uploadImage } from "@/lib/media.functions";
 
-const BUCKET = "post-images";
+const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif", "avif", "svg"];
 
-/** Sube una imagen al almacenamiento privado y devuelve la URL pública servida por la app. */
+/** Sube una imagen y devuelve la URL servida por la app. */
 export async function uploadPostImage(file: File): Promise<string> {
-  if (!file.type.startsWith("image/")) {
-    throw new Error("El archivo debe ser una imagen.");
+  const extension = (file.name.split(".").pop() ?? "").toLowerCase();
+  const looksLikeImage = file.type.startsWith("image/") || ALLOWED_EXTENSIONS.includes(extension);
+  if (!looksLikeImage) {
+    throw new Error("El archivo debe ser una imagen (PNG, JPG, WEBP, GIF, AVIF o SVG).");
   }
   if (file.size > 8 * 1024 * 1024) {
     throw new Error("La imagen no puede superar los 8 MB.");
   }
 
-  const extension = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const path = `${new Date().getFullYear()}/${crypto.randomUUID()}.${extension || "jpg"}`;
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-    cacheControl: "31536000",
-    contentType: file.type,
-    upsert: false,
-  });
-  if (error) throw new Error(error.message);
-
-  return `/api/public/media/${path}`;
+  const result = await uploadImage({ data: formData });
+  return result.url;
 }

@@ -215,7 +215,7 @@ export function PostForm({ post }: { post?: Post }) {
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml,image/*"
             className="hidden"
             onChange={(e) => void onCover(e.target.files?.[0])}
           />
