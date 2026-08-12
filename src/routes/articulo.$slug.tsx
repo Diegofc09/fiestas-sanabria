@@ -13,6 +13,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { ShareBar } from "@/components/site/ShareBar";
 import { AttendanceBox } from "@/components/site/AttendanceBox";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import { EventPhaseBadge } from "@/components/site/EventPhaseBadge";
 import { supportsEvent } from "@/lib/engagement";
 
 type ArticlePayload = { post: Post; related: PostSummary[] };
@@ -110,7 +111,11 @@ function ArticlePage() {
               <span className="h-3 w-px bg-rule" aria-hidden="true" />
               <span className="eyebrow rounded-full border border-rule px-3 py-1 text-foreground">
                 Evento: {formatDate(`${post.event_date}T12:00:00Z`)}
+                {post.event_end_date && post.event_end_date !== post.event_date
+                  ? ` – ${formatDate(`${post.event_end_date}T12:00:00Z`)}`
+                  : ""}
               </span>
+              <EventPhaseBadge post={post} className="px-3 py-1" />
             </>
           )}
         </div>

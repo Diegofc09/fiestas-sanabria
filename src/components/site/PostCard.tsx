@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { categoryLabel, formatDate, type PostSummary } from "@/lib/posts";
 import { cn } from "@/lib/utils";
 import { CommentTeaser } from "./CommentTeaser";
+import { EventPhaseBadge } from "./EventPhaseBadge";
 
 
 function Cover({
@@ -53,6 +54,7 @@ function Meta({ post, className }: { post: PostSummary; className?: string }) {
       <time dateTime={post.published_at ?? post.created_at} className="text-[0.8125rem] text-muted-foreground md:text-xs">
         {formatDate(post.published_at ?? post.created_at)}
       </time>
+      <EventPhaseBadge post={post} />
     </div>
   );
 }

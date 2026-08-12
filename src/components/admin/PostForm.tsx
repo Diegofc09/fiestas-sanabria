@@ -6,7 +6,16 @@ import { toast } from "sonner";
 
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { adminSavePost, getAdminContext } from "@/lib/posts.functions";
-import { CATEGORIES, slugify, type Post, type PostCategory, type PostStatus } from "@/lib/posts";
+import {
+  CATEGORIES,
+  daysUntilRemoval,
+  eventPhase,
+  eventPhaseLabel,
+  slugify,
+  type Post,
+  type PostCategory,
+  type PostStatus,
+} from "@/lib/posts";
 import { uploadPostImage } from "@/lib/upload";
 
 type FormState = {
@@ -18,6 +27,7 @@ type FormState = {
   featured: boolean;
   status: PostStatus;
   event_date: string;
+  event_end_date: string;
   cover_image_url: string | null;
   cover_image_alt: string;
 };
@@ -47,12 +57,20 @@ export function PostForm({ post }: { post?: Post }) {
     featured: post?.featured ?? false,
     status: post?.status ?? "draft",
     event_date: post?.event_date ?? "",
+    event_end_date: post?.event_end_date ?? "",
     cover_image_url: post?.cover_image_url ?? null,
     cover_image_alt: post?.cover_image_alt ?? "",
   });
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
+
+  const eventDates = {
+    event_date: form.event_date || null,
+    event_end_date: form.event_end_date || null,
+  };
+  const phase = eventPhase(eventDates);
+  const removalDays = daysUntilRemoval(eventDates);
 
   const save = useMutation({
     mutationFn: (status: PostStatus) =>
@@ -67,6 +85,7 @@ export function PostForm({ post }: { post?: Post }) {
           featured: form.featured,
           status,
           event_date: form.event_date ? form.event_date : null,
+          event_end_date: form.event_end_date ? form.event_end_date : null,
           cover_image_url: form.cover_image_url,
           cover_image_alt: form.cover_image_alt.trim() || null,
           published_at: post?.published_at ?? null,
@@ -95,6 +114,14 @@ export function PostForm({ post }: { post?: Post }) {
     }
     if (form.content.replace(/<[^>]*>/g, "").trim().length === 0) {
       toast.error("El cuerpo del artículo está vacío.");
+      return;
+    }
+    if (form.event_end_date && form.event_date && form.event_end_date < form.event_date) {
+      toast.error("La fecha de fin no puede ser anterior al inicio.");
+      return;
+    }
+    if (form.event_end_date && !form.event_date) {
+      toast.error("Indica primero la fecha de inicio del evento.");
       return;
     }
     save.mutate(status);
@@ -189,7 +216,7 @@ export function PostForm({ post }: { post?: Post }) {
             </div>
             <div>
               <label htmlFor="event_date" className="mb-1.5 block text-sm font-medium">
-                Fecha del evento
+                Inicio del evento
               </label>
               <input
                 id="event_date"
@@ -201,6 +228,33 @@ export function PostForm({ post }: { post?: Post }) {
               <p className="mt-1 text-xs text-muted-foreground">
                 Opcional. Se usa en el calendario y en el artículo.
               </p>
+            </div>
+            <div>
+              <label htmlFor="event_end_date" className="mb-1.5 block text-sm font-medium">
+                Fin del evento
+              </label>
+              <input
+                id="event_end_date"
+                type="date"
+                value={form.event_end_date}
+                min={form.event_date || undefined}
+                onChange={(e) => set("event_end_date", e.target.value)}
+                className={fieldClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Si se deja vacío se usa la fecha de inicio. Estado: “Sin empezar”, “En curso” y
+                “Terminada”; 14 días después del fin la publicación se elimina automáticamente.
+              </p>
+              {phase && (
+                <p className="mt-2 text-xs font-medium text-foreground">
+                  Estado actual: {eventPhaseLabel(phase)}
+                  {phase === "finished" && removalDays !== null
+                    ? removalDays > 0
+                      ? ` · se eliminará en ${removalDays} día${removalDays === 1 ? "" : "s"}`
+                      : " · pendiente de eliminación automática"
+                    : ""}
+                </p>
+              )}
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input
