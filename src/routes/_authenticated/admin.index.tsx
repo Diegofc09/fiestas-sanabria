@@ -159,6 +159,8 @@ function AdminIndex() {
       )}
 
       {isAdmin && <InviteCodes />}
+      {isAdmin && <CommentsModeration />}
+
     </div>
   );
 }
