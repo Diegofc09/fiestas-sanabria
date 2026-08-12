@@ -74,6 +74,10 @@ function ArticlePage() {
   const { post, related } = data;
   const date = post.published_at ?? post.created_at;
 
+  useEffect(() => {
+    void trackPostView({ data: { postId: post.id } }).catch(() => {});
+  }, [post.id]);
+
   return (
     <article className="pb-10">
       <div className="mx-auto max-w-3xl px-5 pt-8 md:px-8 md:pt-14">
