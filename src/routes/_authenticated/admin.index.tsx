@@ -50,6 +50,8 @@ function AdminIndex() {
         </Link>
       </div>
 
+      <PostRankings />
+
       {isLoading ? (
         <div className="flex items-center gap-2 py-20 text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" /> Cargando publicaciones…
