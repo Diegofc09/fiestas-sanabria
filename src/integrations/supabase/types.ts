@@ -206,6 +206,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_views: {
+        Row: {
+          id: string
+          path: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          path: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          path?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -260,6 +278,13 @@ export type Database = {
           views_last_30: number
           views_prev_30: number
           views_total: number
+        }[]
+      }
+      site_view_daily: {
+        Args: { _days?: number }
+        Returns: {
+          day: string
+          views: number
         }[]
       }
     }
