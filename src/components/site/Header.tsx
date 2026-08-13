@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bookmark, Menu, Search, X, UserRound } from "lucide-react";
+import { Bookmark, Instagram, Menu, Search, X, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -168,13 +168,25 @@ export function Header() {
                   <Bookmark className="h-4 w-4 text-primary" />
                   Mis guardados
                 </Link>
+                <a
+                  href="https://www.instagram.com/fiestassanabria?igsh=dzQ1dTFuYmVkcjQ4&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground"
+                >
+                  <Instagram className="h-4 w-4 text-primary" />
+                  Instagram
+                </a>
                 <Link
                   to="/auth"
+                  search={{ redirect: "/admin" }}
                   onClick={() => setOpen(false)}
                   className="glow-hover inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground"
                 >
                   Acceso
                 </Link>
+
               </li>
 
             </ul>

@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
+
 
 export function Footer() {
   return (
@@ -43,7 +45,11 @@ export function Footer() {
           <p className="eyebrow text-primary/80">Redacción</p>
           <ul className="mt-4 space-y-2 text-[0.9375rem] font-light md:text-sm">
             <li>
-              <Link to="/auth" className="text-ink-foreground/80 transition-colors hover:text-primary">
+              <Link
+                to="/auth"
+                search={{ redirect: "/admin" }}
+                className="text-ink-foreground/80 transition-colors hover:text-primary"
+              >
                 Acceso administración
               </Link>
             </li>
@@ -55,6 +61,18 @@ export function Footer() {
                 fiestassanabria@gmail.com
               </a>
             </li>
+            <li>
+              <a
+                href="https://www.instagram.com/fiestassanabria?igsh=dzQ1dTFuYmVkcjQ4&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-ink-foreground/80 transition-colors hover:text-primary"
+              >
+                <Instagram className="h-4 w-4" aria-hidden="true" />
+                @fiestassanabria
+              </a>
+            </li>
+
           </ul>
           <p className="mt-8 text-[0.8125rem] text-ink-foreground/55 md:text-xs">
             © {new Date().getFullYear()} FiestasSanabria
