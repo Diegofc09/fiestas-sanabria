@@ -34,12 +34,6 @@ export function countLinks(text: string): number {
 
 export const commentSchema = z.object({
   postId: z.string().uuid(),
-  authorName: z
-    .string()
-    .trim()
-    .min(2, "Escribe tu nombre")
-    .max(60)
-    .refine((v) => !containsProfanity(v), "Usa un nombre sin palabras ofensivas"),
   body: z
     .string()
     .trim()
