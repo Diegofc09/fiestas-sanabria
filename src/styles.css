@@ -70,6 +70,7 @@
 
 /* ── Tema claro: blanco hueso ───────────────────────────────────────────── */
 :root {
+  color-scheme: light;
   --radius: 0.75rem;
 
   --background: oklch(0.972 0.008 85);
@@ -142,6 +143,7 @@
 
 /* ── Tema oscuro: negro ─────────────────────────────────────────────────── */
 .dark {
+  color-scheme: dark;
   --background: oklch(0.12 0 0);
   --foreground: oklch(0.96 0.004 85);
   --paper: oklch(0.16 0 0);
