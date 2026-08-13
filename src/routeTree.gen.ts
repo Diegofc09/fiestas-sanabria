@@ -18,6 +18,7 @@ import { Route as FiestasRouteImport } from './routes/fiestas'
 import { Route as GuardadosRouteImport } from './routes/guardados'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -69,6 +70,11 @@ const OtrosRoute = OtrosRouteImport.update({
   path: '/otros',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
+  '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
+  '/perfil': typeof PerfilRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
+  '/perfil': typeof PerfilRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/guardados'
     | '/noticias'
     | '/otros'
+    | '/perfil'
     | '/admin'
     | '/articulo/$slug'
     | '/admin/nuevo'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/guardados'
     | '/noticias'
     | '/otros'
+    | '/perfil'
     | '/articulo/$slug'
     | '/admin/nuevo'
     | '/admin'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/guardados'
     | '/noticias'
     | '/otros'
+    | '/perfil'
     | '/_authenticated/admin'
     | '/articulo/$slug'
     | '/_authenticated/admin/nuevo'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   GuardadosRoute: typeof GuardadosRoute
   NoticiasRoute: typeof NoticiasRoute
   OtrosRoute: typeof OtrosRoute
+  PerfilRoute: typeof PerfilRoute
   ArticuloSlugRoute: typeof ArticuloSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/otros'
       fullPath: '/otros'
       preLoaderRoute: typeof OtrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -361,6 +381,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuardadosRoute: GuardadosRoute,
   NoticiasRoute: NoticiasRoute,
   OtrosRoute: OtrosRoute,
+  PerfilRoute: PerfilRoute,
   ArticuloSlugRoute: ArticuloSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
