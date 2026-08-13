@@ -1,10 +1,11 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
 import { categoryLabel, type PostCategory, type PostSummary } from "@/lib/posts";
-import { PostCard } from "@/components/site/PostCard";
-import { Reveal } from "@/components/site/Reveal";
+import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
+import { matchesQuery, useSearchQuery } from "@/lib/search-store";
 
 export const categoryQuery = (category: PostCategory) =>
   queryOptions({
@@ -20,30 +21,32 @@ export function CategoryPage({
   intro: string;
 }) {
   const { data: posts } = useSuspenseQuery(categoryQuery(category));
+  const query = useSearchQuery();
+  const filtered = useMemo(() => posts.filter((p) => matchesQuery(p, query)), [posts, query]);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 md:px-8">
-      <header className="border-b border-rule py-10 md:py-14">
-        <p className="eyebrow text-primary">Sección</p>
-        <h1 className="mt-3 text-[2.1rem] leading-[1.06] sm:text-5xl">{categoryLabel(category)}</h1>
-        <p className="mt-4 max-w-xl font-[family-name:var(--font-serif)] leading-relaxed text-muted-foreground">
+    <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
+      <header className="py-9 md:py-12">
+        <p className="eyebrow text-neon-cyan">Sección</p>
+        <h1 className="text-glow-violet mt-3 text-[2.1rem] font-bold leading-[1.04] sm:text-5xl">
+          {categoryLabel(category)}
+        </h1>
+        <p className="mt-4 max-w-xl text-base font-light leading-relaxed text-muted-foreground md:text-[0.9375rem]">
           {intro}
         </p>
       </header>
 
-      {posts.length === 0 ? (
+      {filtered.length === 0 ? (
         <EmptyState
-          title="Aún no hay publicaciones en esta sección"
-          description="Pronto encontrarás aquí los contenidos de esta sección. Mientras tanto, echa un vistazo a la portada."
+          title={query ? "Sin resultados" : "Aún no hay publicaciones en esta sección"}
+          description={
+            query
+              ? `No hemos encontrado nada para “${query}” en esta sección.`
+              : "Pronto encontrarás aquí los contenidos de esta sección. Mientras tanto, echa un vistazo al feed principal."
+          }
         />
       ) : (
-        <div className="mt-12 grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post, i) => (
-            <Reveal key={post.id} delay={Math.min(i, 5) * 0.05}>
-              <PostCard post={post} />
-            </Reveal>
-          ))}
-        </div>
+        <FeedGrid posts={filtered} />
       )}
     </div>
   );
