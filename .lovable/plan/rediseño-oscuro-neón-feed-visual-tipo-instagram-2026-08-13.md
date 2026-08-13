@@ -12,7 +12,7 @@ Transformación de FiestasSanabria de "revista editorial en crema" a plataforma 
 
 ## 2. Header con buscador
 
-- Rediseño de `Header.tsx`: barra de búsqueda prominente y centrada con borde neón brillante y placeholder "Buscar fiestas, mercados, música... por palabras clave".
+- Rediseño de `Header.tsx`: barra de búsqueda prominente y centrada con borde neón brillante y placeholder "Buscar fiestas, eventos,publicidad...".
 - A la derecha: botón minimalista de menú/perfil (hamburguesa) que abre un panel deslizante con las secciones (Inicio, Fiestas, Eventos, Noticias, Otros, Calendario) y el acceso de administración.
 - La búsqueda filtra el feed por palabras clave en título, entradilla y categoría (búsqueda en cliente sobre las publicaciones ya cargadas, instantánea y sin recargas). En móvil el buscador ocupa el ancho completo bajo el logo.
 
