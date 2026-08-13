@@ -35,8 +35,8 @@ export function CategoryPage({
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
       <header className="py-9 md:py-12">
-        <p className="eyebrow text-neon-cyan">Sección</p>
-        <h1 className="text-glow-violet mt-3 text-[2.1rem] font-bold leading-[1.04] sm:text-5xl">
+        <p className="eyebrow text-primary">Sección</p>
+        <h1 className="mt-3 text-[2.1rem] font-bold leading-[1.04] sm:text-5xl">
           {categoryLabel(category)}
         </h1>
         <p className="mt-4 max-w-xl text-base font-light leading-relaxed text-muted-foreground md:text-[0.9375rem]">

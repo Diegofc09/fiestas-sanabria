@@ -129,8 +129,8 @@ function AuthPage() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-5 py-16 md:py-24">
-      <p className="eyebrow text-neon-cyan">Tu cuenta</p>
-      <h1 className="text-glow-violet mt-3 text-3xl font-bold md:text-4xl">
+      <p className="eyebrow text-primary">Tu cuenta</p>
+      <h1 className="mt-3 text-3xl font-bold md:text-4xl">
         {mode === "signin" ? "Iniciar sesión" : "Crear una cuenta"}
       </h1>
       <p className="mt-3 text-[0.9375rem] font-light text-muted-foreground">
@@ -153,7 +153,7 @@ function AuthPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="p. ej. sanabres91"
-              className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
+              className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-primary"
             />
           </div>
         )}
@@ -168,7 +168,7 @@ function AuthPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
+            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-primary"
           />
         </div>
         <div>
@@ -183,13 +183,13 @@ function AuthPage() {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
+            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-primary"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="glow-hover inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-neon-violet/70 bg-neon-violet/20 text-sm font-semibold text-foreground shadow-[var(--glow-violet)] disabled:opacity-60"
+          className="glow-hover inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary bg-primary/10 text-sm font-semibold text-foreground disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {mode === "signin" ? "Entrar" : "Crear cuenta"}

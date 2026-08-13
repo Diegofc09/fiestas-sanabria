@@ -75,7 +75,7 @@ export function CommentsSection({
     : null;
 
   return (
-    <section className="glass-card rounded-2xl p-5 shadow-neon md:p-6">
+    <section className="glass-card rounded-2xl p-5 md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h2 className="text-xl font-bold md:text-2xl">Comentarios</h2>
         {withRating && average != null && (
@@ -110,7 +110,7 @@ export function CommentsSection({
           }}
         >
           <p className="inline-flex items-center gap-2 text-[0.8125rem] text-muted-foreground">
-            <UserRound className="h-4 w-4 text-neon-cyan" aria-hidden="true" />
+            <UserRound className="h-4 w-4 text-primary" aria-hidden="true" />
             Comentas como <span className="font-medium text-foreground">{username ?? "tú"}</span>
           </p>
 
@@ -149,7 +149,7 @@ export function CommentsSection({
             <button
               type="submit"
               disabled={send.isPending || cooldown > 0}
-              className="glow-hover inline-flex h-11 items-center gap-2 rounded-full border border-neon-violet/70 bg-neon-violet/20 px-5 text-sm font-semibold text-foreground shadow-[var(--glow-violet)] disabled:opacity-60"
+              className="glow-hover inline-flex h-11 items-center gap-2 rounded-full border border-primary bg-primary/10 px-5 text-sm font-semibold text-foreground disabled:opacity-60"
             >
               {send.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               {cooldown > 0 ? `Espera ${cooldown} s` : "Enviar comentario"}
@@ -168,7 +168,7 @@ export function CommentsSection({
                 "Crea una cuenta o inicia sesión para guardar publicaciones y comentar",
               )
             }
-            className="glow-hover inline-flex h-11 items-center rounded-full border border-neon-violet/70 bg-neon-violet/20 px-5 text-sm font-semibold text-foreground shadow-[var(--glow-violet)]"
+            className="glow-hover inline-flex h-11 items-center rounded-full border border-primary bg-primary/10 px-5 text-sm font-semibold text-foreground"
           >
             Acceder para comentar
           </button>
