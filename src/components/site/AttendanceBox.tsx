@@ -38,7 +38,7 @@ export function AttendanceBox({ postId, eventDate }: { postId: string; eventDate
   const count = data?.count ?? 0;
 
   return (
-    <section className="mt-10 rounded-sm border border-rule bg-secondary/50 p-5 md:p-6">
+    <section className="rounded-sm border border-rule bg-secondary/50 p-5 shadow-neon md:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-lg md:text-xl">¿Vas a asistir?</h2>

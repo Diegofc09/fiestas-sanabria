@@ -75,7 +75,7 @@ export function CommentsSection({
     : null;
 
   return (
-    <section className="mt-14 border-t border-rule pt-10">
+    <section className="rounded-sm border border-rule bg-secondary/50 p-5 shadow-neon md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h2 className="text-xl md:text-2xl">Comentarios</h2>
         {withRating && average != null && (
@@ -88,7 +88,7 @@ export function CommentsSection({
       </div>
 
       <form
-        className="mt-6 rounded-sm border border-rule p-4 md:p-5"
+        className="mt-6 rounded-sm border border-rule bg-background/60 p-4 md:p-5"
         onSubmit={(event) => {
           event.preventDefault();
           if (cooldown > 0) {
