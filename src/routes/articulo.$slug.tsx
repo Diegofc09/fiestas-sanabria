@@ -133,11 +133,7 @@ function ArticlePage() {
 
       {/* Bloque social primero: asistencia, valoración y comentarios */}
       <div className="mx-auto mt-8 max-w-3xl px-5 md:px-8">
-        {isEvent && (
-          <div className="rounded-sm border border-rule bg-secondary/50 p-1 shadow-neon">
-            <AttendanceBox postId={post.id} eventDate={post.event_date} />
-          </div>
-        )}
+        {isEvent && <AttendanceBox postId={post.id} eventDate={post.event_date} />}
 
         <div className={isEvent ? "mt-5" : "mt-0"}>
           <CommentsSection postId={post.id} withRating={isEvent} />
