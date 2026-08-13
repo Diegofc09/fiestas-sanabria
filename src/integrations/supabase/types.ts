@@ -152,6 +152,7 @@ export type Database = {
       posts: {
         Row: {
           author_id: string | null
+          author_label: string | null
           category: Database["public"]["Enums"]["post_category"]
           content: string
           cover_image_alt: string | null
@@ -170,6 +171,7 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          author_label?: string | null
           category?: Database["public"]["Enums"]["post_category"]
           content?: string
           cover_image_alt?: string | null
@@ -188,6 +190,7 @@ export type Database = {
         }
         Update: {
           author_id?: string | null
+          author_label?: string | null
           category?: Database["public"]["Enums"]["post_category"]
           content?: string
           cover_image_alt?: string | null
@@ -203,6 +206,27 @@ export type Database = {
           status?: Database["public"]["Enums"]["post_status"]
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string
         }
         Relationships: []
       }
