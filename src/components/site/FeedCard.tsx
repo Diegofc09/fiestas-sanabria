@@ -155,7 +155,7 @@ export function FeedCard({
 
         <div className="flex items-center gap-3 text-[0.8125rem] font-light text-muted-foreground md:text-xs">
           {stats?.rating_avg != null && stats.rating_count > 0 && (
-            <span className="text-neon-pink">★ {formatRating(stats.rating_avg)}</span>
+            <span className="text-primary">★ {formatRating(stats.rating_avg)}</span>
           )}
           {(stats?.comments_count ?? 0) > 0 && (
             <span className="inline-flex items-center gap-1">
@@ -179,13 +179,12 @@ function IconButton({
   label,
   onClick,
   active,
-  tone,
   children,
 }: {
   label: string;
   onClick: () => void;
   active?: boolean;
-  tone: "pink" | "cyan" | "violet";
+  tone?: "pink" | "cyan" | "violet";
   children: React.ReactNode;
 }) {
   return (
@@ -195,23 +194,15 @@ function IconButton({
       title={label}
       onClick={onClick}
       className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 active:scale-90",
-        tone === "pink" && "hover:text-neon-pink hover:drop-shadow-[0_0_10px_var(--neon-pink)]",
-        tone === "cyan" && "hover:text-neon-cyan hover:drop-shadow-[0_0_10px_var(--neon-cyan)]",
-        tone === "violet" && "hover:text-neon-violet hover:drop-shadow-[0_0_10px_var(--neon-violet)]",
-        active
-          ? tone === "pink"
-            ? "text-neon-pink drop-shadow-[0_0_10px_var(--neon-pink)]"
-            : tone === "violet"
-              ? "text-neon-violet drop-shadow-[0_0_10px_var(--neon-violet)]"
-              : "text-neon-cyan"
-          : "text-muted-foreground",
+        "inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200 active:scale-90 hover:text-primary",
+        active ? "text-primary" : "text-muted-foreground",
       )}
     >
       {children}
     </button>
   );
 }
+
 
 /** Cuadrícula de feed responsive con alturas variables (masonry suave). */
 export function FeedGrid({ posts }: { posts: PostSummary[] }) {
