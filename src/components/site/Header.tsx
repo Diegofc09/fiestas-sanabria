@@ -134,7 +134,15 @@ export function Header() {
                   </Link>
                 </motion.li>
               ))}
-              <li className="pt-4 pb-2">
+              <li className="flex flex-wrap items-center gap-2 pt-4 pb-2">
+                <Link
+                  to="/guardados"
+                  onClick={() => setOpen(false)}
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/50 px-4 py-2 text-sm font-medium text-foreground"
+                >
+                  <Bookmark className="h-4 w-4 text-neon-violet" />
+                  Mis guardados
+                </Link>
                 <Link
                   to="/auth"
                   onClick={() => setOpen(false)}
