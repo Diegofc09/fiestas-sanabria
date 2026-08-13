@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
+
 
 export function Footer() {
   return (
