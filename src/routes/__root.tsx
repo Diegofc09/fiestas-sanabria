@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthPromptModal } from "@/components/site/AuthPromptModal";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
@@ -178,6 +179,7 @@ function RootComponent() {
         </main>
         <Footer />
       </div>
+      <AuthPromptModal />
       <Toaster />
     </QueryClientProvider>
   );

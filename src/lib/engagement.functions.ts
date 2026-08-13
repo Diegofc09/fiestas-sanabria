@@ -43,10 +43,11 @@ export const listPostComments = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
-/** Cualquiera puede enviar un comentario; queda pendiente de moderación. */
+/** Solo usuarios con cuenta pueden comentar; el nombre se toma de su perfil. */
 export const submitComment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => commentSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: post } = await supabaseAdmin
       .from("posts")
@@ -54,6 +55,17 @@ export const submitComment = createServerFn({ method: "POST" })
       .eq("id", data.postId)
       .maybeSingle();
     if (!post || post.status !== "published") throw new Error("Publicación no disponible.");
+
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", context.userId)
+      .maybeSingle();
+    const authorName =
+      profile?.username?.trim() ||
+      (typeof context.claims["email"] === "string"
+        ? context.claims["email"].split("@")[0]!
+        : "Usuario");
 
     // Anti spam: límite por publicación, por autor y sin duplicados recientes.
     const minuteAgo = new Date(Date.now() - 60_000).toISOString();
@@ -72,7 +84,7 @@ export const submitComment = createServerFn({ method: "POST" })
       .from("post_comments")
       .select("id", { count: "exact", head: true })
       .eq("post_id", data.postId)
-      .eq("author_name", data.authorName)
+      .eq("user_id", context.userId)
       .gte("created_at", tenMinutesAgo);
     if ((perAuthor ?? 0) >= 3) {
       throw new Error("Ya has enviado varios comentarios. Espera unos minutos.");
@@ -89,14 +101,13 @@ export const submitComment = createServerFn({ method: "POST" })
 
     // Doble comprobación en servidor: nada ofensivo se publica.
     const { PROFANITY_MESSAGE, containsProfanity } = await import("./profanity");
-    if (containsProfanity(data.body) || containsProfanity(data.authorName)) {
-      throw new Error(PROFANITY_MESSAGE);
-    }
+    if (containsProfanity(data.body)) throw new Error(PROFANITY_MESSAGE);
 
     // Sin moderación manual: si pasa el filtro, se publica al instante.
     const { error } = await supabaseAdmin.from("post_comments").insert({
       post_id: data.postId,
-      author_name: data.authorName,
+      user_id: context.userId,
+      author_name: authorName,
       body: data.body,
       rating: data.rating ?? null,
       approved: true,

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { authorLabel, categoryLabel, formatDateShort, timelineDate, type PostSummary } from "@/lib/posts";
 import { formatRating } from "@/lib/engagement";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { cn } from "@/lib/utils";
 import { useEngagement } from "./CommentTeaser";
 import { EventPhaseBadge } from "./EventPhaseBadge";
@@ -77,7 +78,10 @@ export function FeedCard({
   const { forPost } = useEngagement();
   const { stats } = forPost(post.id);
   const [liked, toggleLike] = useLocalFlag("fs-likes", post.id);
-  const [saved, toggleSave] = useLocalFlag("fs-saved", post.id);
+  const { isSaved, toggle } = useSavedPosts();
+  const saved = isSaved(post.id);
+  const toggleSave = () => toggle(post.id);
+
 
   const share = async () => {
     const url = `${window.location.origin}/articulo/${post.slug}`;

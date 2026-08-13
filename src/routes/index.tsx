@@ -1,14 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { CATEGORIES, eventPhase, type PostCategory, type PostSummary } from "@/lib/posts";
+import { listPostMetrics } from "@/lib/saved.functions";
+import { CATEGORIES, eventPhase, isExpired, type PostCategory, type PostSummary } from "@/lib/posts";
 import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, setSearchOpen, setSearchQuery, useSearchOpen, useSearchQuery } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
+
+type PostMetric = { post_id: string; views_count: number; saves_count: number; comments_count: number };
+
+const metricsQuery = queryOptions({
+  queryKey: ["post-metrics"],
+  queryFn: () => listPostMetrics() as Promise<PostMetric[]>,
+  staleTime: 60_000,
+});
+
+type SortMode = "recent" | "views" | "popular";
 
 const homeQuery = queryOptions({
   queryKey: ["posts", "home"],
@@ -42,24 +54,48 @@ type PhaseFilter = "all" | "upcoming" | "ongoing" | "finished";
 
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
+  const { data: metrics } = useQuery(metricsQuery);
+  const { savedIds } = useSavedPosts();
   const query = useSearchQuery();
   const searchOpen = useSearchOpen();
   const [category, setCategory] = useState<PostCategory | "all">("all");
   const [phase, setPhase] = useState<PhaseFilter>("all");
+  const [sort, setSort] = useState<SortMode>("recent");
 
-  const filtered = useMemo(
-    () =>
-      posts.filter((post) => {
-        if (category !== "all" && post.category !== category) return false;
-        if (phase !== "all" && eventPhase(post) !== phase) return false;
-        return matchesQuery(post, query);
-      }),
-    [posts, category, phase, query],
-  );
+  const metricFor = useMemo(() => {
+    const map = new Map<string, PostMetric>();
+    for (const metric of metrics ?? []) map.set(metric.post_id, metric);
+    return map;
+  }, [metrics]);
+
+  const filtered = useMemo(() => {
+    const list = posts.filter((post) => {
+      if (category !== "all" && post.category !== category) return false;
+      if (phase !== "all" && eventPhase(post) !== phase) return false;
+      // Las publicaciones caducan a los 14 días, salvo si el usuario las guardó.
+      if (isExpired(post) && !savedIds.includes(post.id)) return false;
+      return matchesQuery(post, query);
+    });
+
+    if (sort === "views") {
+      return [...list].sort(
+        (a, b) => (metricFor.get(b.id)?.views_count ?? 0) - (metricFor.get(a.id)?.views_count ?? 0),
+      );
+    }
+    if (sort === "popular") {
+      const score = (id: string) => {
+        const m = metricFor.get(id);
+        return (m?.saves_count ?? 0) * 2 + (m?.comments_count ?? 0);
+      };
+      return [...list].sort((a, b) => score(b.id) - score(a.id));
+    }
+    return list;
+  }, [posts, category, phase, query, sort, metricFor, savedIds]);
 
   if (!searchOpen) {
     return <SearchLanding posts={posts} />;
   }
+
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
@@ -99,6 +135,21 @@ function HomePage() {
             tone={value}
             onClick={() => setPhase((p) => (p === value ? "all" : value))}
           >
+            {label}
+          </Chip>
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="eyebrow text-muted-foreground">Ordenar por</span>
+        {(
+          [
+            ["recent", "Más reciente"],
+            ["views", "Más visitado"],
+            ["popular", "Más popular"],
+          ] as const
+        ).map(([value, label]) => (
+          <Chip key={value} active={sort === value} onClick={() => setSort(value)}>
             {label}
           </Chip>
         ))}

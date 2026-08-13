@@ -133,3 +133,23 @@ export function readingMinutes(html: string): number {
 export function authorLabel(post: { author_label?: string | null }): string {
   return post.author_label?.trim() || "ADMIN";
 }
+
+/** Días que una publicación normal permanece visible antes de caducar. */
+export const EXPIRY_DAYS = 14;
+
+/**
+ * Una publicación caduca 14 días después del fin del evento (o de su publicación
+ * si no tiene fechas). Los guardados de cada usuario nunca caducan para él.
+ */
+export function isExpired(post: {
+  event_date?: string | null;
+  event_end_date?: string | null;
+  published_at?: string | null;
+  created_at?: string;
+}): boolean {
+  const end = post.event_end_date ?? post.event_date;
+  const reference = end
+    ? new Date(`${end}T12:00:00Z`).getTime()
+    : new Date(post.published_at ?? post.created_at ?? Date.now()).getTime();
+  return Date.now() - reference > EXPIRY_DAYS * 86_400_000;
+}

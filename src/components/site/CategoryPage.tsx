@@ -2,9 +2,10 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { categoryLabel, type PostCategory, type PostSummary } from "@/lib/posts";
+import { categoryLabel, isExpired, type PostCategory, type PostSummary } from "@/lib/posts";
 import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, useSearchQuery } from "@/lib/search-store";
 
 export const categoryQuery = (category: PostCategory) =>
@@ -22,7 +23,14 @@ export function CategoryPage({
 }) {
   const { data: posts } = useSuspenseQuery(categoryQuery(category));
   const query = useSearchQuery();
-  const filtered = useMemo(() => posts.filter((p) => matchesQuery(p, query)), [posts, query]);
+  const { savedIds } = useSavedPosts();
+  const filtered = useMemo(
+    () =>
+      posts.filter(
+        (p) => (!isExpired(p) || savedIds.includes(p.id)) && matchesQuery(p, query),
+      ),
+    [posts, query, savedIds],
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
