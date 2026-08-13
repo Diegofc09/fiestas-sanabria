@@ -90,8 +90,8 @@ export function FeedCard({
   };
 
   return (
-    <article className="group glass-card glow-hover overflow-hidden rounded-2xl shadow-neon">
-      <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block">
+    <article className="group glass-card glow-hover flex h-full flex-col overflow-hidden rounded-2xl shadow-neon">
+      <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block flex-1">
         <div className={cn("relative overflow-hidden", aspect)}>
           <Cover post={post} priority={priority} />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent opacity-90" />
@@ -124,7 +124,7 @@ export function FeedCard({
         </div>
       </Link>
 
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
+      <div className="mt-auto flex items-center justify-between gap-3 px-4 py-3">
         <div className="flex items-center gap-1">
           <IconButton
             label={liked ? "Quitar me gusta" : "Me gusta"}
@@ -213,11 +213,7 @@ export function FeedGrid({ posts }: { posts: PostSummary[] }) {
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {posts.map((post, i) => (
         <Reveal key={post.id} delay={Math.min(i, 6) * 0.05}>
-          <FeedCard
-            post={post}
-            priority={i < 4}
-            aspect={i % 7 === 0 ? "aspect-[4/5]" : i % 5 === 0 ? "aspect-square" : "aspect-[4/5]"}
-          />
+          <FeedCard post={post} priority={i < 4} />
         </Reveal>
       ))}
     </div>
