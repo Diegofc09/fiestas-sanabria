@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can submit a comment for review" ON public.post_comments;
