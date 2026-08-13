@@ -78,7 +78,10 @@ export function FeedCard({
   const { forPost } = useEngagement();
   const { stats } = forPost(post.id);
   const [liked, toggleLike] = useLocalFlag("fs-likes", post.id);
-  const [saved, toggleSave] = useLocalFlag("fs-saved", post.id);
+  const { isSaved, toggle } = useSavedPosts();
+  const saved = isSaved(post.id);
+  const toggleSave = () => toggle(post.id);
+
 
   const share = async () => {
     const url = `${window.location.origin}/articulo/${post.slug}`;
