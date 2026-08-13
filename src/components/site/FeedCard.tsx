@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { authorLabel, categoryLabel, formatDateShort, timelineDate, type PostSummary } from "@/lib/posts";
 import { formatRating } from "@/lib/engagement";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { cn } from "@/lib/utils";
 import { useEngagement } from "./CommentTeaser";
 import { EventPhaseBadge } from "./EventPhaseBadge";
