@@ -129,7 +129,7 @@ export function Header() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-rule/60 bg-ink/95 backdrop-blur-xl"
+            className="overflow-hidden border-t border-border bg-card"
           >
             <ul className="mx-auto max-w-6xl px-5 py-2 md:px-8 md:py-4">
               {NAV.map((item, i) => (
@@ -138,14 +138,14 @@ export function Header() {
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.04 * i, duration: 0.24 }}
-                  className="border-b border-border/50 last:border-0"
+                  className="border-b border-border/60 last:border-0"
                 >
                   <Link
                     to={item.path}
                     onClick={() => setOpen(false)}
                     activeOptions={{ exact: item.path === "/" }}
-                    className="block py-4 font-[family-name:var(--font-display)] text-xl text-foreground transition-colors hover:text-neon-cyan"
-                    activeProps={{ className: "text-neon-violet" }}
+                    className="block py-4 font-[family-name:var(--font-display)] text-xl text-foreground transition-colors hover:text-primary"
+                    activeProps={{ className: "text-primary" }}
                   >
                     {item.label}
                   </Link>
@@ -153,22 +153,30 @@ export function Header() {
               ))}
               <li className="flex flex-wrap items-center gap-2 pt-4 pb-2">
                 <Link
+                  to="/perfil"
+                  onClick={() => setOpen(false)}
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground"
+                >
+                  <UserRound className="h-4 w-4 text-primary" />
+                  Mi perfil
+                </Link>
+                <Link
                   to="/guardados"
                   onClick={() => setOpen(false)}
-                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/50 px-4 py-2 text-sm font-medium text-foreground"
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground"
                 >
-                  <Bookmark className="h-4 w-4 text-neon-violet" />
+                  <Bookmark className="h-4 w-4 text-primary" />
                   Mis guardados
                 </Link>
                 <Link
                   to="/auth"
                   onClick={() => setOpen(false)}
-                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/50 px-4 py-2 text-sm font-medium text-foreground"
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground"
                 >
-                  <UserRound className="h-4 w-4 text-neon-pink" />
-                  Acceso / Perfil
+                  Acceso
                 </Link>
               </li>
+
             </ul>
           </motion.nav>
         )}
