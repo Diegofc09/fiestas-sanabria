@@ -174,9 +174,19 @@ export const adminSavePost = createServerFn({ method: "POST" })
       return updated;
     }
 
+    let authorLabel = "ADMIN";
+    if (!isAdmin) {
+      const { data: profile } = await context.supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", context.userId)
+        .maybeSingle();
+      authorLabel = profile?.username?.trim() || "Suscriptor";
+    }
+
     const { data: created, error } = await context.supabase
       .from("posts")
-      .insert({ ...payload, author_id: context.userId })
+      .insert({ ...payload, author_id: context.userId, author_label: authorLabel })
       .select("id, slug")
       .single();
     if (error) throw new Error(error.message);

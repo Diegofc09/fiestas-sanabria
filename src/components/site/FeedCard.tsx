@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Bookmark, Heart, MessageCircle, Send, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { categoryLabel, formatDateShort, timelineDate, type PostSummary } from "@/lib/posts";
+import { authorLabel, categoryLabel, formatDateShort, timelineDate, type PostSummary } from "@/lib/posts";
 import { formatRating } from "@/lib/engagement";
 import { cn } from "@/lib/utils";
 import { useEngagement } from "./CommentTeaser";
@@ -91,6 +91,18 @@ export function FeedCard({
 
   return (
     <article className="group glass-card glow-hover flex h-full flex-col overflow-hidden rounded-2xl shadow-neon">
+      <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+        <span
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neon-cyan/50 bg-neon-cyan/10 text-[0.6875rem] font-bold text-neon-cyan"
+          aria-hidden="true"
+        >
+          {authorLabel(post).slice(0, 1).toUpperCase()}
+        </span>
+        <span className="truncate text-[0.8125rem] font-medium text-foreground/90">
+          {authorLabel(post)}
+        </span>
+      </div>
+
       <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block flex-1">
         <div className={cn("relative overflow-hidden", aspect)}>
           <Cover post={post} priority={priority} />

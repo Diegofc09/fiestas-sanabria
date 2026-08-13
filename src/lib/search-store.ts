@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 let query = "";
+let open = false;
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -9,7 +10,24 @@ function emit() {
 
 export function setSearchQuery(value: string) {
   query = value;
+  if (value) open = true;
   emit();
+}
+
+/** Abre o cierra el buscador (el feed permanece oculto mientras esté cerrado). */
+export function setSearchOpen(value: boolean) {
+  open = value;
+  if (!value) query = "";
+  emit();
+}
+
+/** Indica si el visitante ha abierto la barra de búsqueda. */
+export function useSearchOpen(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => open,
+    () => false,
+  );
 }
 
 function subscribe(listener: () => void) {

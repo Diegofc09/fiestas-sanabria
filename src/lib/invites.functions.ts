@@ -82,7 +82,17 @@ export const adminDeleteInviteCode = createServerFn({ method: "POST" })
 export const redeemInviteCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z.object({ code: z.string().min(4).max(60) }).parse(data),
+    z
+      .object({
+        code: z.string().min(4).max(60),
+        username: z
+          .string()
+          .trim()
+          .min(3)
+          .max(24)
+          .regex(/^[A-Za-z0-9 ._-]+$/, "El nombre de usuario contiene caracteres no permitidos."),
+      })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     const code = data.code.trim().toUpperCase();
@@ -99,6 +109,20 @@ export const redeemInviteCode = createServerFn({ method: "POST" })
     if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
       throw new Error("Este código ha caducado.");
     }
+
+    const username = data.username.trim();
+    const { data: taken } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .ilike("username", username)
+      .neq("id", context.userId)
+      .maybeSingle();
+    if (taken) throw new Error("Ese nombre de usuario ya está en uso.");
+
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: context.userId, username }, { onConflict: "id" });
+    if (profileError) throw new Error(profileError.message);
 
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")

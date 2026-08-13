@@ -22,6 +22,7 @@ export type Post = {
   status: PostStatus;
   event_date: string | null;
   event_end_date: string | null;
+  author_label: string | null;
   published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -126,4 +127,9 @@ export function stripHtml(html: string): string {
 export function readingMinutes(html: string): number {
   const words = stripHtml(html).split(" ").filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
+}
+
+/** Nombre visible del autor de una publicación. */
+export function authorLabel(post: { author_label?: string | null }): string {
+  return post.author_label?.trim() || "ADMIN";
 }

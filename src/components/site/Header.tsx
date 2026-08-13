@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { CATEGORIES } from "@/lib/posts";
-import { setSearchQuery, useSearchQuery } from "@/lib/search-store";
+import { setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -75,6 +75,7 @@ export function Header() {
               type="search"
               value={query}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setSearchOpen(true)}
               placeholder="Buscar fiestas, eventos, publicidad..."
               aria-label="Buscar publicaciones"
               className="min-w-0 flex-1 bg-transparent text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none md:text-sm"
@@ -82,7 +83,7 @@ export function Header() {
             {query && (
               <button
                 type="button"
-                onClick={() => setSearchQuery("")}
+                onClick={() => setSearchOpen(false)}
                 aria-label="Limpiar búsqueda"
                 className="shrink-0 text-muted-foreground transition-colors hover:text-neon-pink"
               >
