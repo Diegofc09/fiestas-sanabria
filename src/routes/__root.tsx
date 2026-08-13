@@ -18,6 +18,8 @@ import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthPromptModal } from "@/components/site/AuthPromptModal";
 import { supabase } from "@/integrations/supabase/client";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
+
 
 function NotFoundComponent() {
   return (
@@ -90,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#0d0718" },
+      { name: "theme-color", content: "#f7f4ee" },
       { property: "og:title", content: "FiestasSanabria — Fiestas, eventos y noticias de la comarca" },
       { name: "twitter:title", content: "FiestasSanabria — Fiestas, eventos y noticias de la comarca" },
       { property: "og:description", content: "Portada de FiestasSanabria: últimas publicaciones sobre fiestas, eventos, noticias y anuncios de la comarca de Sanabria." },
@@ -132,6 +134,8 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
       <head>
+        {/* Aplica el tema (manual o automático a partir de las 20:00) antes de pintar. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -141,6 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

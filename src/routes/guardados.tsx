@@ -44,11 +44,11 @@ function SavedPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
       <header className="pt-10 md:pt-14">
-        <p className="eyebrow inline-flex items-center gap-2 text-neon-cyan">
+        <p className="eyebrow inline-flex items-center gap-2 text-primary">
           <Bookmark className="h-4 w-4" aria-hidden="true" />
           Tu espacio personal
         </p>
-        <h1 className="text-glow-violet mt-3 text-3xl font-bold md:text-4xl">Mis guardados</h1>
+        <h1 className="mt-3 text-3xl font-bold md:text-4xl">Mis guardados</h1>
         <p className="mt-3 max-w-2xl text-[0.9375rem] font-light text-muted-foreground">
           Las publicaciones normales desaparecen del feed a los 14 días, pero las que guardas aquí
           se quedan contigo de forma permanente.
@@ -67,7 +67,7 @@ function SavedPage() {
               <Link
                 to="/auth"
                 search={{ mode: "signup", redirect: "/guardados" }}
-                className="glow-hover rounded-full border border-neon-violet/70 bg-neon-violet/20 px-5 py-2.5 text-sm font-semibold text-foreground shadow-[var(--glow-violet)]"
+                className="glow-hover rounded-full border border-primary bg-primary/10 px-5 py-2.5 text-sm font-semibold text-foreground"
               >
                 Registrarse
               </Link>

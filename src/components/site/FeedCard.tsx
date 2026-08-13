@@ -44,16 +44,14 @@ function useLocalFlag(key: string, id: string) {
 function Cover({ post, priority }: { post: PostSummary; priority?: boolean | undefined }) {
   if (!post.cover_image_url) {
     return (
-      <div
-        className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,color-mix(in_oklab,var(--neon-violet)_45%,transparent),transparent_65%)] bg-secondary"
-        aria-hidden="true"
-      >
-        <span className="text-glow font-[family-name:var(--font-display)] text-3xl font-bold text-neon-cyan/80">
+      <div className="flex h-full w-full items-center justify-center bg-secondary" aria-hidden="true">
+        <span className="font-[family-name:var(--font-display)] text-3xl font-bold text-muted-foreground">
           FS
         </span>
       </div>
     );
   }
+
   return (
     <img
       src={post.cover_image_url}
@@ -94,10 +92,10 @@ export function FeedCard({
   };
 
   return (
-    <article className="group glass-card glow-hover flex h-full flex-col overflow-hidden rounded-2xl shadow-neon">
+    <article className="group glass-card glow-hover flex h-full flex-col overflow-hidden rounded-2xl">
       <div className="flex items-center gap-2 px-4 pt-3 pb-2">
         <span
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neon-cyan/50 bg-neon-cyan/10 text-[0.6875rem] font-bold text-neon-cyan"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-[0.6875rem] font-bold text-primary"
           aria-hidden="true"
         >
           {authorLabel(post).slice(0, 1).toUpperCase()}
@@ -110,35 +108,27 @@ export function FeedCard({
       <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block flex-1">
         <div className={cn("relative overflow-hidden", aspect)}>
           <Cover post={post} priority={priority} />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent opacity-90" />
-          <div
-            className="absolute inset-0 mix-blend-soft-light"
-            style={{
-              background:
-                "linear-gradient(140deg, color-mix(in oklab, var(--neon-violet) 45%, transparent), transparent 55%, color-mix(in oklab, var(--neon-cyan) 35%, transparent))",
-            }}
-            aria-hidden="true"
-          />
-
           <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
-            <span className="eyebrow rounded-full border border-neon-violet/60 bg-ink/70 px-2.5 py-1 text-neon-violet backdrop-blur-md">
+            <span className="eyebrow rounded-full border border-border bg-card/95 px-2.5 py-1 text-primary">
               {categoryLabel(post.category)}
             </span>
-            <EventPhaseBadge post={post} className="bg-ink/70 backdrop-blur-md" />
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 p-4">
-            <h3 className="text-glow line-clamp-2 font-[family-name:var(--font-display)] text-lg font-bold leading-tight text-foreground md:text-xl">
-              {post.title}
-            </h3>
-            <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] font-light text-neon-cyan/90 md:text-xs">
-              <time dateTime={timelineDate(post)}>{formatDateShort(timelineDate(post))}</time>
-              <span className="h-3 w-px bg-neon-cyan/40" aria-hidden="true" />
-              <span>Sanabria · {categoryLabel(post.category)}</span>
-            </p>
+            <EventPhaseBadge post={post} className="bg-card/95" />
           </div>
         </div>
+
+        <div className="px-4 pt-3.5">
+          <h3 className="line-clamp-2 font-[family-name:var(--font-display)] text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary md:text-xl">
+            {post.title}
+          </h3>
+          <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] font-light text-muted-foreground md:text-xs">
+            <time dateTime={timelineDate(post)}>{formatDateShort(timelineDate(post))}</time>
+            <span className="h-3 w-px bg-rule" aria-hidden="true" />
+            <span>Sanabria · {categoryLabel(post.category)}</span>
+          </p>
+        </div>
       </Link>
+
+
 
       <div className="mt-auto flex items-center justify-between gap-3 px-4 py-3">
         <div className="flex items-center gap-1">
@@ -165,7 +155,7 @@ export function FeedCard({
 
         <div className="flex items-center gap-3 text-[0.8125rem] font-light text-muted-foreground md:text-xs">
           {stats?.rating_avg != null && stats.rating_count > 0 && (
-            <span className="text-neon-pink">★ {formatRating(stats.rating_avg)}</span>
+            <span className="text-primary">★ {formatRating(stats.rating_avg)}</span>
           )}
           {(stats?.comments_count ?? 0) > 0 && (
             <span className="inline-flex items-center gap-1">
@@ -189,13 +179,12 @@ function IconButton({
   label,
   onClick,
   active,
-  tone,
   children,
 }: {
   label: string;
   onClick: () => void;
   active?: boolean;
-  tone: "pink" | "cyan" | "violet";
+  tone?: "pink" | "cyan" | "violet";
   children: React.ReactNode;
 }) {
   return (
@@ -205,23 +194,15 @@ function IconButton({
       title={label}
       onClick={onClick}
       className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 active:scale-90",
-        tone === "pink" && "hover:text-neon-pink hover:drop-shadow-[0_0_10px_var(--neon-pink)]",
-        tone === "cyan" && "hover:text-neon-cyan hover:drop-shadow-[0_0_10px_var(--neon-cyan)]",
-        tone === "violet" && "hover:text-neon-violet hover:drop-shadow-[0_0_10px_var(--neon-violet)]",
-        active
-          ? tone === "pink"
-            ? "text-neon-pink drop-shadow-[0_0_10px_var(--neon-pink)]"
-            : tone === "violet"
-              ? "text-neon-violet drop-shadow-[0_0_10px_var(--neon-violet)]"
-              : "text-neon-cyan"
-          : "text-muted-foreground",
+        "inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200 active:scale-90 hover:text-primary",
+        active ? "text-primary" : "text-muted-foreground",
       )}
     >
       {children}
     </button>
   );
 }
+
 
 /** Cuadrícula de feed responsive con alturas variables (masonry suave). */
 export function FeedGrid({ posts }: { posts: PostSummary[] }) {

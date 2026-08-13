@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { trackPostView } from "@/lib/analytics.functions";
 
 import { getPublishedPost } from "@/lib/posts.functions";
-import { authorLabel, categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
+import { categoryLabel, formatDate, stripHtml, type Post, type PostSummary } from "@/lib/posts";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { PostCard } from "@/components/site/PostCard";
 import { Reveal } from "@/components/site/Reveal";
@@ -80,7 +80,7 @@ function ArticlePage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(articleQuery(slug));
   const { post, related } = data;
-  const date = post.published_at ?? post.created_at;
+  
 
   useEffect(() => {
     void trackPostView({ data: { postId: post.id } }).catch(() => {});
@@ -99,32 +99,14 @@ function ArticlePage() {
           Portada
         </Link>
 
-        <div className="mt-7 flex items-center gap-2.5">
-          <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neon-cyan/50 bg-neon-cyan/10 text-sm font-bold text-neon-cyan"
-            aria-hidden="true"
-          >
-            {authorLabel(post).slice(0, 1).toUpperCase()}
-          </span>
-          <span className="text-[0.9375rem] font-medium text-foreground">
-            Publicado por {authorLabel(post)}
-          </span>
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="eyebrow rounded-full bg-secondary px-3 py-1 text-primary">
             {categoryLabel(post.category)}
           </span>
-          <time dateTime={date} className="text-[0.9375rem] text-muted-foreground md:text-sm">
-            {formatDate(date)}
-          </time>
-          <span className="h-3 w-px bg-rule" aria-hidden="true" />
-          <span className="text-[0.9375rem] text-muted-foreground md:text-sm">{readingMinutes(post.content)} min de lectura</span>
           {post.event_date && (
             <>
-              <span className="h-3 w-px bg-rule" aria-hidden="true" />
-              <span className="eyebrow rounded-full border border-rule px-3 py-1 text-foreground">
-                Evento: {formatDate(`${post.event_date}T12:00:00Z`)}
+              <span className="eyebrow rounded-full border border-border px-3 py-1 text-foreground">
+                {formatDate(`${post.event_date}T12:00:00Z`)}
                 {post.event_end_date && post.event_end_date !== post.event_date
                   ? ` – ${formatDate(`${post.event_end_date}T12:00:00Z`)}`
                   : ""}
@@ -133,6 +115,7 @@ function ArticlePage() {
             </>
           )}
         </div>
+
 
         <h1 className="mt-4 text-[2.1rem] leading-[1.06] sm:text-5xl md:text-[3.25rem]">{post.title}</h1>
 
