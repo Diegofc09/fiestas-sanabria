@@ -1,4 +1,4 @@
-import { Newspaper } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export function EmptyState({
   title = "Todavía no hay publicaciones",
@@ -8,12 +8,12 @@ export function EmptyState({
   description?: string;
 }) {
   return (
-    <div className="mt-10 flex flex-col items-center justify-center rounded-sm border border-dashed border-rule bg-paper px-6 py-20 text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-primary">
-        <Newspaper className="h-6 w-6" />
+    <div className="glass-card mt-10 flex flex-col items-center justify-center rounded-2xl px-6 py-20 text-center shadow-neon">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-neon-violet/15 text-neon-violet shadow-[var(--glow-violet)]">
+        <Sparkles className="h-6 w-6" />
       </span>
-      <h2 className="mt-6 text-2xl md:text-3xl">{title}</h2>
-      <p className="mt-3 max-w-md font-[family-name:var(--font-serif)] text-base md:text-[0.9375rem] leading-relaxed text-muted-foreground">
+      <h2 className="text-glow mt-6 text-2xl font-bold md:text-3xl">{title}</h2>
+      <p className="mt-3 max-w-md text-base font-light leading-relaxed text-muted-foreground md:text-[0.9375rem]">
         {description}
       </p>
     </div>
