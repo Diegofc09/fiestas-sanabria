@@ -80,7 +80,7 @@ function ArticlePage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(articleQuery(slug));
   const { post, related } = data;
-  const date = post.published_at ?? post.created_at;
+  
 
   useEffect(() => {
     void trackPostView({ data: { postId: post.id } }).catch(() => {});
