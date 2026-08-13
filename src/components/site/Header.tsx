@@ -49,31 +49,34 @@ export function Header() {
           <Link to="/" className="group flex min-w-0 flex-col" onClick={() => setOpen(false)}>
             <span
               className={cn(
-                "text-glow-violet truncate font-[family-name:var(--font-display)] font-bold leading-none tracking-tight transition-all duration-300",
+                "truncate font-[family-name:var(--font-display)] font-bold leading-none tracking-tight transition-all duration-300",
                 scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
               )}
             >
-              Fiestas<span className="text-neon-cyan">Sanabria</span>
+              Fiestas<span className="text-primary">Sanabria</span>
             </span>
-            <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-neon-cyan">
+            <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-primary">
               Fiestas · Eventos · Comarca
             </span>
           </Link>
 
-          <button
-            type="button"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="glow-hover -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-secondary/50 text-foreground active:scale-95 md:hidden"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              type="button"
+              aria-label={open ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="glow-hover -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <label className="neon-border glow-hover flex min-w-0 flex-1 items-center gap-2.5 rounded-full bg-background/60 px-4 py-2.5 backdrop-blur-md">
-            <Search className="h-4 w-4 shrink-0 text-neon-cyan" aria-hidden="true" />
+          <label className="neon-border glow-hover flex min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5">
+            <Search className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <input
               type="search"
               value={query}
@@ -88,22 +91,33 @@ export function Header() {
                 type="button"
                 onClick={() => setSearchOpen(false)}
                 aria-label="Limpiar búsqueda"
-                className="shrink-0 text-muted-foreground transition-colors hover:text-neon-pink"
+                className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
             )}
           </label>
 
+          <Link
+            to="/perfil"
+            aria-label="Mi perfil"
+            className="glow-hover hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95 md:inline-flex"
+          >
+            <UserRound className="h-[18px] w-[18px]" />
+          </Link>
+
+          <ThemeToggle className="hidden md:inline-flex" />
+
           <button
             type="button"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="glow-hover hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/70 bg-secondary/40 text-foreground active:scale-95 md:inline-flex"
+            className="glow-hover hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95 md:inline-flex"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+
         </div>
       </div>
 
