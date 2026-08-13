@@ -17,7 +17,7 @@ export function AuthPromptModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/80 px-5 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/40 px-5 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label="Crear cuenta o iniciar sesión"
