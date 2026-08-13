@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { CATEGORIES } from "@/lib/posts";
+import { setSearchQuery, useSearchQuery } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -15,6 +16,7 @@ const NAV = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const query = useSearchQuery();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -33,90 +35,114 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b bg-background/85 backdrop-blur-md transition-all duration-300",
-        scrolled ? "border-rule shadow-editorial" : "border-transparent",
+        "sticky top-0 z-50 w-full border-b transition-all duration-300",
+        scrolled
+          ? "border-rule/70 bg-background/80 shadow-editorial backdrop-blur-xl"
+          : "border-transparent bg-background/40 backdrop-blur-md",
       )}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 md:px-8 md:py-5">
-        <Link to="/" className="group flex min-w-0 flex-col" onClick={() => setOpen(false)}>
-          <span
-            className={cn(
-              "truncate font-[family-name:var(--font-display)] font-semibold leading-none transition-all duration-300",
-              scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-4xl",
-            )}
-          >
-            FiestasSanabria
-          </span>
-          <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-primary">
-            Anuncios · Fiestas · Comarca
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-7 md:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              activeOptions={{ exact: item.path === "/" }}
-              className="relative py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
-            >
-              {({ isActive }) => (
-                <>
-                  {item.label}
-                  <span
-                    className={cn(
-                      "absolute -bottom-0.5 left-0 h-[1.5px] w-full origin-left bg-primary transition-transform duration-300",
-                      isActive ? "scale-x-100" : "scale-x-0",
-                    )}
-                  />
-                </>
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:gap-6 md:px-8 md:py-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:shrink-0">
+          <Link to="/" className="group flex min-w-0 flex-col" onClick={() => setOpen(false)}>
+            <span
+              className={cn(
+                "text-glow-violet truncate font-[family-name:var(--font-display)] font-bold leading-none tracking-tight transition-all duration-300",
+                scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
               )}
-            </Link>
-          ))}
-        </nav>
+            >
+              Fiestas<span className="text-neon-cyan">Sanabria</span>
+            </span>
+            <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-neon-cyan">
+              Fiestas · Eventos · Comarca
+            </span>
+          </Link>
 
-        <button
-          type="button"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-          className="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary active:scale-95 md:hidden"
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+          <button
+            type="button"
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="glow-hover -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-secondary/50 text-foreground active:scale-95 md:hidden"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <label className="neon-border glow-hover flex min-w-0 flex-1 items-center gap-2.5 rounded-full bg-background/60 px-4 py-2.5 backdrop-blur-md">
+            <Search className="h-4 w-4 shrink-0 text-neon-cyan" aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar fiestas, eventos, publicidad..."
+              aria-label="Buscar publicaciones"
+              className="min-w-0 flex-1 bg-transparent text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none md:text-sm"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                aria-label="Limpiar búsqueda"
+                className="shrink-0 text-muted-foreground transition-colors hover:text-neon-pink"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </label>
+
+          <button
+            type="button"
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="glow-hover hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/70 bg-secondary/40 text-foreground active:scale-95 md:inline-flex"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
         {open && (
           <motion.nav
-            key="mobile-nav"
+            key="nav-panel"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-rule bg-paper md:hidden"
+            className="overflow-hidden border-t border-rule/60 bg-ink/95 backdrop-blur-xl"
           >
-            <ul className="mx-auto max-w-6xl px-5 py-2">
+            <ul className="mx-auto max-w-6xl px-5 py-2 md:px-8 md:py-4">
               {NAV.map((item, i) => (
                 <motion.li
                   key={item.path}
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.04 * i, duration: 0.24 }}
-                  className="border-b border-border last:border-0"
+                  className="border-b border-border/50 last:border-0"
                 >
                   <Link
                     to={item.path}
                     onClick={() => setOpen(false)}
                     activeOptions={{ exact: item.path === "/" }}
-                    className="block py-4 font-[family-name:var(--font-display)] text-xl text-foreground"
-                    activeProps={{ className: "text-primary" }}
+                    className="block py-4 font-[family-name:var(--font-display)] text-xl text-foreground transition-colors hover:text-neon-cyan"
+                    activeProps={{ className: "text-neon-violet" }}
                   >
                     {item.label}
                   </Link>
                 </motion.li>
               ))}
+              <li className="pt-4 pb-2">
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="glow-hover inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/50 px-4 py-2 text-sm font-medium text-foreground"
+                >
+                  <UserRound className="h-4 w-4 text-neon-pink" />
+                  Acceso / Perfil
+                </Link>
+              </li>
             </ul>
           </motion.nav>
         )}
