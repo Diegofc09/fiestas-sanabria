@@ -157,7 +157,7 @@ export function CommentsSection({
           </div>
         </form>
       ) : (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-neon-violet/40 bg-background/60 p-5">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-background/60 p-5">
           <p className="text-[0.9375rem] text-muted-foreground">
             Crea una cuenta o inicia sesión para comentar y valorar esta publicación.
           </p>
