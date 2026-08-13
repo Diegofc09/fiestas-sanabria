@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as FiestasRouteImport } from './routes/fiestas'
+import { Route as GuardadosRouteImport } from './routes/guardados'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -51,6 +52,11 @@ const EventosRoute = EventosRouteImport.update({
 const FiestasRoute = FiestasRouteImport.update({
   id: '/fiestas',
   path: '/fiestas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuardadosRoute = GuardadosRouteImport.update({
+  id: '/guardados',
+  path: '/guardados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasRoute = NoticiasRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
+  '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
+  '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/calendario': typeof CalendarioRoute
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
+  '/guardados': typeof GuardadosRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eventos'
     | '/fiestas'
+    | '/guardados'
     | '/noticias'
     | '/otros'
     | '/admin'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eventos'
     | '/fiestas'
+    | '/guardados'
     | '/noticias'
     | '/otros'
     | '/articulo/$slug'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eventos'
     | '/fiestas'
+    | '/guardados'
     | '/noticias'
     | '/otros'
     | '/_authenticated/admin'
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   CalendarioRoute: typeof CalendarioRoute
   EventosRoute: typeof EventosRoute
   FiestasRoute: typeof FiestasRoute
+  GuardadosRoute: typeof GuardadosRoute
   NoticiasRoute: typeof NoticiasRoute
   OtrosRoute: typeof OtrosRoute
   ArticuloSlugRoute: typeof ArticuloSlugRoute
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/fiestas'
       fullPath: '/fiestas'
       preLoaderRoute: typeof FiestasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guardados': {
+      id: '/guardados'
+      path: '/guardados'
+      fullPath: '/guardados'
+      preLoaderRoute: typeof GuardadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/noticias': {
@@ -338,6 +358,7 @@ const rootRouteChildren: RootRouteChildren = {
   CalendarioRoute: CalendarioRoute,
   EventosRoute: EventosRoute,
   FiestasRoute: FiestasRoute,
+  GuardadosRoute: GuardadosRoute,
   NoticiasRoute: NoticiasRoute,
   OtrosRoute: OtrosRoute,
   ArticuloSlugRoute: ArticuloSlugRoute,
