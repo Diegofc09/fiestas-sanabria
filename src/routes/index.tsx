@@ -54,24 +54,48 @@ type PhaseFilter = "all" | "upcoming" | "ongoing" | "finished";
 
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
+  const { data: metrics } = useQuery(metricsQuery);
+  const { savedIds } = useSavedPosts();
   const query = useSearchQuery();
   const searchOpen = useSearchOpen();
   const [category, setCategory] = useState<PostCategory | "all">("all");
   const [phase, setPhase] = useState<PhaseFilter>("all");
+  const [sort, setSort] = useState<SortMode>("recent");
 
-  const filtered = useMemo(
-    () =>
-      posts.filter((post) => {
-        if (category !== "all" && post.category !== category) return false;
-        if (phase !== "all" && eventPhase(post) !== phase) return false;
-        return matchesQuery(post, query);
-      }),
-    [posts, category, phase, query],
-  );
+  const metricFor = useMemo(() => {
+    const map = new Map<string, PostMetric>();
+    for (const metric of metrics ?? []) map.set(metric.post_id, metric);
+    return map;
+  }, [metrics]);
+
+  const filtered = useMemo(() => {
+    const list = posts.filter((post) => {
+      if (category !== "all" && post.category !== category) return false;
+      if (phase !== "all" && eventPhase(post) !== phase) return false;
+      // Las publicaciones caducan a los 14 días, salvo si el usuario las guardó.
+      if (isExpired(post) && !savedIds.includes(post.id)) return false;
+      return matchesQuery(post, query);
+    });
+
+    if (sort === "views") {
+      return [...list].sort(
+        (a, b) => (metricFor.get(b.id)?.views_count ?? 0) - (metricFor.get(a.id)?.views_count ?? 0),
+      );
+    }
+    if (sort === "popular") {
+      const score = (id: string) => {
+        const m = metricFor.get(id);
+        return (m?.saves_count ?? 0) * 2 + (m?.comments_count ?? 0);
+      };
+      return [...list].sort((a, b) => score(b.id) - score(a.id));
+    }
+    return list;
+  }, [posts, category, phase, query, sort, metricFor, savedIds]);
 
   if (!searchOpen) {
     return <SearchLanding posts={posts} />;
   }
+
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
