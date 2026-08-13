@@ -86,6 +86,8 @@ function ArticlePage() {
     void trackPostView({ data: { postId: post.id } }).catch(() => {});
   }, [post.id]);
 
+  const isEvent = supportsEvent(post.category);
+
   return (
     <article className="pb-10">
       <div className="mx-auto max-w-3xl px-5 pt-8 md:px-8 md:pt-14">
@@ -120,18 +122,30 @@ function ArticlePage() {
           )}
         </div>
 
-
         <h1 className="mt-4 text-[2.1rem] leading-[1.06] sm:text-5xl md:text-[3.25rem]">{post.title}</h1>
 
         {post.excerpt && (
-          <p className="mt-5 font-[family-name:var(--font-serif)] text-lg leading-relaxed text-muted-foreground md:text-xl">
+          <p className="mt-5 border-l-2 border-primary pl-4 font-[family-name:var(--font-serif)] text-lg leading-relaxed text-muted-foreground md:text-xl">
             {post.excerpt}
           </p>
         )}
       </div>
 
+      {/* Bloque social primero: asistencia, valoración y comentarios */}
+      <div className="mx-auto mt-8 max-w-3xl px-5 md:px-8">
+        {isEvent && (
+          <div className="rounded-sm border border-rule bg-secondary/50 p-1 shadow-neon">
+            <AttendanceBox postId={post.id} eventDate={post.event_date} />
+          </div>
+        )}
+
+        <div className={isEvent ? "mt-5" : "mt-0"}>
+          <CommentsSection postId={post.id} withRating={isEvent} />
+        </div>
+      </div>
+
       {post.cover_image_url && (
-        <figure className="mx-auto mt-9 max-w-5xl px-0 md:px-8">
+        <figure className="mx-auto mt-12 max-w-5xl px-0 md:px-8">
           <div className="overflow-hidden bg-secondary md:rounded-sm">
             <img
               src={post.cover_image_url}
@@ -157,12 +171,6 @@ function ArticlePage() {
         />
 
         <ShareBar title={post.title} slug={post.slug} />
-
-        {supportsEvent(post.category) && (
-          <AttendanceBox postId={post.id} eventDate={post.event_date} />
-        )}
-
-        <CommentsSection postId={post.id} withRating={supportsEvent(post.category)} />
       </div>
 
       {related.length > 0 && (
