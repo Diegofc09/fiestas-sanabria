@@ -44,16 +44,14 @@ function useLocalFlag(key: string, id: string) {
 function Cover({ post, priority }: { post: PostSummary; priority?: boolean | undefined }) {
   if (!post.cover_image_url) {
     return (
-      <div
-        className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,color-mix(in_oklab,var(--neon-violet)_45%,transparent),transparent_65%)] bg-secondary"
-        aria-hidden="true"
-      >
-        <span className="text-glow font-[family-name:var(--font-display)] text-3xl font-bold text-neon-cyan/80">
+      <div className="flex h-full w-full items-center justify-center bg-secondary" aria-hidden="true">
+        <span className="font-[family-name:var(--font-display)] text-3xl font-bold text-muted-foreground">
           FS
         </span>
       </div>
     );
   }
+
   return (
     <img
       src={post.cover_image_url}
