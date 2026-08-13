@@ -42,6 +42,7 @@ type PhaseFilter = "all" | "upcoming" | "ongoing" | "finished";
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
   const query = useSearchQuery();
+  const searchOpen = useSearchOpen();
   const [category, setCategory] = useState<PostCategory | "all">("all");
   const [phase, setPhase] = useState<PhaseFilter>("all");
 
@@ -55,55 +56,27 @@ function HomePage() {
     [posts, category, phase, query],
   );
 
+  if (!searchOpen) {
+    return <SearchLanding posts={posts} />;
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
-      <Masthead />
-
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Chip active={category === "all"} onClick={() => setCategory("all")}>
-          Todo
-        </Chip>
-        {CATEGORIES.map((c) => (
-          <Chip key={c.value} active={category === c.value} onClick={() => setCategory(c.value)}>
-            {c.label}
-          </Chip>
-        ))}
-        <span className="mx-1 hidden h-8 w-px self-center bg-rule/60 sm:block" aria-hidden="true" />
-        {(
-          [
-            ["upcoming", "Sin empezar"],
-            ["ongoing", "En curso"],
-            ["finished", "Terminada"],
-          ] as const
-        ).map(([value, label]) => (
-          <Chip
-            key={value}
-            active={phase === value}
-            tone={value}
-            onClick={() => setPhase((p) => (p === value ? "all" : value))}
-          >
-            {label}
-          </Chip>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-8 md:pt-10">
+        <p className="eyebrow text-neon-cyan">
+          {query ? `Resultados para “${query}”` : "Explorando todas las publicaciones"}
+        </p>
+        <button
+          type="button"
+          onClick={() => setSearchOpen(false)}
+          className="glow-hover rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-[0.8125rem] font-medium text-muted-foreground md:text-sm"
+        >
+          Cerrar búsqueda
+        </button>
       </div>
 
-      {filtered.length === 0 ? (
-        <EmptyState
-          title={query ? "Sin resultados" : "Todavía no hay publicaciones"}
-          description={
-            query
-              ? `No hemos encontrado nada para “${query}”. Prueba con otras palabras clave.`
-              : "Estamos preparando las primeras fiestas y eventos de Sanabria. Vuelve pronto."
-          }
-        />
-      ) : (
-        <div className="mt-7">
-          <FeedGrid posts={filtered} />
-        </div>
-      )}
-    </div>
-  );
-}
+      <div className="mt-6 flex flex-wrap gap-2">
+
 
 function Chip({
   active,
