@@ -40,7 +40,7 @@ function useLocalFlag(key: string, id: string) {
 
 /* ── Tarjeta de feed tipo Instagram ─────────────────────────────────────── */
 
-function Cover({ post, priority }: { post: PostSummary; priority?: boolean }) {
+function Cover({ post, priority }: { post: PostSummary; priority?: boolean | undefined }) {
   if (!post.cover_image_url) {
     return (
       <div
