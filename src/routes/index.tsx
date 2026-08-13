@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Search } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
@@ -6,7 +7,7 @@ import { listPublishedPosts } from "@/lib/posts.functions";
 import { CATEGORIES, eventPhase, type PostCategory, type PostSummary } from "@/lib/posts";
 import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
-import { matchesQuery, useSearchQuery } from "@/lib/search-store";
+import { matchesQuery, setSearchOpen, setSearchQuery, useSearchOpen, useSearchQuery } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
 
 const homeQuery = queryOptions({
