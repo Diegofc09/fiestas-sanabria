@@ -27,7 +27,6 @@ function apply() {
   if (typeof document === "undefined") return;
   const resolved = resolveTheme(mode);
   document.documentElement.classList.toggle("dark", resolved === "dark");
-  document.documentElement.style.colorScheme = resolved;
 }
 
 function emit() {
@@ -86,4 +85,4 @@ export function useThemeMode(): { mode: ThemeMode; resolved: "light" | "dark" } 
 }
 
 /** Script en línea que evita el parpadeo aplicando el tema antes de hidratar. */
-export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var m=localStorage.getItem('${STORAGE_KEY}')||'auto';var h=new Date().getHours();var d=m==='dark'||(m==='auto'&&(h>=${NIGHT_START_HOUR}||h<${NIGHT_END_HOUR}));document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();`;
+export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var m=localStorage.getItem('${STORAGE_KEY}')||'auto';var h=new Date().getHours();var d=m==='dark'||(m==='auto'&&(h>=${NIGHT_START_HOUR}||h<${NIGHT_END_HOUR}));document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
