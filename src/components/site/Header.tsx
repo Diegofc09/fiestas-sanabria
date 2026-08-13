@@ -39,10 +39,11 @@ export function Header() {
       className={cn(
         "sticky top-0 z-50 w-full border-b transition-all duration-300",
         scrolled
-          ? "border-rule/70 bg-background/80 shadow-editorial backdrop-blur-xl"
-          : "border-transparent bg-background/40 backdrop-blur-md",
+          ? "border-border bg-background/90 shadow-editorial backdrop-blur-xl"
+          : "border-transparent bg-background/70 backdrop-blur-md",
       )}
     >
+
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:gap-6 md:px-8 md:py-4">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:shrink-0">
           <Link to="/" className="group flex min-w-0 flex-col" onClick={() => setOpen(false)}>
