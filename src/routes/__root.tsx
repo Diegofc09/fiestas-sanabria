@@ -18,6 +18,8 @@ import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthPromptModal } from "@/components/site/AuthPromptModal";
 import { supabase } from "@/integrations/supabase/client";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
+
 
 function NotFoundComponent() {
   return (
