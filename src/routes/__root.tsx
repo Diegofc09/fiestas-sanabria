@@ -132,6 +132,8 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
       <head>
+        {/* Aplica el tema (manual o automático a partir de las 20:00) antes de pintar. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -141,6 +143,7 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
