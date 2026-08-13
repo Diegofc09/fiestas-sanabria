@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { trackPostView } from "@/lib/analytics.functions";
 
 import { getPublishedPost } from "@/lib/posts.functions";
-import { categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
+import { authorLabel, categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { PostCard } from "@/components/site/PostCard";
 import { Reveal } from "@/components/site/Reveal";
@@ -99,7 +99,19 @@ function ArticlePage() {
           Portada
         </Link>
 
-        <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="mt-7 flex items-center gap-2.5">
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neon-cyan/50 bg-neon-cyan/10 text-sm font-bold text-neon-cyan"
+            aria-hidden="true"
+          >
+            {authorLabel(post).slice(0, 1).toUpperCase()}
+          </span>
+          <span className="text-[0.9375rem] font-medium text-foreground">
+            Publicado por {authorLabel(post)}
+          </span>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="eyebrow rounded-full bg-secondary px-3 py-1 text-primary">
             {categoryLabel(post.category)}
           </span>
