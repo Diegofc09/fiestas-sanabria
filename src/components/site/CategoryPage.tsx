@@ -2,9 +2,10 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { categoryLabel, type PostCategory, type PostSummary } from "@/lib/posts";
+import { categoryLabel, isExpired, type PostCategory, type PostSummary } from "@/lib/posts";
 import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, useSearchQuery } from "@/lib/search-store";
 
 export const categoryQuery = (category: PostCategory) =>
