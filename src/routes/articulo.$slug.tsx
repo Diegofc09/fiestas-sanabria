@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { trackPostView } from "@/lib/analytics.functions";
 
 import { getPublishedPost } from "@/lib/posts.functions";
-import { authorLabel, categoryLabel, formatDate, readingMinutes, stripHtml, type Post, type PostSummary } from "@/lib/posts";
+import { categoryLabel, formatDate, stripHtml, type Post, type PostSummary } from "@/lib/posts";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { PostCard } from "@/components/site/PostCard";
 import { Reveal } from "@/components/site/Reveal";
