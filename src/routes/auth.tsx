@@ -9,6 +9,7 @@ import { lovable } from "@/integrations/lovable/index";
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
+  mode: z.enum(["signin", "signup"]).optional(),
 });
 
 export const Route = createFileRoute("/auth")({
@@ -16,13 +17,18 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Acceso a la redacción — FiestasSanabria" },
+      { title: "Crear cuenta o iniciar sesión — FiestasSanabria" },
       {
         name: "description",
-        content: "Acceso privado para la redacción de FiestasSanabria.",
+        content:
+          "Crea tu cuenta en FiestasSanabria para guardar publicaciones sin caducidad y comentar las fiestas de la comarca.",
       },
-      { property: "og:title", content: "Acceso a la redacción — FiestasSanabria" },
-      { property: "og:description", content: "Acceso privado para la redacción de FiestasSanabria." },
+      { property: "og:title", content: "Crear cuenta o iniciar sesión — FiestasSanabria" },
+      {
+        property: "og:description",
+        content:
+          "Crea tu cuenta en FiestasSanabria para guardar publicaciones sin caducidad y comentar las fiestas de la comarca.",
+      },
       { property: "og:url", content: "/auth" },
       { name: "robots", content: "noindex" },
     ],
@@ -32,17 +38,25 @@ export const Route = createFileRoute("/auth")({
 });
 
 function safePath(value: string | undefined): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/admin";
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/guardados";
   return value;
 }
+
+const usernameSchema = z
+  .string()
+  .trim()
+  .min(3, "El nombre de usuario necesita al menos 3 caracteres")
+  .max(24, "Máximo 24 caracteres")
+  .regex(/^[a-zA-Z0-9_.-]+$/, "Usa solo letras, números, puntos, guiones o guiones bajos");
 
 function AuthPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
   const target = safePath(search.redirect);
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(search.mode ?? "signin");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -61,17 +75,35 @@ function AuthPage() {
         if (error) throw error;
         navigate({ to: target, replace: true });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const name = usernameSchema.parse(username);
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}${target}` },
+          options: {
+            emailRedirectTo: `${window.location.origin}${target}`,
+            data: { username: name },
+          },
         });
         if (error) throw error;
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .upsert({ id: data.user.id, username: name });
+          if (profileError && !profileError.message.includes("duplicate")) {
+            toast.error("Ese nombre de usuario ya está en uso. Podrás cambiarlo más tarde.");
+          }
+        }
         toast.success("Cuenta creada. Revisa tu correo si se requiere confirmación.");
         navigate({ to: target, replace: true });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "No se ha podido completar el acceso.");
+      const message =
+        error instanceof z.ZodError
+          ? (error.issues[0]?.message ?? "Datos no válidos.")
+          : error instanceof Error
+            ? error.message
+            : "No se ha podido completar el acceso.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -97,13 +129,34 @@ function AuthPage() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-5 py-16 md:py-24">
-      <p className="eyebrow text-primary">Redacción</p>
-      <h1 className="mt-3 text-3xl md:text-4xl">Acceso privado</h1>
-      <p className="mt-3 font-[family-name:var(--font-serif)] text-muted-foreground">
-        Área reservada a la administración de FiestasSanabria.
+      <p className="eyebrow text-neon-cyan">Tu cuenta</p>
+      <h1 className="text-glow-violet mt-3 text-3xl font-bold md:text-4xl">
+        {mode === "signin" ? "Iniciar sesión" : "Crear una cuenta"}
+      </h1>
+      <p className="mt-3 text-[0.9375rem] font-light text-muted-foreground">
+        Guarda publicaciones para que no caduquen a los 14 días y comenta las fiestas de Sanabria.
       </p>
 
       <form onSubmit={submit} className="mt-8 space-y-4">
+        {mode === "signup" && (
+          <div>
+            <label htmlFor="username" className="mb-1.5 block text-sm font-medium">
+              Nombre de usuario público
+            </label>
+            <input
+              id="username"
+              type="text"
+              autoComplete="username"
+              required
+              minLength={3}
+              maxLength={24}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="p. ej. sanabres91"
+              className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
+            />
+          </div>
+        )}
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
             Correo electrónico
@@ -115,7 +168,7 @@ function AuthPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 w-full rounded-sm border border-input bg-paper px-3 text-base outline-none transition-colors focus:border-primary"
+            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
           />
         </div>
         <div>
@@ -130,13 +183,13 @@ function AuthPage() {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-11 w-full rounded-sm border border-input bg-paper px-3 text-base outline-none transition-colors focus:border-primary"
+            className="h-11 w-full rounded-sm border border-input bg-secondary/40 px-3 text-base outline-none transition-colors focus:border-neon-violet"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-sm bg-primary text-sm font-medium text-primary-foreground transition-all hover:opacity-95 active:scale-[0.99] disabled:opacity-60"
+          className="glow-hover inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-neon-violet/70 bg-neon-violet/20 text-sm font-semibold text-foreground shadow-[var(--glow-violet)] disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {mode === "signin" ? "Entrar" : "Crear cuenta"}
@@ -153,7 +206,7 @@ function AuthPage() {
         type="button"
         onClick={google}
         disabled={loading}
-        className="inline-flex h-11 w-full items-center justify-center rounded-sm border border-input bg-background text-sm font-medium transition-colors hover:bg-secondary disabled:opacity-60"
+        className="glow-hover inline-flex h-11 w-full items-center justify-center rounded-full border border-border/70 bg-secondary/50 text-sm font-medium transition-colors disabled:opacity-60"
       >
         Continuar con Google
       </button>
