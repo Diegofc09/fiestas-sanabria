@@ -140,6 +140,21 @@ function HomePage() {
         ))}
       </div>
 
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="eyebrow text-muted-foreground">Ordenar por</span>
+        {(
+          [
+            ["recent", "Más reciente"],
+            ["views", "Más visitado"],
+            ["popular", "Más popular"],
+          ] as const
+        ).map(([value, label]) => (
+          <Chip key={value} active={sort === value} onClick={() => setSort(value)}>
+            {label}
+          </Chip>
+        ))}
+      </div>
+
       {filtered.length === 0 ? (
         <EmptyState
           title={query ? "Sin resultados" : "Todavía no hay publicaciones"}
