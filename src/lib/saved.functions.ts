@@ -48,11 +48,9 @@ export const toggleSavedPost = createServerFn({ method: "POST" })
     if (data.saved) {
       const { error } = await context.supabase
         .from("saved_posts")
-        .upsert(
-          { user_id: context.userId, post_id: data.postId },
-          { onConflict: "user_id,post_id" },
-        );
-      if (error) throw new Error(error.message);
+        .insert({ user_id: context.userId, post_id: data.postId });
+      // 23505 = ya estaba guardada; no es un error para el usuario.
+      if (error && error.code !== "23505") throw new Error(error.message);
     } else {
       const { error } = await context.supabase
         .from("saved_posts")
