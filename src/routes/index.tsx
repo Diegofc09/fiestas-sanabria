@@ -1,14 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { CATEGORIES, eventPhase, type PostCategory, type PostSummary } from "@/lib/posts";
+import { listPostMetrics } from "@/lib/saved.functions";
+import { CATEGORIES, eventPhase, isExpired, type PostCategory, type PostSummary } from "@/lib/posts";
 import { FeedGrid } from "@/components/site/FeedCard";
 import { EmptyState } from "@/components/site/EmptyState";
+import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, setSearchOpen, setSearchQuery, useSearchOpen, useSearchQuery } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
+
+type PostMetric = { post_id: string; views_count: number; saves_count: number; comments_count: number };
+
+const metricsQuery = queryOptions({
+  queryKey: ["post-metrics"],
+  queryFn: () => listPostMetrics() as Promise<PostMetric[]>,
+  staleTime: 60_000,
+});
+
+type SortMode = "recent" | "views" | "popular";
 
 const homeQuery = queryOptions({
   queryKey: ["posts", "home"],
