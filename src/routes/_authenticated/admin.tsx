@@ -18,6 +18,7 @@ function AdminLayout() {
   const queryClient = useQueryClient();
   const [claiming, setClaiming] = useState(false);
   const [code, setCode] = useState("");
+  const [username, setUsername] = useState("");
   const [redeeming, setRedeeming] = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
@@ -52,9 +53,13 @@ function AdminLayout() {
       toast.error("Introduce un código válido.");
       return;
     }
+    if (username.trim().length < 3) {
+      toast.error("Elige un nombre de usuario de al menos 3 caracteres.");
+      return;
+    }
     setRedeeming(true);
     try {
-      await redeemInviteCode({ data: { code } });
+      await redeemInviteCode({ data: { code, username: username.trim() } });
       toast.success("Código canjeado: ya puedes redactar publicaciones.");
       setCode("");
       await refetch();
@@ -134,6 +139,21 @@ function AdminLayout() {
           )}
 
           <div className="mt-8 border-t border-rule pt-6 text-left">
+            <label htmlFor="username" className="mb-1.5 block text-sm font-medium">
+              Nombre de usuario público
+            </label>
+            <input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ej. PeñaLosCharros"
+              maxLength={24}
+              className="mb-1.5 h-11 w-full rounded-sm border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+            />
+            <p className="mb-4 text-xs text-muted-foreground">
+              Aparecerá como autor al inicio de tus publicaciones.
+            </p>
+
             <label htmlFor="invite" className="mb-1.5 block text-sm font-medium">
               Código de suscriptor
             </label>
