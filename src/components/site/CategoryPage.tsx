@@ -22,7 +22,14 @@ export function CategoryPage({
 }) {
   const { data: posts } = useSuspenseQuery(categoryQuery(category));
   const query = useSearchQuery();
-  const filtered = useMemo(() => posts.filter((p) => matchesQuery(p, query)), [posts, query]);
+  const { savedIds } = useSavedPosts();
+  const filtered = useMemo(
+    () =>
+      posts.filter(
+        (p) => (!isExpired(p) || savedIds.includes(p.id)) && matchesQuery(p, query),
+      ),
+    [posts, query, savedIds],
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-14 md:px-8">
