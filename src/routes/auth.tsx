@@ -85,22 +85,16 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        // El perfil solo se puede escribir con sesión activa; si el registro
-        // requiere confirmación por correo, se creará al iniciar sesión.
-        if (data.session && data.user) {
+        if (data.user) {
           const { error: profileError } = await supabase
             .from("profiles")
             .upsert({ id: data.user.id, username: name });
-          if (profileError?.code === "23505") {
+          if (profileError && !profileError.message.includes("duplicate")) {
             toast.error("Ese nombre de usuario ya está en uso. Podrás cambiarlo más tarde.");
           }
         }
-        toast.success(
-          data.session
-            ? "Cuenta creada. Ya puedes guardar publicaciones y comentar."
-            : "Cuenta creada. Revisa tu correo para confirmarla.",
-        );
-        if (data.session) navigate({ to: target, replace: true });
+        toast.success("Cuenta creada. Revisa tu correo si se requiere confirmación.");
+        navigate({ to: target, replace: true });
       }
     } catch (error) {
       const message =
