@@ -124,49 +124,72 @@ function HomePage() {
         </p>
       </header>
 
-      <div className="mt-8 flex flex-wrap items-center gap-2">
-        <Chip active={category === "all"} onClick={() => setCategory("all")}>
-          Todo
-        </Chip>
-        {CATEGORIES.map((c) => (
-          <Chip key={c.value} active={category === c.value} onClick={() => setCategory(c.value)}>
-            {c.label}
-          </Chip>
-        ))}
-        <span className="mx-1 hidden h-8 w-px self-center bg-rule sm:block" aria-hidden="true" />
-        {(
-          [
-            ["upcoming", "Sin empezar"],
-            ["ongoing", "En curso"],
-            ["finished", "Terminada"],
-          ] as const
-        ).map(([value, label]) => (
-          <Chip
-            key={value}
-            active={phase === value}
-            tone={value}
-            onClick={() => setPhase((p) => (p === value ? "all" : value))}
-          >
-            {label}
-          </Chip>
-        ))}
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="eyebrow text-muted-foreground">Ordenar por</span>
-          {(
-            [
-              ["upcoming", "Más próximas"],
-              ["recent", "Más reciente"],
-              ["views", "Más visitado"],
-              ["popular", "Más popular"],
-            ] as const
-          ).map(([value, label]) => (
-            <Chip key={value} active={sort === value} onClick={() => setSort(value)}>
-              {label}
-            </Chip>
-          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+              >
+                Categoría
+                <span className="text-muted-foreground">{categoryLabelFor(category)}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52">
+              <DropdownMenuRadioGroup
+                value={category}
+                onValueChange={(v) => setCategory(v as PostCategory | "all")}
+              >
+                <DropdownMenuRadioItem value="all">Todo</DropdownMenuRadioItem>
+                {CATEGORIES.map((c) => (
+                  <DropdownMenuRadioItem key={c.value} value={c.value}>
+                    {c.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+              >
+                Ordenar por
+                <span className="text-muted-foreground">{sortLabelFor(sort, phase)}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Orden</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                value={sort}
+                onValueChange={(v) => setSort(v as SortMode)}
+              >
+                {SORT_OPTIONS.map(([value, label]) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Estado del evento</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                value={phase}
+                onValueChange={(v) => setPhase(v as PhaseFilter)}
+              >
+                <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
+                {PHASE_OPTIONS.map(([value, label]) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div
