@@ -294,33 +294,3 @@ function ViewButton({
   );
 }
 
-function Chip({
-  active,
-  tone,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  tone?: "upcoming" | "ongoing" | "finished";
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "glow-hover rounded-full border px-4 py-2 text-[0.8125rem] font-medium md:text-sm",
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-secondary text-muted-foreground",
-        active && tone === "upcoming" && "border-phase-upcoming bg-phase-upcoming/15 text-foreground",
-        active && tone === "ongoing" && "border-phase-ongoing bg-phase-ongoing/15 text-foreground",
-        active && tone === "finished" && "border-phase-finished bg-phase-finished/15 text-foreground",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
