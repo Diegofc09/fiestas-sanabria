@@ -60,11 +60,25 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
 
   const byDay = useMemo(() => {
     const map = new Map<string, PostSummary[]>();
-    for (const post of posts) {
-      const key = dayKey(timelineDate(post));
+    const add = (key: string, post: PostSummary) => {
       const list = map.get(key);
       if (list) list.push(post);
       else map.set(key, [post]);
+    };
+    for (const post of posts) {
+      // Fiestas con rango de fechas se muestran en todos los días de inicio a fin.
+      if (post.event_date && post.event_end_date && post.event_end_date > post.event_date) {
+        const cursorDay = new Date(`${post.event_date}T12:00:00Z`);
+        const endDay = new Date(`${post.event_end_date}T12:00:00Z`);
+        let guard = 0;
+        while (cursorDay.getTime() <= endDay.getTime() && guard < 400) {
+          add(dayKey(cursorDay.toISOString()), post);
+          cursorDay.setDate(cursorDay.getDate() + 1);
+          guard += 1;
+        }
+        continue;
+      }
+      add(dayKey(timelineDate(post)), post);
     }
     return map;
   }, [posts]);
