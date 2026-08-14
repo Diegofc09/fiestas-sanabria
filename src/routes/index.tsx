@@ -7,6 +7,7 @@ import { listPublishedPosts } from "@/lib/posts.functions";
 import { listPostMetrics } from "@/lib/saved.functions";
 import {
   CATEGORIES,
+  categoryLabel,
   eventPhase,
   isExpired,
   timelineDate,
