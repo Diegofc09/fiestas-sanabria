@@ -32,6 +32,30 @@ type SortMode = "upcoming" | "recent" | "views" | "popular";
 type PhaseFilter = "all" | "upcoming" | "ongoing" | "finished";
 type ViewMode = "cards" | "calendar";
 
+const SORT_OPTIONS: [SortMode, string][] = [
+  ["upcoming", "Más próximas"],
+  ["recent", "Más reciente"],
+  ["views", "Más visitado"],
+  ["popular", "Más popular"],
+];
+
+const PHASE_OPTIONS: [Exclude<PhaseFilter, "all">, string][] = [
+  ["upcoming", "Sin empezar"],
+  ["ongoing", "En curso"],
+  ["finished", "Terminada"],
+];
+
+function categoryLabelFor(value: PostCategory | "all"): string {
+  return value === "all" ? "Todo" : categoryLabel(value);
+}
+
+function sortLabelFor(sort: SortMode, phase: PhaseFilter): string {
+  const base = SORT_OPTIONS.find(([v]) => v === sort)?.[1] ?? "";
+  if (phase === "all") return base;
+  const extra = PHASE_OPTIONS.find(([v]) => v === phase)?.[1] ?? "";
+  return `${base} · ${extra}`;
+}
+
 const homeQuery = queryOptions({
   queryKey: ["posts", "home"],
   queryFn: () => listPublishedPosts({ data: { limit: 60 } }) as Promise<PostSummary[]>,
