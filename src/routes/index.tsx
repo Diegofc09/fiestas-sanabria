@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, LayoutGrid } from "lucide-react";
+import { CalendarDays, ChevronDown, LayoutGrid } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
@@ -7,6 +7,7 @@ import { listPublishedPosts } from "@/lib/posts.functions";
 import { listPostMetrics } from "@/lib/saved.functions";
 import {
   CATEGORIES,
+  categoryLabel,
   eventPhase,
   isExpired,
   timelineDate,
@@ -18,6 +19,15 @@ import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, useSearchQuery } from "@/lib/search-store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 type PostMetric = { post_id: string; views_count: number; saves_count: number; comments_count: number };
@@ -31,6 +41,30 @@ const metricsQuery = queryOptions({
 type SortMode = "upcoming" | "recent" | "views" | "popular";
 type PhaseFilter = "all" | "upcoming" | "ongoing" | "finished";
 type ViewMode = "cards" | "calendar";
+
+const SORT_OPTIONS: [SortMode, string][] = [
+  ["upcoming", "Más próximas"],
+  ["recent", "Más reciente"],
+  ["views", "Más visitado"],
+  ["popular", "Más popular"],
+];
+
+const PHASE_OPTIONS: [Exclude<PhaseFilter, "all">, string][] = [
+  ["upcoming", "Sin empezar"],
+  ["ongoing", "En curso"],
+  ["finished", "Terminada"],
+];
+
+function categoryLabelFor(value: PostCategory | "all"): string {
+  return value === "all" ? "Todo" : categoryLabel(value);
+}
+
+function sortLabelFor(sort: SortMode, phase: PhaseFilter): string {
+  const base = SORT_OPTIONS.find(([v]) => v === sort)?.[1] ?? "";
+  if (phase === "all") return base;
+  const extra = PHASE_OPTIONS.find(([v]) => v === phase)?.[1] ?? "";
+  return `${base} · ${extra}`;
+}
 
 const homeQuery = queryOptions({
   queryKey: ["posts", "home"],
@@ -124,49 +158,72 @@ function HomePage() {
         </p>
       </header>
 
-      <div className="mt-8 flex flex-wrap items-center gap-2">
-        <Chip active={category === "all"} onClick={() => setCategory("all")}>
-          Todo
-        </Chip>
-        {CATEGORIES.map((c) => (
-          <Chip key={c.value} active={category === c.value} onClick={() => setCategory(c.value)}>
-            {c.label}
-          </Chip>
-        ))}
-        <span className="mx-1 hidden h-8 w-px self-center bg-rule sm:block" aria-hidden="true" />
-        {(
-          [
-            ["upcoming", "Sin empezar"],
-            ["ongoing", "En curso"],
-            ["finished", "Terminada"],
-          ] as const
-        ).map(([value, label]) => (
-          <Chip
-            key={value}
-            active={phase === value}
-            tone={value}
-            onClick={() => setPhase((p) => (p === value ? "all" : value))}
-          >
-            {label}
-          </Chip>
-        ))}
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="eyebrow text-muted-foreground">Ordenar por</span>
-          {(
-            [
-              ["upcoming", "Más próximas"],
-              ["recent", "Más reciente"],
-              ["views", "Más visitado"],
-              ["popular", "Más popular"],
-            ] as const
-          ).map(([value, label]) => (
-            <Chip key={value} active={sort === value} onClick={() => setSort(value)}>
-              {label}
-            </Chip>
-          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+              >
+                Categoría
+                <span className="text-muted-foreground">{categoryLabelFor(category)}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52">
+              <DropdownMenuRadioGroup
+                value={category}
+                onValueChange={(v) => setCategory(v as PostCategory | "all")}
+              >
+                <DropdownMenuRadioItem value="all">Todo</DropdownMenuRadioItem>
+                {CATEGORIES.map((c) => (
+                  <DropdownMenuRadioItem key={c.value} value={c.value}>
+                    {c.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+              >
+                Ordenar por
+                <span className="text-muted-foreground">{sortLabelFor(sort, phase)}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Orden</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                value={sort}
+                onValueChange={(v) => setSort(v as SortMode)}
+              >
+                {SORT_OPTIONS.map(([value, label]) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Estado del evento</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                value={phase}
+                onValueChange={(v) => setPhase(v as PhaseFilter)}
+              >
+                <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
+                {PHASE_OPTIONS.map(([value, label]) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div
@@ -237,33 +294,3 @@ function ViewButton({
   );
 }
 
-function Chip({
-  active,
-  tone,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  tone?: "upcoming" | "ongoing" | "finished";
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "glow-hover rounded-full border px-4 py-2 text-[0.8125rem] font-medium md:text-sm",
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-secondary text-muted-foreground",
-        active && tone === "upcoming" && "border-phase-upcoming bg-phase-upcoming/15 text-foreground",
-        active && tone === "ongoing" && "border-phase-ongoing bg-phase-ongoing/15 text-foreground",
-        active && tone === "finished" && "border-phase-finished bg-phase-finished/15 text-foreground",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
