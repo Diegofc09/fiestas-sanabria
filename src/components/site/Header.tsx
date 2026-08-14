@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { CATEGORIES } from "@/lib/posts";
 import { setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
 import { ThemeToggle } from "./ThemeToggle";
+import logoAsset from "@/assets/fiestas-sanabria-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
 
