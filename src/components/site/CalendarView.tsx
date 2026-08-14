@@ -95,6 +95,12 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
 
   const monthPosts = posts
     .filter((p) => {
+      if (p.event_date) {
+        const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+        const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")}`;
+        const end = p.event_end_date ?? p.event_date;
+        return p.event_date <= monthEnd && end >= monthStart;
+      }
       const d = new Date(timelineDate(p));
       return d.getFullYear() === year && d.getMonth() === month;
     })
