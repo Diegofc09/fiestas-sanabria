@@ -22,16 +22,15 @@ export const PHASE_DOT: Record<EventPhase, string> = {
   finished: "bg-phase-finished",
 };
 
-/** Fase dominante de un día: en curso > sin empezar > terminada. */
-function dayPhase(posts: PostSummary[]): EventPhase | null {
-  const phases = posts.map((p) => eventPhase(p)).filter(Boolean) as EventPhase[];
-  if (phases.includes("ongoing")) return "ongoing";
-  if (phases.includes("upcoming")) return "upcoming";
-  if (phases.includes("finished")) return "finished";
-  return null;
-}
+/** Estilo de la barra del evento según su fase (semáforo). */
+const PHASE_BAR: Record<EventPhase | "none", string> = {
+  upcoming: "bg-phase-upcoming/20 text-foreground ring-1 ring-inset ring-phase-upcoming/60",
+  ongoing: "bg-phase-ongoing/20 text-foreground ring-1 ring-inset ring-phase-ongoing/60",
+  finished: "bg-phase-finished/15 text-muted-foreground ring-1 ring-inset ring-phase-finished/50",
+  none: "bg-secondary text-foreground ring-1 ring-inset ring-border",
+};
 
-const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
+const WEEKDAYS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
 const MONTHS = [
   "enero",
   "febrero",
@@ -47,66 +46,108 @@ const MONTHS = [
   "diciembre",
 ];
 
-function dayKey(value: string): string {
-  const d = new Date(value);
+function toKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-/** Calendario mensual con semáforo de estado y listado del día seleccionado. */
+function dayKey(value: string): string {
+  return toKey(new Date(value));
+}
+
+/** Rango [inicio, fin] de una publicación en claves YYYY-MM-DD. */
+function postRange(post: PostSummary): { start: string; end: string } {
+  if (post.event_date) {
+    return { start: post.event_date, end: post.event_end_date ?? post.event_date };
+  }
+  const key = dayKey(timelineDate(post));
+  return { start: key, end: key };
+}
+
+type Segment = { post: PostSummary; startCol: number; span: number; lane: number };
+
+/** Calendario mensual con barras de eventos que abarcan todos sus días. */
 export function CalendarView({ posts }: { posts: PostSummary[] }) {
   const today = new Date();
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState<string | null>(null);
 
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+
+  /** Semanas visibles: filas de 7 días (incluye días de meses vecinos). */
+  const weeks = useMemo(() => {
+    const start = new Date(year, month, 1 - firstWeekday);
+    const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+    const list: Date[][] = [];
+    for (let i = 0; i < totalCells; i += 7) {
+      list.push(
+        Array.from({ length: 7 }, (_, k) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i + k)),
+      );
+    }
+    return list;
+  }, [year, month, firstWeekday, daysInMonth]);
+
+  /** Publicaciones por día (una fiesta aparece en todos sus días). */
   const byDay = useMemo(() => {
     const map = new Map<string, PostSummary[]>();
-    const add = (key: string, post: PostSummary) => {
-      const list = map.get(key);
-      if (list) list.push(post);
-      else map.set(key, [post]);
-    };
     for (const post of posts) {
-      // Fiestas con rango de fechas se muestran en todos los días de inicio a fin.
-      if (post.event_date && post.event_end_date && post.event_end_date > post.event_date) {
-        const cursorDay = new Date(`${post.event_date}T12:00:00Z`);
-        const endDay = new Date(`${post.event_end_date}T12:00:00Z`);
-        let guard = 0;
-        while (cursorDay.getTime() <= endDay.getTime() && guard < 400) {
-          add(dayKey(cursorDay.toISOString()), post);
-          cursorDay.setDate(cursorDay.getDate() + 1);
-          guard += 1;
-        }
-        continue;
+      const { start, end } = postRange(post);
+      const cursorDay = new Date(`${start}T12:00:00Z`);
+      const endDay = new Date(`${end}T12:00:00Z`);
+      let guard = 0;
+      while (cursorDay.getTime() <= endDay.getTime() && guard < 400) {
+        const key = `${cursorDay.getUTCFullYear()}-${String(cursorDay.getUTCMonth() + 1).padStart(2, "0")}-${String(cursorDay.getUTCDate()).padStart(2, "0")}`;
+        const list = map.get(key);
+        if (list) list.push(post);
+        else map.set(key, [post]);
+        cursorDay.setUTCDate(cursorDay.getUTCDate() + 1);
+        guard += 1;
       }
-      add(dayKey(timelineDate(post)), post);
     }
     return map;
   }, [posts]);
 
-  const year = cursor.getFullYear();
-  const month = cursor.getMonth();
-  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: (number | null)[] = [
-    ...Array.from({ length: firstWeekday }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
+  /** Segmentos por semana con carriles para que no se solapen. */
+  const segmentsByWeek = useMemo(() => {
+    return weeks.map((week) => {
+      const weekStart = toKey(week[0]!);
+      const weekEnd = toKey(week[6]!);
+      const inWeek = posts
+        .map((post) => ({ post, ...postRange(post) }))
+        .filter((p) => p.start <= weekEnd && p.end >= weekStart)
+        .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : b.end.localeCompare(a.end)));
+
+      const lanes: number[] = []; // última columna ocupada por carril
+      const segments: Segment[] = [];
+      for (const item of inWeek) {
+        const startIndex = Math.max(0, week.findIndex((d) => toKey(d) === item.start));
+        const endFound = week.findIndex((d) => toKey(d) === item.end);
+        const endIndex = endFound === -1 ? 6 : endFound;
+        const startCol = item.start < weekStart ? 0 : startIndex;
+        const span = Math.max(1, endIndex - startCol + 1);
+        let lane = lanes.findIndex((occupiedUntil) => occupiedUntil < startCol);
+        if (lane === -1) {
+          lane = lanes.length;
+          lanes.push(startCol + span - 1);
+        } else {
+          lanes[lane] = startCol + span - 1;
+        }
+        segments.push({ post: item.post, startCol, span, lane });
+      }
+      return segments;
+    });
+  }, [weeks, posts]);
 
   const monthPosts = posts
     .filter((p) => {
-      if (p.event_date) {
-        const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
-        const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")}`;
-        const end = p.event_end_date ?? p.event_date;
-        return p.event_date <= monthEnd && end >= monthStart;
-      }
-      const d = new Date(timelineDate(p));
-      return d.getFullYear() === year && d.getMonth() === month;
+      const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+      const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")}`;
+      const { start, end } = postRange(p);
+      return start <= monthEnd && end >= monthStart;
     })
-    .sort(
-      (a, b) => new Date(timelineDate(a)).getTime() - new Date(timelineDate(b)).getTime(),
-    );
+    .sort((a, b) => (postRange(a).start < postRange(b).start ? -1 : 1));
 
   const selectedPosts = selected ? (byDay.get(selected) ?? []) : null;
   const listed = selectedPosts ?? monthPosts;
@@ -116,19 +157,28 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
     setCursor(new Date(year, month + delta, 1));
   };
 
+  const todayKey = toKey(today);
+
   return (
-    <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-      <section className="lg:col-span-7">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-[family-name:var(--font-display)] text-2xl capitalize md:text-3xl">
-            {MONTHS[month]} {year}
-          </h2>
-          <div className="flex items-center gap-1">
+    <div className="space-y-8">
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(null);
+                setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
+              }}
+              className="rounded-full border border-border bg-secondary px-4 py-1.5 text-[0.8125rem] font-medium md:text-sm"
+            >
+              Hoy
+            </button>
             <button
               type="button"
               aria-label="Mes anterior"
               onClick={() => move(-1)}
-              className="glow-hover inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -136,63 +186,98 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
               type="button"
               aria-label="Mes siguiente"
               onClick={() => move(1)}
-              className="glow-hover inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
+            <h2 className="ml-1 font-[family-name:var(--font-display)] text-xl capitalize md:text-2xl">
+              {MONTHS[month]} de {year}
+            </h2>
           </div>
+          <p className="text-[0.8125rem] text-muted-foreground md:text-xs">
+            Clic en una etiqueta para ver detalles · clic en un día para filtrar
+          </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-7 gap-1 text-center">
-          {WEEKDAYS.map((d) => (
-            <span key={d} className="eyebrow pb-2 text-muted-foreground">
-              {d}
-            </span>
-          ))}
-          {cells.map((day, i) => {
-            if (day === null) return <span key={`empty-${i}`} className="aspect-square" />;
-            const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            const dayPosts = byDay.get(key) ?? [];
-            const count = dayPosts.length;
-            const phase = dayPhase(dayPosts);
-            const isToday = key === dayKey(today.toISOString());
-            const isSelected = selected === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                disabled={count === 0}
-                onClick={() => setSelected(isSelected ? null : key)}
-                aria-label={`${day} de ${MONTHS[month]}${count ? `, ${count} publicaciones` : ", sin publicaciones"}`}
-                className={cn(
-                  "relative flex aspect-square flex-col items-center justify-center rounded-lg border text-base transition-colors md:text-sm",
-                  count > 0
-                    ? "border-border bg-card text-foreground hover:bg-secondary"
-                    : "border-transparent text-muted-foreground/60",
-                  isToday && "font-semibold",
-                  phase === "upcoming" && "border-phase-upcoming/60",
-                  phase === "ongoing" && "border-phase-ongoing/70",
-                  phase === "finished" && "border-phase-finished/50",
-                  isSelected && "border-primary bg-secondary text-primary",
-                )}
+        <div className="mt-5 overflow-hidden rounded-xl border border-border">
+          <div className="grid grid-cols-7 border-b border-border bg-secondary/60">
+            {WEEKDAYS.map((d) => (
+              <span
+                key={d}
+                className="py-2 text-center text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground"
               >
-                {day}
-                {count > 0 && (
-                  <span className="mt-1 flex gap-0.5" aria-hidden="true">
-                    {Array.from({ length: Math.min(count, 3) }, (_, k) => (
-                      <span
-                        key={k}
-                        className={cn("h-1 w-1 rounded-full", phase ? PHASE_DOT[phase] : "bg-primary")}
-                      />
-                    ))}
-                  </span>
-                )}
-              </button>
+                {d}
+              </span>
+            ))}
+          </div>
+
+          {weeks.map((week, wi) => {
+            const segments = segmentsByWeek[wi] ?? [];
+            const laneCount = segments.reduce((max, s) => Math.max(max, s.lane + 1), 0);
+            return (
+              <div key={toKey(week[0]!)} className="border-b border-border last:border-b-0">
+                <div className="grid grid-cols-7">
+                  {week.map((d) => {
+                    const key = toKey(d);
+                    const isCurrentMonth = d.getMonth() === month;
+                    const isToday = key === todayKey;
+                    const isSelected = selected === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setSelected(isSelected ? null : key)}
+                        className={cn(
+                          "flex justify-center border-r border-border/60 py-2 last:border-r-0",
+                          !isCurrentMonth && "text-muted-foreground/50",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-sm",
+                            isToday && "bg-primary font-semibold text-primary-foreground",
+                            !isToday && isSelected && "bg-secondary font-semibold text-primary",
+                          )}
+                        >
+                          {d.getDate()}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div
+                  className="grid grid-cols-7 gap-y-1 px-1 pb-2"
+                  style={{ minHeight: laneCount === 0 ? 8 : undefined }}
+                >
+                  {segments.map((seg) => {
+                    const phase = eventPhase(seg.post) ?? "none";
+                    return (
+                      <Link
+                        key={`${seg.post.id}-${seg.startCol}`}
+                        to="/articulo/$slug"
+                        params={{ slug: seg.post.slug }}
+                        title={seg.post.title}
+                        style={{
+                          gridColumn: `${seg.startCol + 1} / span ${seg.span}`,
+                          gridRow: seg.lane + 1,
+                        }}
+                        className={cn(
+                          "mx-0.5 truncate rounded-full px-2.5 py-1 text-[0.75rem] font-medium transition-opacity hover:opacity-80 md:text-xs",
+                          PHASE_BAR[phase],
+                        )}
+                      >
+                        {seg.post.title}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         </div>
 
-        <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-muted-foreground md:text-xs">
+        <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-muted-foreground md:text-xs">
           {(
             [
               ["upcoming", "Sin empezar"],
@@ -208,7 +293,7 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
         </ul>
       </section>
 
-      <section className="lg:col-span-5">
+      <section>
         <h2 className="border-b border-rule pb-3 font-[family-name:var(--font-display)] text-xl">
           {selected ? formatDate(`${selected}T12:00:00Z`) : `Publicaciones de ${MONTHS[month]}`}
         </h2>
