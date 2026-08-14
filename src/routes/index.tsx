@@ -147,18 +147,16 @@ function HomePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
-      <header className="pt-9 md:pt-14">
-        <p className="eyebrow text-primary">Agenda de la comarca</p>
-        <h1 className="mt-3 max-w-3xl text-[2.1rem] font-bold leading-[1.05] sm:text-5xl md:text-[3.25rem]">
-          {query ? `Resultados para “${query}”` : "Próximas fiestas y eventos en Sanabria"}
-        </h1>
-        <p className="mt-4 max-w-xl text-base font-light leading-relaxed text-muted-foreground md:text-[0.9375rem]">
-          Fiestas patronales, verbenas, mercados, romerías y conciertos, ordenados por lo que está
-          más cerca en el tiempo.
-        </p>
-      </header>
+      {query ? (
+        <header className="pt-9 md:pt-14">
+          <h1 className="text-[1.6rem] font-bold leading-tight sm:text-3xl">
+            Resultados para “{query}”
+          </h1>
+        </header>
+      ) : null}
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+
         <div className="flex flex-wrap items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
