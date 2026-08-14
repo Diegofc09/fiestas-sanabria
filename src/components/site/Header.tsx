@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { CATEGORIES } from "@/lib/posts";
 import { setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
 import { ThemeToggle } from "./ThemeToggle";
+import logoAsset from "@/assets/fiestas-sanabria-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
 
@@ -46,17 +47,31 @@ export function Header() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:gap-6 md:px-8 md:py-4">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:shrink-0">
-          <Link to="/" className="group flex min-w-0 flex-col" onClick={() => setOpen(false)}>
-            <span
+          <Link
+            to="/"
+            className="group flex min-w-0 items-center gap-3"
+            onClick={() => setOpen(false)}
+          >
+            <img
+              src={logoAsset.url}
+              alt="FiestasSanabria"
               className={cn(
-                "truncate font-[family-name:var(--font-display)] font-bold leading-none tracking-tight transition-all duration-300",
-                scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
+                "w-auto shrink-0 transition-all duration-300 dark:invert",
+                scrolled ? "h-10 md:h-12" : "h-12 md:h-14",
               )}
-            >
-              Fiestas<span className="text-primary">Sanabria</span>
-            </span>
-            <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-primary">
-              Fiestas · Eventos · Comarca
+            />
+            <span className="flex min-w-0 flex-col">
+              <span
+                className={cn(
+                  "truncate font-[family-name:var(--font-display)] font-bold leading-none tracking-tight transition-all duration-300",
+                  scrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
+                )}
+              >
+                Fiestas<span className="text-primary">Sanabria</span>
+              </span>
+              <span className="eyebrow mt-1 text-muted-foreground transition-colors group-hover:text-primary">
+                Fiestas · Eventos · Comarca
+              </span>
             </span>
           </Link>
 
