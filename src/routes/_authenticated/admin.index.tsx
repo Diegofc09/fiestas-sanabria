@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ExternalLink, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, ExternalLink, Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { adminDeletePost, adminListPosts, adminSetPostStatus, getAdminContext } from "@/lib/posts.functions";
+import { adminPostRankings, type PostRanking } from "@/lib/analytics.functions";
 import { categoryLabel, formatDateShort, statusLabel, type Post } from "@/lib/posts";
 import { PostRankings } from "@/components/admin/PostRankings";
 import { SiteTraffic } from "@/components/admin/SiteTraffic";
@@ -27,6 +28,16 @@ function AdminIndex() {
     staleTime: 60_000,
   });
   const isAdmin = Boolean(ctx?.isAdmin);
+
+  const { data: rankings } = useQuery({
+    queryKey: ["admin-post-rankings"],
+    queryFn: () => adminPostRankings() as Promise<PostRanking[]>,
+    staleTime: 60_000,
+  });
+  const viewsByPost = new Map(
+    (rankings ?? []).map((r) => [r.post_id, { total: r.views_total, last30: r.views_last_30 }]),
+  );
+
 
   const approve = useMutation({
     mutationFn: (id: string) => adminSetPostStatus({ data: { id, status: "published" } }),
@@ -106,9 +117,17 @@ function AdminIndex() {
                   {post.featured && <span className="text-xs text-primary">Destacado</span>}
                 </div>
                 <p className="mt-1.5 truncate font-[family-name:var(--font-display)] text-lg">{post.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  Actualizado el {formatDateShort(post.updated_at)}
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <span>Actualizado el {formatDateShort(post.updated_at)}</span>
+                  <span className="inline-flex items-center gap-1 text-foreground">
+                    <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                    {viewsByPost.get(post.id)?.total ?? 0} visitas
+                    <span className="text-muted-foreground">
+                      ({viewsByPost.get(post.id)?.last30 ?? 0} en 30 días)
+                    </span>
+                  </span>
                 </p>
+
               </div>
               <div className="flex items-center gap-1.5">
                 {isAdmin && post.status === "pending" && (
