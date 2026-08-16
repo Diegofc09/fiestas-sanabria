@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ExternalLink, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, ExternalLink, Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { adminDeletePost, adminListPosts, adminSetPostStatus, getAdminContext } from "@/lib/posts.functions";
+import { adminPostRankings, type PostRanking } from "@/lib/analytics.functions";
 import { categoryLabel, formatDateShort, statusLabel, type Post } from "@/lib/posts";
 import { PostRankings } from "@/components/admin/PostRankings";
 import { SiteTraffic } from "@/components/admin/SiteTraffic";
@@ -27,6 +28,16 @@ function AdminIndex() {
     staleTime: 60_000,
   });
   const isAdmin = Boolean(ctx?.isAdmin);
+
+  const { data: rankings } = useQuery({
+    queryKey: ["admin-post-rankings"],
+    queryFn: () => adminPostRankings() as Promise<PostRanking[]>,
+    staleTime: 60_000,
+  });
+  const viewsByPost = new Map(
+    (rankings ?? []).map((r) => [r.post_id, { total: r.views_total, last30: r.views_last_30 }]),
+  );
+
 
   const approve = useMutation({
     mutationFn: (id: string) => adminSetPostStatus({ data: { id, status: "published" } }),
