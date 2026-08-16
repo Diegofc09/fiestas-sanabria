@@ -267,7 +267,7 @@ export function CalendarView({ posts }: { posts: PostSummary[] }) {
                           PHASE_BAR[phase],
                         )}
                       >
-                        {seg.post.title}
+                        {seg.post.village ?? seg.post.title}
                       </Link>
                     );
                   })}
