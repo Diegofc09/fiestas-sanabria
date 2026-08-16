@@ -28,6 +28,7 @@ type FormState = {
   status: PostStatus;
   event_date: string;
   event_end_date: string;
+  village: string;
   cover_image_url: string | null;
   cover_image_alt: string;
 };

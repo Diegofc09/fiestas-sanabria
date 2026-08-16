@@ -160,6 +160,7 @@ export const adminSavePost = createServerFn({ method: "POST" })
       status: data.status,
       event_date: data.event_date ?? null,
       event_end_date: data.event_end_date ?? null,
+      village: data.village?.trim() || null,
       published_at:
         data.status === "published" ? (data.published_at ?? new Date().toISOString()) : data.published_at ?? null,
     };
