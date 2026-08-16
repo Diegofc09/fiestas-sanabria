@@ -124,7 +124,7 @@ export function FeedCard({
           <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] font-light text-muted-foreground md:text-xs">
             <time dateTime={timelineDate(post)}>{formatDateShort(timelineDate(post))}</time>
             <span className="h-3 w-px bg-rule" aria-hidden="true" />
-            <span>Sanabria · {categoryLabel(post.category)}</span>
+            <span>{post.village?.trim() || "Sanabria"} · {categoryLabel(post.category)}</span>
           </p>
         </div>
       </Link>
