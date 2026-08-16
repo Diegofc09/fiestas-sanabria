@@ -22,6 +22,7 @@ export type Post = {
   status: PostStatus;
   event_date: string | null;
   event_end_date: string | null;
+  village: string | null;
   author_label: string | null;
   published_at: string | null;
   created_at: string;

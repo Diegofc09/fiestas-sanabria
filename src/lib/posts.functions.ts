@@ -21,6 +21,7 @@ const saveSchema = z.object({
   status: z.enum(["draft", "pending", "published"]),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   event_end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  village: z.string().max(120).nullable().optional(),
   published_at: z.string().nullable().optional(),
 });
 
