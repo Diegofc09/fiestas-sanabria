@@ -59,6 +59,7 @@ export function PostForm({ post }: { post?: Post }) {
     status: post?.status ?? "draft",
     event_date: post?.event_date ?? "",
     event_end_date: post?.event_end_date ?? "",
+    village: post?.village ?? "",
     cover_image_url: post?.cover_image_url ?? null,
     cover_image_alt: post?.cover_image_alt ?? "",
   });
