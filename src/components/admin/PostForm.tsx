@@ -88,6 +88,7 @@ export function PostForm({ post }: { post?: Post }) {
           status,
           event_date: form.event_date ? form.event_date : null,
           event_end_date: form.event_end_date ? form.event_end_date : null,
+          village: form.village.trim() || null,
           cover_image_url: form.cover_image_url,
           cover_image_alt: form.cover_image_alt.trim() || null,
           published_at: post?.published_at ?? null,
