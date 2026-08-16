@@ -28,6 +28,7 @@ type FormState = {
   status: PostStatus;
   event_date: string;
   event_end_date: string;
+  village: string;
   cover_image_url: string | null;
   cover_image_alt: string;
 };
@@ -58,6 +59,7 @@ export function PostForm({ post }: { post?: Post }) {
     status: post?.status ?? "draft",
     event_date: post?.event_date ?? "",
     event_end_date: post?.event_end_date ?? "",
+    village: post?.village ?? "",
     cover_image_url: post?.cover_image_url ?? null,
     cover_image_alt: post?.cover_image_alt ?? "",
   });
@@ -86,6 +88,7 @@ export function PostForm({ post }: { post?: Post }) {
           status,
           event_date: form.event_date ? form.event_date : null,
           event_end_date: form.event_end_date ? form.event_end_date : null,
+          village: form.village.trim() || null,
           cover_image_url: form.cover_image_url,
           cover_image_alt: form.cover_image_alt.trim() || null,
           published_at: post?.published_at ?? null,
@@ -200,6 +203,22 @@ export function PostForm({ post }: { post?: Post }) {
               </select>
             </div>
             <div>
+              <label htmlFor="village" className="mb-1.5 block text-sm font-medium">
+                Pueblo
+              </label>
+              <input
+                id="village"
+                value={form.village}
+                onChange={(e) => set("village", e.target.value)}
+                placeholder="Ej. Puebla de Sanabria"
+                className={fieldClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Se muestra en la cabecera de la tarjeta de la publicación.
+              </p>
+            </div>
+            <div>
+
               <label htmlFor="slug" className="mb-1.5 block text-sm font-medium">
                 URL
               </label>

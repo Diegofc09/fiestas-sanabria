@@ -98,12 +98,13 @@ export function FeedCard({
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-[0.6875rem] font-bold text-primary"
           aria-hidden="true"
         >
-          {authorLabel(post).slice(0, 1).toUpperCase()}
+          {(post.village?.trim() || authorLabel(post)).slice(0, 1).toUpperCase()}
         </span>
         <span className="truncate text-[0.8125rem] font-medium text-foreground/90">
-          {authorLabel(post)}
+          {post.village?.trim() || authorLabel(post)}
         </span>
       </div>
+
 
       <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block flex-1">
         <div className={cn("relative overflow-hidden", aspect)}>
@@ -123,7 +124,7 @@ export function FeedCard({
           <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] font-light text-muted-foreground md:text-xs">
             <time dateTime={timelineDate(post)}>{formatDateShort(timelineDate(post))}</time>
             <span className="h-3 w-px bg-rule" aria-hidden="true" />
-            <span>Sanabria · {categoryLabel(post.category)}</span>
+            <span>{post.village?.trim() || "Sanabria"} · {categoryLabel(post.category)}</span>
           </p>
         </div>
       </Link>

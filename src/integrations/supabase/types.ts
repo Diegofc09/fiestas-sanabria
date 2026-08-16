@@ -171,6 +171,7 @@ export type Database = {
           status: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at: string
+          village: string | null
         }
         Insert: {
           author_id?: string | null
@@ -190,6 +191,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at?: string
+          village?: string | null
         }
         Update: {
           author_id?: string | null
@@ -209,6 +211,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["post_status"]
           title?: string
           updated_at?: string
+          village?: string | null
         }
         Relationships: []
       }
