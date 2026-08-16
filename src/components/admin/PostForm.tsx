@@ -203,6 +203,22 @@ export function PostForm({ post }: { post?: Post }) {
               </select>
             </div>
             <div>
+              <label htmlFor="village" className="mb-1.5 block text-sm font-medium">
+                Pueblo
+              </label>
+              <input
+                id="village"
+                value={form.village}
+                onChange={(e) => set("village", e.target.value)}
+                placeholder="Ej. Puebla de Sanabria"
+                className={fieldClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Se muestra en la cabecera de la tarjeta de la publicación.
+              </p>
+            </div>
+            <div>
+
               <label htmlFor="slug" className="mb-1.5 block text-sm font-medium">
                 URL
               </label>
