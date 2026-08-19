@@ -20,6 +20,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const query = useSearchQuery();
+  const isHome = useLocation({ select: (l) => l.pathname === "/" });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
