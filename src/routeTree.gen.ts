@@ -16,9 +16,11 @@ import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as FiestasRouteImport } from './routes/fiestas'
 import { Route as GuardadosRouteImport } from './routes/guardados'
+import { Route as MerchandisingRouteImport } from './routes/merchandising'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PublicidadRouteImport } from './routes/publicidad'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -60,6 +62,11 @@ const GuardadosRoute = GuardadosRouteImport.update({
   path: '/guardados',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MerchandisingRoute = MerchandisingRouteImport.update({
+  id: '/merchandising',
+  path: '/merchandising',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NoticiasRoute = NoticiasRouteImport.update({
   id: '/noticias',
   path: '/noticias',
@@ -73,6 +80,11 @@ const OtrosRoute = OtrosRouteImport.update({
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicidadRoute = PublicidadRouteImport.update({
+  id: '/publicidad',
+  path: '/publicidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -114,9 +126,11 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -131,9 +145,11 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -149,9 +165,11 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -168,9 +186,11 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/admin'
     | '/articulo/$slug'
     | '/admin/nuevo'
@@ -185,9 +205,11 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/articulo/$slug'
     | '/admin/nuevo'
     | '/admin'
@@ -202,9 +224,11 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/_authenticated/admin'
     | '/articulo/$slug'
     | '/_authenticated/admin/nuevo'
@@ -221,9 +245,11 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   FiestasRoute: typeof FiestasRoute
   GuardadosRoute: typeof GuardadosRoute
+  MerchandisingRoute: typeof MerchandisingRoute
   NoticiasRoute: typeof NoticiasRoute
   OtrosRoute: typeof OtrosRoute
   PerfilRoute: typeof PerfilRoute
+  PublicidadRoute: typeof PublicidadRoute
   ArticuloSlugRoute: typeof ArticuloSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -279,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuardadosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/merchandising': {
+      id: '/merchandising'
+      path: '/merchandising'
+      fullPath: '/merchandising'
+      preLoaderRoute: typeof MerchandisingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/noticias': {
       id: '/noticias'
       path: '/noticias'
@@ -298,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/publicidad': {
+      id: '/publicidad'
+      path: '/publicidad'
+      fullPath: '/publicidad'
+      preLoaderRoute: typeof PublicidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -379,9 +419,11 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   FiestasRoute: FiestasRoute,
   GuardadosRoute: GuardadosRoute,
+  MerchandisingRoute: MerchandisingRoute,
   NoticiasRoute: NoticiasRoute,
   OtrosRoute: OtrosRoute,
   PerfilRoute: PerfilRoute,
+  PublicidadRoute: PublicidadRoute,
   ArticuloSlugRoute: ArticuloSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
