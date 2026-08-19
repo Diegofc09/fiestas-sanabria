@@ -358,7 +358,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "subscriber"
-      post_category: "fiestas" | "eventos" | "noticias" | "otros"
+      post_category:
+        | "fiestas"
+        | "eventos"
+        | "noticias"
+        | "otros"
+        | "publicidad"
+        | "merchandising"
       post_status: "draft" | "published" | "pending"
     }
     CompositeTypes: {
@@ -488,7 +494,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "subscriber"],
-      post_category: ["fiestas", "eventos", "noticias", "otros"],
+      post_category: [
+        "fiestas",
+        "eventos",
+        "noticias",
+        "otros",
+        "publicidad",
+        "merchandising",
+      ],
       post_status: ["draft", "published", "pending"],
     },
   },
