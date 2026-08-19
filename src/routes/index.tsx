@@ -145,17 +145,42 @@ function HomePage() {
     return list;
   }, [posts, category, phase, query, sort, metricFor, savedIds]);
 
+  if (!query) {
+    return (
+      <div className="mx-auto flex min-h-[62vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center md:px-8">
+        <h1 className="font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
+          Fiestas<span className="text-primary">Sanabria</span>
+        </h1>
+        <p className="mt-4 max-w-md text-[0.9375rem] font-light text-muted-foreground md:text-base">
+          Busca fiestas, eventos y anuncios de la comarca de Sanabria.
+        </p>
+
+        <label className="mt-8 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5">
+          <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+          <input
+            type="search"
+            autoFocus
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setSearchOpen(true)}
+            placeholder="Buscar fiestas, eventos, publicidad..."
+            aria-label="Buscar publicaciones"
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+          />
+        </label>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
-      {query ? (
-        <header className="pt-9 md:pt-14">
-          <h1 className="text-[1.6rem] font-bold leading-tight sm:text-3xl">
-            Resultados para “{query}”
-          </h1>
-        </header>
-      ) : null}
+      <header className="pt-9 md:pt-14">
+        <h1 className="text-[1.6rem] font-bold leading-tight sm:text-3xl">
+          Resultados para “{query}”
+        </h1>
+      </header>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+
 
         <div className="flex flex-wrap items-center gap-2">
           <DropdownMenu>
