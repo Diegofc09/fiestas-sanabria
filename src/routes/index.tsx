@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import logoAsset from "@/assets/wolf-mark.png.asset.json";
 
 type PostMetric = { post_id: string; views_count: number; saves_count: number; comments_count: number };
 
@@ -148,7 +149,12 @@ function HomePage() {
   if (!query) {
     return (
       <div className="mx-auto flex min-h-[62vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center md:px-8">
-        <h1 className="font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
+        <img
+          src={logoAsset.url}
+          alt="FiestasSanabria"
+          className="h-24 w-auto dark:invert sm:h-32"
+        />
+        <h1 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
           Fiestas<span className="text-primary">Sanabria</span>
         </h1>
         <p className="mt-4 max-w-md text-[0.9375rem] font-light text-muted-foreground md:text-base">
@@ -162,7 +168,7 @@ function HomePage() {
             autoFocus
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setSearchOpen(true)}
-            placeholder="Buscar fiestas, eventos, publicidad..."
+            placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
             aria-label="Buscar publicaciones"
             className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
