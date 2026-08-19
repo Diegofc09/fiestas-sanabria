@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Bookmark, Instagram, Menu, Search, X, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -20,6 +20,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const query = useSearchQuery();
+  const isHome = useLocation({ select: (l) => l.pathname === "/" });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -90,7 +91,12 @@ export function Header() {
         </div>
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <label className="neon-border glow-hover flex min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5">
+          <label
+            className={cn(
+              "neon-border glow-hover min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5",
+              isHome && !query ? "hidden" : "flex",
+            )}
+          >
             <Search className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <input
               type="search"
