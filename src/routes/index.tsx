@@ -18,7 +18,7 @@ import { FeedGrid } from "@/components/site/FeedCard";
 import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
-import { matchesQuery, useSearchQuery } from "@/lib/search-store";
+import { matchesQuery, setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
