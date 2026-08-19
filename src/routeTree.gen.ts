@@ -19,6 +19,7 @@ import { Route as GuardadosRouteImport } from './routes/guardados'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PublicidadRouteImport } from './routes/publicidad'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticuloSlugRouteImport } from './routes/articulo.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -75,6 +76,11 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicidadRoute = PublicidadRouteImport.update({
+  id: '/publicidad',
+  path: '/publicidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
+  '/publicidad': typeof PublicidadRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articulo/$slug': typeof ArticuloSlugRoute
   '/_authenticated/admin/nuevo': typeof AuthenticatedAdminNuevoRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/admin'
     | '/articulo/$slug'
     | '/admin/nuevo'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/articulo/$slug'
     | '/admin/nuevo'
     | '/admin'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/otros'
     | '/perfil'
+    | '/publicidad'
     | '/_authenticated/admin'
     | '/articulo/$slug'
     | '/_authenticated/admin/nuevo'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   NoticiasRoute: typeof NoticiasRoute
   OtrosRoute: typeof OtrosRoute
   PerfilRoute: typeof PerfilRoute
+  PublicidadRoute: typeof PublicidadRoute
   ArticuloSlugRoute: typeof ArticuloSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/publicidad': {
+      id: '/publicidad'
+      path: '/publicidad'
+      fullPath: '/publicidad'
+      preLoaderRoute: typeof PublicidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasRoute: NoticiasRoute,
   OtrosRoute: OtrosRoute,
   PerfilRoute: PerfilRoute,
+  PublicidadRoute: PublicidadRoute,
   ArticuloSlugRoute: ArticuloSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
