@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, LayoutGrid } from "lucide-react";
+import { CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
