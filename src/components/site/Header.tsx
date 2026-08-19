@@ -90,7 +90,12 @@ export function Header() {
         </div>
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <label className="neon-border glow-hover flex min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5">
+          <label
+            className={cn(
+              "neon-border glow-hover min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5",
+              isHome && !query ? "hidden" : "flex",
+            )}
+          >
             <Search className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <input
               type="search"
