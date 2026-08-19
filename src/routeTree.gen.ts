@@ -16,6 +16,7 @@ import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as FiestasRouteImport } from './routes/fiestas'
 import { Route as GuardadosRouteImport } from './routes/guardados'
+import { Route as MerchandisingRouteImport } from './routes/merchandising'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OtrosRouteImport } from './routes/otros'
 import { Route as PerfilRouteImport } from './routes/perfil'
@@ -59,6 +60,11 @@ const FiestasRoute = FiestasRouteImport.update({
 const GuardadosRoute = GuardadosRouteImport.update({
   id: '/guardados',
   path: '/guardados',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchandisingRoute = MerchandisingRouteImport.update({
+  id: '/merchandising',
+  path: '/merchandising',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasRoute = NoticiasRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/fiestas': typeof FiestasRoute
   '/guardados': typeof GuardadosRoute
+  '/merchandising': typeof MerchandisingRoute
   '/noticias': typeof NoticiasRoute
   '/otros': typeof OtrosRoute
   '/perfil': typeof PerfilRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/fiestas'
     | '/guardados'
+    | '/merchandising'
     | '/noticias'
     | '/otros'
     | '/perfil'
@@ -233,6 +245,7 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   FiestasRoute: typeof FiestasRoute
   GuardadosRoute: typeof GuardadosRoute
+  MerchandisingRoute: typeof MerchandisingRoute
   NoticiasRoute: typeof NoticiasRoute
   OtrosRoute: typeof OtrosRoute
   PerfilRoute: typeof PerfilRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/guardados'
       fullPath: '/guardados'
       preLoaderRoute: typeof GuardadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchandising': {
+      id: '/merchandising'
+      path: '/merchandising'
+      fullPath: '/merchandising'
+      preLoaderRoute: typeof MerchandisingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/noticias': {
@@ -399,6 +419,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   FiestasRoute: FiestasRoute,
   GuardadosRoute: GuardadosRoute,
+  MerchandisingRoute: MerchandisingRoute,
   NoticiasRoute: NoticiasRoute,
   OtrosRoute: OtrosRoute,
   PerfilRoute: PerfilRoute,

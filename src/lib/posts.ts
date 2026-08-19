@@ -1,4 +1,10 @@
-export type PostCategory = "fiestas" | "eventos" | "noticias" | "otros";
+export type PostCategory =
+  | "fiestas"
+  | "eventos"
+  | "noticias"
+  | "publicidad"
+  | "merchandising"
+  | "otros";
 export type PostStatus = "draft" | "pending" | "published";
 export type AppRole = "admin" | "editor" | "subscriber";
 
@@ -35,6 +41,8 @@ export const CATEGORIES: { value: PostCategory; label: string; path: string }[] 
   { value: "fiestas", label: "Fiestas", path: "/fiestas" },
   { value: "eventos", label: "Eventos", path: "/eventos" },
   { value: "noticias", label: "Noticias", path: "/noticias" },
+  { value: "publicidad", label: "Publicidad", path: "/publicidad" },
+  { value: "merchandising", label: "Merchandising", path: "/merchandising" },
   { value: "otros", label: "Otros", path: "/otros" },
 ];
 
