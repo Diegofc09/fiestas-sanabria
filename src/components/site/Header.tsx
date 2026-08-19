@@ -103,7 +103,7 @@ export function Header() {
               value={query}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
-              placeholder="Buscar fiestas, eventos, publicidad..."
+              placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
               aria-label="Buscar publicaciones"
               className="min-w-0 flex-1 bg-transparent text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none md:text-sm"
             />
