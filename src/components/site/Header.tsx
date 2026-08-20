@@ -50,7 +50,10 @@ export function Header() {
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:shrink-0">
           <Link
             to="/"
-            className="group flex min-w-0 items-center gap-3"
+            className={cn(
+              "group min-w-0 items-center gap-3",
+              isHome && !query ? "hidden" : "flex",
+            )}
             onClick={() => setOpen(false)}
           >
             <img
