@@ -4,7 +4,7 @@ import { z } from "zod";
 import { sanitizeArticleHtml } from "./sanitize";
 
 const listSchema = z.object({
-  category: z.enum(["fiestas", "eventos", "noticias", "otros"]).optional(),
+  category: z.enum(["fiestas", "eventos", "noticias", "publicidad", "merchandising", "otros"]).optional(),
   limit: z.number().int().min(1).max(60).optional(),
 });
 
@@ -16,7 +16,7 @@ const saveSchema = z.object({
   cover_image_alt: z.string().max(300).nullable().optional(),
   excerpt: z.string().max(600).nullable().optional(),
   content: z.string().max(200000),
-  category: z.enum(["fiestas", "eventos", "noticias", "otros"]),
+  category: z.enum(["fiestas", "eventos", "noticias", "publicidad", "merchandising", "otros"]),
   featured: z.boolean(),
   status: z.enum(["draft", "pending", "published"]),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
