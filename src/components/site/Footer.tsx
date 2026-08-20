@@ -2,12 +2,15 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
 import { useSearchQuery } from "@/lib/search-store";
+import { hasCategoryContent, useActiveCategories } from "@/hooks/useActiveCategories";
 import { cn } from "@/lib/utils";
 
 
 export function Footer() {
   const query = useSearchQuery();
   const isHome = useLocation({ select: (l) => l.pathname === "/" });
+  const activeCategories = useActiveCategories();
+
   const hideSections = isHome && !query;
 
   return (
@@ -28,7 +31,8 @@ export function Footer() {
 
           <p className="eyebrow text-primary/80">Secciones</p>
           <ul className="mt-4 space-y-2 text-[0.9375rem] font-light md:text-sm">
-            {CATEGORIES.map((c) => (
+            {CATEGORIES.filter((c) => hasCategoryContent(activeCategories, c.value)).map((c) => (
+
               <li key={c.path}>
                 <Link
                   to={c.path}

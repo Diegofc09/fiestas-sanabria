@@ -5,22 +5,29 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { CATEGORIES } from "@/lib/posts";
 import { setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
+import { hasCategoryContent, useActiveCategories } from "@/hooks/useActiveCategories";
 import { ThemeToggle } from "./ThemeToggle";
 import logoAsset from "@/assets/wolf-mark.png.asset.json";
 import { cn } from "@/lib/utils";
 
-
-const NAV = [
-  { label: "Inicio", path: "/" },
-  ...CATEGORIES.map((c) => ({ label: c.label, path: c.path })),
-  { label: "Calendario", path: "/calendario" },
-];
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const query = useSearchQuery();
   const isHome = useLocation({ select: (l) => l.pathname === "/" });
+  const activeCategories = useActiveCategories();
+
+  // Las secciones sin contenido se ocultan hasta que se publique algo en ellas.
+  const NAV = [
+    { label: "Inicio", path: "/" },
+    ...CATEGORIES.filter((c) => hasCategoryContent(activeCategories, c.value)).map((c) => ({
+      label: c.label,
+      path: c.path,
+    })),
+    { label: "Calendario", path: "/calendario" },
+  ];
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
