@@ -1,12 +1,19 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
+import { useSearchQuery } from "@/lib/search-store";
+import { cn } from "@/lib/utils";
 
 
 export function Footer() {
+  const query = useSearchQuery();
+  const isHome = useLocation({ select: (l) => l.pathname === "/" });
+  const hideSections = isHome && !query;
+
   return (
     <footer className="mt-20 border-t border-rule/60 bg-ink/80 text-ink-foreground backdrop-blur-xl">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-3 md:px-8">
+
         <div>
           <p className="font-[family-name:var(--font-display)] text-3xl font-bold leading-none">
             Fiestas<span className="text-primary">Sanabria</span>
