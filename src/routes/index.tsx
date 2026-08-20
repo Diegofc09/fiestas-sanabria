@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -173,7 +173,33 @@ function HomePage() {
             className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
         </label>
+
+        <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
+          <p className="eyebrow text-muted-foreground">Secciones</p>
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {CATEGORIES.filter((c) => c.value !== "otros").map((c) => (
+              <li key={c.value}>
+                <Link
+                  to={c.path}
+                  className="flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
+                >
+                  {c.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                to="/calendario"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
+              >
+                <CalendarDays className="h-4 w-4" />
+                Calendario
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </div>
+
     );
   }
 

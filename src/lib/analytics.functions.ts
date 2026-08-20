@@ -23,7 +23,7 @@ export type PostRanking = {
   title: string;
   slug: string;
   status: "draft" | "published";
-  category: "fiestas" | "eventos" | "noticias" | "otros";
+  category: "fiestas" | "eventos" | "noticias" | "publicidad" | "merchandising" | "otros";
   views_total: number;
   views_last_30: number;
   views_prev_30: number;
