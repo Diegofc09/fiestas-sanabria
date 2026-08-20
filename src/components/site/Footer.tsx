@@ -2,12 +2,15 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
 import { useSearchQuery } from "@/lib/search-store";
+import { hasCategoryContent, useActiveCategories } from "@/hooks/useActiveCategories";
 import { cn } from "@/lib/utils";
 
 
 export function Footer() {
   const query = useSearchQuery();
   const isHome = useLocation({ select: (l) => l.pathname === "/" });
+  const activeCategories = useActiveCategories();
+
   const hideSections = isHome && !query;
 
   return (
