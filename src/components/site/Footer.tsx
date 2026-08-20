@@ -24,7 +24,8 @@ export function Footer() {
           </p>
         </div>
 
-        <div>
+        <div className={cn(hideSections && "hidden")}>
+
           <p className="eyebrow text-primary/80">Secciones</p>
           <ul className="mt-4 space-y-2 text-[0.9375rem] font-light md:text-sm">
             {CATEGORIES.map((c) => (
