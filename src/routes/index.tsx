@@ -105,11 +105,22 @@ function HomePage() {
   const [sort, setSort] = useState<SortMode>("upcoming");
   const [view, setView] = useState<ViewMode>("cards");
 
+  // Secciones con al menos una publicación vigente (las vacías se ocultan).
+  const availableCategories = useMemo(() => {
+    const set = new Set<PostCategory>();
+    for (const post of posts) {
+      if (isExpired(post) && !savedIds.includes(post.id)) continue;
+      set.add(post.category);
+    }
+    return set;
+  }, [posts, savedIds]);
+
   const metricFor = useMemo(() => {
     const map = new Map<string, PostMetric>();
     for (const metric of metrics ?? []) map.set(metric.post_id, metric);
     return map;
   }, [metrics]);
+
 
   const filtered = useMemo(() => {
     const list = posts.filter((post) => {
