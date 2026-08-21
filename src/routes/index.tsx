@@ -246,7 +246,7 @@ function HomePage() {
                 onValueChange={(v) => setCategory(v as PostCategory | "all")}
               >
                 <DropdownMenuRadioItem value="all">Todo</DropdownMenuRadioItem>
-                {CATEGORIES.map((c) => (
+                {CATEGORIES.filter((c) => availableCategories.has(c.value)).map((c) => (
                   <DropdownMenuRadioItem key={c.value} value={c.value}>
                     {c.label}
                   </DropdownMenuRadioItem>
