@@ -346,7 +346,10 @@ function HomePage() {
           <FeedGrid posts={filtered} />
         </div>
       )}
+        </>
+      )}
     </div>
+
   );
 }
 
