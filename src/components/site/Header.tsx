@@ -27,6 +27,24 @@ export function Header() {
     })),
     { label: "Calendario", path: "/calendario" },
   ];
+  const searchRef = useRef<HTMLInputElement>(null);
+  const visibleSearch = !(isHome && !query);
+
+  // Al pasar de la portada a los resultados, el foco salta a la barra de la cabecera.
+  useEffect(() => {
+    if (!visibleSearch) return;
+    const el = searchRef.current;
+    if (!el || document.activeElement === el) return;
+    if (isHome) {
+      el.focus();
+      const end = el.value.length;
+      try {
+        el.setSelectionRange(end, end);
+      } catch {
+        /* algunos navegadores no permiten selección en type=search */
+      }
+    }
+  }, [visibleSearch, isHome]);
 
 
   useEffect(() => {
