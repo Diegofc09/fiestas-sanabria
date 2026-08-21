@@ -157,26 +157,42 @@ function HomePage() {
     return list;
   }, [posts, category, phase, query, sort, metricFor, savedIds]);
 
-  if (!query) {
-    return (
-      <div className="mx-auto flex min-h-[62vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center md:px-8">
-        <img
-          src={logoAsset.url}
-          alt="FiestasSanabria"
-          className="h-24 w-auto dark:invert sm:h-32"
-        />
-        <h1 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
-          Fiestas<span className="text-primary">Sanabria</span>
-        </h1>
-        <p className="mt-4 max-w-md text-[0.9375rem] font-light text-muted-foreground md:text-base">
-          Busca fiestas, eventos y anuncios de la comarca de Sanabria.
-        </p>
+  return (
+    <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
+      {/* El buscador permanece montado siempre: al escribir no se remonta ni pierde el foco. */}
+      <div
+        className={cn(
+          "mx-auto flex max-w-3xl flex-col items-center text-center",
+          query ? "pt-8 md:pt-10" : "min-h-[62vh] justify-center py-16",
+        )}
+      >
+        {!query && (
+          <>
+            <img
+              src={logoAsset.url}
+              alt="FiestasSanabria"
+              className="h-24 w-auto dark:invert sm:h-32"
+            />
+            <h1 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
+              Fiestas<span className="text-primary">Sanabria</span>
+            </h1>
+            <p className="mt-4 max-w-md text-[0.9375rem] font-light text-muted-foreground md:text-base">
+              Busca fiestas, eventos y anuncios de la comarca de Sanabria.
+            </p>
+          </>
+        )}
 
-        <label className="mt-8 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5">
+        <label
+          className={cn(
+            "flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5",
+            !query && "mt-8",
+          )}
+        >
           <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
           <input
             type="search"
             autoFocus
+            value={query}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setSearchOpen(true)}
             placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
@@ -185,47 +201,46 @@ function HomePage() {
           />
         </label>
 
-        <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
-          <p className="eyebrow text-muted-foreground">Secciones</p>
-          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {CATEGORIES.filter(
-              (c) => c.value !== "otros" && availableCategories.has(c.value),
-            ).map((c) => (
-
-              <li key={c.value}>
+        {!query && (
+          <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
+            <p className="eyebrow text-muted-foreground">Secciones</p>
+            <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {CATEGORIES.filter(
+                (c) => c.value !== "otros" && availableCategories.has(c.value),
+              ).map((c) => (
+                <li key={c.value}>
+                  <Link
+                    to={c.path}
+                    className="flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
+                  >
+                    {c.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
                 <Link
-                  to={c.path}
-                  className="flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
+                  to="/calendario"
+                  className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
                 >
-                  {c.label}
+                  <CalendarDays className="h-4 w-4" />
+                  Calendario
                 </Link>
               </li>
-            ))}
-            <li>
-              <Link
-                to="/calendario"
-                className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
-              >
-                <CalendarDays className="h-4 w-4" />
-                Calendario
-              </Link>
-            </li>
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        )}
+
+        {query && (
+          <h1 className="mt-6 w-full text-left text-[1.6rem] font-bold leading-tight sm:text-3xl">
+            Resultados para “{query}”
+          </h1>
+        )}
       </div>
 
-    );
-  }
-
-  return (
-    <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
-      <header className="pt-9 md:pt-14">
-        <h1 className="text-[1.6rem] font-bold leading-tight sm:text-3xl">
-          Resultados para “{query}”
-        </h1>
-      </header>
-
+      {query && (
+        <>
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+
 
 
         <div className="flex flex-wrap items-center gap-2">
@@ -331,7 +346,10 @@ function HomePage() {
           <FeedGrid posts={filtered} />
         </div>
       )}
+        </>
+      )}
     </div>
+
   );
 }
 
