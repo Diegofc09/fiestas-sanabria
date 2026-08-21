@@ -105,11 +105,22 @@ function HomePage() {
   const [sort, setSort] = useState<SortMode>("upcoming");
   const [view, setView] = useState<ViewMode>("cards");
 
+  // Secciones con al menos una publicación vigente (las vacías se ocultan).
+  const availableCategories = useMemo(() => {
+    const set = new Set<PostCategory>();
+    for (const post of posts) {
+      if (isExpired(post) && !savedIds.includes(post.id)) continue;
+      set.add(post.category);
+    }
+    return set;
+  }, [posts, savedIds]);
+
   const metricFor = useMemo(() => {
     const map = new Map<string, PostMetric>();
     for (const metric of metrics ?? []) map.set(metric.post_id, metric);
     return map;
   }, [metrics]);
+
 
   const filtered = useMemo(() => {
     const list = posts.filter((post) => {
@@ -177,7 +188,10 @@ function HomePage() {
         <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
           <p className="eyebrow text-muted-foreground">Secciones</p>
           <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {CATEGORIES.filter((c) => c.value !== "otros").map((c) => (
+            {CATEGORIES.filter(
+              (c) => c.value !== "otros" && availableCategories.has(c.value),
+            ).map((c) => (
+
               <li key={c.value}>
                 <Link
                   to={c.path}
@@ -232,7 +246,7 @@ function HomePage() {
                 onValueChange={(v) => setCategory(v as PostCategory | "all")}
               >
                 <DropdownMenuRadioItem value="all">Todo</DropdownMenuRadioItem>
-                {CATEGORIES.map((c) => (
+                {CATEGORIES.filter((c) => availableCategories.has(c.value)).map((c) => (
                   <DropdownMenuRadioItem key={c.value} value={c.value}>
                     {c.label}
                   </DropdownMenuRadioItem>

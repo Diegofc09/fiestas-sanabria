@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Bookmark, Instagram, Menu, Search, X, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { CATEGORIES } from "@/lib/posts";
@@ -27,6 +27,24 @@ export function Header() {
     })),
     { label: "Calendario", path: "/calendario" },
   ];
+  const searchRef = useRef<HTMLInputElement>(null);
+  const visibleSearch = !(isHome && !query);
+
+  // Al pasar de la portada a los resultados, el foco salta a la barra de la cabecera.
+  useEffect(() => {
+    if (!visibleSearch) return;
+    const el = searchRef.current;
+    if (!el || document.activeElement === el) return;
+    if (isHome) {
+      el.focus();
+      const end = el.value.length;
+      try {
+        el.setSelectionRange(end, end);
+      } catch {
+        /* algunos navegadores no permiten selección en type=search */
+      }
+    }
+  }, [visibleSearch, isHome]);
 
 
   useEffect(() => {
@@ -109,7 +127,9 @@ export function Header() {
           >
             <Search className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <input
+              ref={searchRef}
               type="search"
+
               value={query}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
