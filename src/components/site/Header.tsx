@@ -28,24 +28,7 @@ export function Header() {
     { label: "Calendario", path: "/calendario" },
   ];
   const searchRef = useRef<HTMLInputElement>(null);
-  const visibleSearch = !(isHome && !query);
-
-  // Al pasar de la portada a los resultados, el foco salta a la barra de la cabecera.
-  useEffect(() => {
-    if (!visibleSearch) return;
-    const el = searchRef.current;
-    if (!el || document.activeElement === el) return;
-    if (isHome) {
-      el.focus();
-      const end = el.value.length;
-      try {
-        el.setSelectionRange(end, end);
-      } catch {
-        /* algunos navegadores no permiten selección en type=search */
-      }
-    }
-  }, [visibleSearch, isHome]);
-
+  // En la portada el buscador vive en la propia página, así que aquí se oculta.
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -122,7 +105,7 @@ export function Header() {
           <label
             className={cn(
               "neon-border glow-hover min-w-0 flex-1 items-center gap-2.5 rounded-full bg-card px-4 py-2.5",
-              isHome && !query ? "hidden" : "flex",
+              isHome ? "hidden" : "flex",
             )}
           >
             <Search className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
