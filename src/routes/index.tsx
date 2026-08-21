@@ -177,7 +177,10 @@ function HomePage() {
         <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
           <p className="eyebrow text-muted-foreground">Secciones</p>
           <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {CATEGORIES.filter((c) => c.value !== "otros").map((c) => (
+            {CATEGORIES.filter(
+              (c) => c.value !== "otros" && availableCategories.has(c.value),
+            ).map((c) => (
+
               <li key={c.value}>
                 <Link
                   to={c.path}
