@@ -92,7 +92,7 @@ export function FeedCard({
   };
 
   return (
-    <article className="group glass-card glow-hover flex h-full flex-col overflow-hidden rounded-2xl">
+    <article className="group glass-card glow-hover hover-lift flex h-full flex-col overflow-hidden rounded-2xl">
       <div className="flex items-center gap-2 px-4 pt-3 pb-2">
         <span
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-[0.6875rem] font-bold text-primary"
@@ -210,7 +210,7 @@ export function FeedGrid({ posts }: { posts: PostSummary[] }) {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {posts.map((post, i) => (
-        <Reveal key={post.id} delay={Math.min(i, 6) * 0.05} className="h-full">
+        <Reveal key={post.id} delay={Math.min(i % 8, 7) * 0.06} className="h-full">
           <FeedCard post={post} priority={i < 4} />
         </Reveal>
       ))}
