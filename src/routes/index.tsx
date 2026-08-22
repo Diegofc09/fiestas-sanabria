@@ -171,12 +171,15 @@ function HomePage() {
             <img
               src={logoAsset.url}
               alt="FiestasSanabria"
-              className="h-24 w-auto dark:invert sm:h-32"
+              className="h-24 w-auto animate-scale-in dark:invert sm:h-32"
             />
-            <h1 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
+            <h1 className="mt-6 animate-fade-in font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
               Fiestas<span className="text-primary">Sanabria</span>
             </h1>
-            <p className="mt-4 max-w-md text-[0.9375rem] font-light text-muted-foreground md:text-base">
+            <p
+              className="mt-4 max-w-md animate-fade-in text-[0.9375rem] font-light text-muted-foreground md:text-base"
+              style={{ animationDelay: "80ms", animationFillMode: "both" }}
+            >
               Busca fiestas, eventos y anuncios de la comarca de Sanabria.
             </p>
           </>
@@ -184,9 +187,10 @@ function HomePage() {
 
         <label
           className={cn(
-            "flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5",
-            !query && "mt-8",
+            "flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5 transition-all duration-300 focus-within:border-primary focus-within:shadow-[0_10px_30px_-24px_var(--foreground)]",
+            !query && "mt-8 animate-fade-in",
           )}
+          style={!query ? { animationDelay: "140ms", animationFillMode: "both" } : undefined}
         >
           <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
           <input
@@ -205,30 +209,30 @@ function HomePage() {
           <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
             <p className="eyebrow text-muted-foreground">Secciones</p>
             <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {CATEGORIES.filter(
-                (c) => c.value !== "otros" && availableCategories.has(c.value),
-              ).map((c) => (
-                <li key={c.value}>
+              {[
+                ...CATEGORIES.filter(
+                  (c) => c.value !== "otros" && availableCategories.has(c.value),
+                ).map((c) => ({ key: c.value, path: c.path, label: c.label, icon: false })),
+                { key: "calendario", path: "/calendario", label: "Calendario", icon: true },
+              ].map((item, i) => (
+                <li
+                  key={item.key}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: "both" }}
+                >
                   <Link
-                    to={c.path}
-                    className="flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
+                    to={item.path}
+                    className="hover-lift flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground hover:border-primary hover:text-primary md:text-base"
                   >
-                    {c.label}
+                    {item.icon && <CalendarDays className="h-4 w-4" />}
+                    {item.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  to="/calendario"
-                  className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary md:text-base"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  Calendario
-                </Link>
-              </li>
             </ul>
           </nav>
         )}
+
 
         {query && (
           <h1 className="mt-6 w-full text-left text-[1.6rem] font-bold leading-tight sm:text-3xl">
