@@ -4,7 +4,7 @@ import { Bookmark } from "lucide-react";
 
 import { listSavedPosts } from "@/lib/saved.functions";
 import type { PostSummary } from "@/lib/posts";
-import { FeedGrid } from "@/components/site/FeedCard";
+import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSession } from "@/hooks/useSession";
 
@@ -88,7 +88,7 @@ function SavedPage() {
             description="Pulsa el marcador en cualquier publicación para conservarla aquí para siempre."
           />
         ) : (
-          <FeedGrid posts={posts ?? []} />
+          <ProgressiveFeed posts={posts ?? []} />
         )}
       </div>
     </div>

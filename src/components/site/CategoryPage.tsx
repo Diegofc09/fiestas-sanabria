@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 import { listPublishedPosts } from "@/lib/posts.functions";
 import { categoryLabel, isExpired, type PostCategory, type PostSummary } from "@/lib/posts";
-import { FeedGrid } from "@/components/site/FeedCard";
+import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { matchesQuery, useSearchQuery } from "@/lib/search-store";
@@ -54,7 +54,7 @@ export function CategoryPage({
           }
         />
       ) : (
-        <FeedGrid posts={filtered} />
+        <ProgressiveFeed posts={filtered} resetKey={`${category}|${query}`} />
       )}
     </div>
   );

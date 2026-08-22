@@ -14,7 +14,7 @@ import {
   type PostCategory,
   type PostSummary,
 } from "@/lib/posts";
-import { FeedGrid } from "@/components/site/FeedCard";
+import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
@@ -343,7 +343,10 @@ function HomePage() {
         </div>
       ) : (
         <div className="mt-8">
-          <FeedGrid posts={filtered} />
+          <ProgressiveFeed
+            posts={filtered}
+            resetKey={`${query}|${category}|${phase}|${sort}`}
+          />
         </div>
       )}
         </>
