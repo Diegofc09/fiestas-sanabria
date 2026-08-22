@@ -133,6 +133,14 @@ export function Header() {
           </label>
 
           <Link
+            to="/calendario"
+            aria-label="Calendario de fiestas y eventos"
+            className="glow-hover inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95"
+          >
+            <Calendar className="h-5 w-5" />
+          </Link>
+
+          <Link
             to="/perfil"
             aria-label="Mi perfil"
             className="glow-hover hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95 md:inline-flex"
