@@ -19,13 +19,13 @@ export function Header() {
   const activeCategories = useActiveCategories();
 
   // Las secciones sin contenido se ocultan hasta que se publique algo en ellas.
+  // El calendario tiene su propio botón junto al buscador.
   const NAV = [
     { label: "Inicio", path: "/" },
     ...CATEGORIES.filter((c) => hasCategoryContent(activeCategories, c.value)).map((c) => ({
       label: c.label,
       path: c.path,
     })),
-    { label: "Calendario", path: "/calendario" },
   ];
   const searchRef = useRef<HTMLInputElement>(null);
   // En la portada el buscador vive en la propia página, así que aquí se oculta.
