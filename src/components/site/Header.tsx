@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Bookmark, Instagram, Menu, Search, X, UserRound } from "lucide-react";
+import { Bookmark, Calendar, Instagram, Menu, Search, X, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
