@@ -179,9 +179,12 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
+          {/* Transición suave entre páginas. Required: nested routes render in <Outlet />. */}
+          <PageTransition routeKey={pathname}>
+            <Outlet />
+          </PageTransition>
         </main>
+
         <Footer />
       </div>
       <AuthPromptModal />
