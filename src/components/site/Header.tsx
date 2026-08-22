@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Bookmark, Instagram, Menu, Search, X, UserRound } from "lucide-react";
+import { Bookmark, Calendar, Instagram, Menu, Search, X, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -19,13 +19,13 @@ export function Header() {
   const activeCategories = useActiveCategories();
 
   // Las secciones sin contenido se ocultan hasta que se publique algo en ellas.
+  // El calendario tiene su propio botón junto al buscador.
   const NAV = [
     { label: "Inicio", path: "/" },
     ...CATEGORIES.filter((c) => hasCategoryContent(activeCategories, c.value)).map((c) => ({
       label: c.label,
       path: c.path,
     })),
-    { label: "Calendario", path: "/calendario" },
   ];
   const searchRef = useRef<HTMLInputElement>(null);
   // En la portada el buscador vive en la propia página, así que aquí se oculta.
@@ -131,6 +131,14 @@ export function Header() {
               </button>
             )}
           </label>
+
+          <Link
+            to="/calendario"
+            aria-label="Calendario de fiestas y eventos"
+            className="glow-hover inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground active:scale-95"
+          >
+            <Calendar className="h-5 w-5" />
+          </Link>
 
           <Link
             to="/perfil"
