@@ -15,6 +15,7 @@ import { trackSiteView } from "@/lib/analytics.functions";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageTransition } from "@/components/site/PageTransition";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthPromptModal } from "@/components/site/AuthPromptModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -179,9 +180,12 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
+          {/* Transición suave entre páginas. Required: nested routes render in <Outlet />. */}
+          <PageTransition routeKey={pathname}>
+            <Outlet />
+          </PageTransition>
         </main>
+
         <Footer />
       </div>
       <AuthPromptModal />
