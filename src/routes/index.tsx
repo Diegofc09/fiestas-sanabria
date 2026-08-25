@@ -75,9 +75,22 @@ const homeQuery = queryOptions({
   queryFn: () => listPublishedPosts({ data: { limit: 60 } }) as Promise<PostSummary[]>,
 });
 
+// Búsqueda, filtros, orden, vista y nº de resultados cargados viven en la URL:
+// así se pueden compartir, recargar y no se pierden al cargar más resultados.
+const homeSearchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  cat: fallback(z.string(), "all").default("all"),
+  phase: fallback(z.string(), "all").default("all"),
+  sort: fallback(z.string(), "upcoming").default("upcoming"),
+  view: fallback(z.string(), "cards").default("cards"),
+  n: fallback(z.number().int(), 0).default(0),
+});
+
 export const Route = createFileRoute("/")({
+  validateSearch: zodValidator(homeSearchSchema),
+  search: { middlewares: [stripSearchParams({ q: "", cat: "all", phase: "all", sort: "upcoming", view: "cards", n: 0 })] },
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
-  head: () => ({
+
     meta: [
       { title: "FiestasSanabria — Próximas fiestas y eventos de Sanabria" },
       {
