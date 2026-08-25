@@ -394,7 +394,10 @@ function HomePage() {
           <ProgressiveFeed
             posts={filtered}
             resetKey={`${query}|${category}|${phase}|${sort}`}
+            visible={visibleCount}
+            onVisibleChange={(n) => patchSearch({ n })}
           />
+
         </div>
       )}
         </>
