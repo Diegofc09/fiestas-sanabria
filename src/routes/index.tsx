@@ -117,11 +117,38 @@ function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
   const { data: metrics } = useQuery(metricsQuery);
   const { savedIds } = useSavedPosts();
-  const query = useSearchQuery();
-  const [category, setCategory] = useState<PostCategory | "all">("all");
-  const [phase, setPhase] = useState<PhaseFilter>("all");
-  const [sort, setSort] = useState<SortMode>("upcoming");
-  const [view, setView] = useState<ViewMode>("cards");
+  const navigate = useNavigate({ from: "/" });
+  const search = Route.useSearch();
+
+  const query = search.q.slice(0, 120);
+  const category = (CATEGORIES.some((c) => c.value === search.cat) ? search.cat : "all") as
+    | PostCategory
+    | "all";
+  const phase = (["upcoming", "ongoing", "finished"].includes(search.phase)
+    ? search.phase
+    : "all") as PhaseFilter;
+  const sort = (SORT_OPTIONS.some(([v]) => v === search.sort) ? search.sort : "upcoming") as SortMode;
+  const view = (search.view === "calendar" ? "calendar" : "cards") as ViewMode;
+  const visibleCount = search.n > 0 ? search.n : undefined;
+
+  const patchSearch = useCallback(
+    (patch: Record<string, string | number>) => {
+      navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    },
+    [navigate],
+  );
+
+  // Mantiene la cabecera/pie sincronizados con la búsqueda que viaja en la URL.
+  useEffect(() => {
+    if (query) setSearchQuery(query);
+    else setSearchOpen(false);
+  }, [query]);
+
+  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 });
+  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
+  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
+  const setView = (value: ViewMode) => patchSearch({ view: value });
+
 
   // Secciones con al menos una publicación vigente (las vacías se ocultan).
   const availableCategories = useMemo(() => {
