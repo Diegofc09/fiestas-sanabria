@@ -209,23 +209,19 @@ function HomePage() {
           <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
             <p className="eyebrow text-muted-foreground">Secciones</p>
             <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {[
-                ...CATEGORIES.filter(
-                  (c) => c.value !== "otros" && availableCategories.has(c.value),
-                ).map((c) => ({ key: c.value, path: c.path, label: c.label, icon: false })),
-                { key: "calendario", path: "/calendario", label: "Calendario", icon: true },
-              ].map((item, i) => (
+              {CATEGORIES.filter(
+                (c) => c.value !== "otros" && availableCategories.has(c.value),
+              ).map((c, i) => (
                 <li
-                  key={item.key}
+                  key={c.value}
                   className="animate-fade-in"
                   style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: "both" }}
                 >
                   <Link
-                    to={item.path}
+                    to={c.path}
                     className="hover-lift flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground hover:border-primary hover:text-primary md:text-base"
                   >
-                    {item.icon && <CalendarDays className="h-4 w-4" />}
-                    {item.label}
+                    {c.label}
                   </Link>
                 </li>
               ))}
