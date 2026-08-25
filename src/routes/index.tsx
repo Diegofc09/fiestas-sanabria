@@ -21,7 +21,7 @@ import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
-import { matchesQuery, setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
+import { matchesQuery, setSearchOpen, setSearchQuery } from "@/lib/search-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
