@@ -242,7 +242,10 @@ function HomePage() {
             type="search"
             autoFocus
             value={query}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              patchSearch({ q: e.target.value, n: 0 });
+            }}
             onFocus={() => setSearchOpen(true)}
             placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
             aria-label="Buscar publicaciones"
