@@ -9,23 +9,38 @@ const PAGE_SIZE = 8;
 /**
  * Feed con carga progresiva: muestra los primeros resultados y va añadiendo
  * tandas al acercarse al final de la lista (con botón de respaldo).
+ *
+ * Si se pasa `visible` + `onVisibleChange`, el número de resultados cargados
+ * queda controlado desde fuera (por ejemplo, guardado en la URL) para que no se
+ * pierda al recargar o al compartir el enlace.
  */
 export function ProgressiveFeed({
   posts,
   pageSize = PAGE_SIZE,
   resetKey,
+  visible: visibleProp,
+  onVisibleChange,
 }: {
   posts: PostSummary[];
   pageSize?: number;
   resetKey?: string;
+  visible?: number;
+  onVisibleChange?: (visible: number) => void;
 }) {
-  const [visible, setVisible] = useState(pageSize);
+  const controlled = onVisibleChange !== undefined;
+  const [internal, setInternal] = useState(pageSize);
+  const visible = Math.max(pageSize, (controlled ? visibleProp : internal) ?? pageSize);
   const sentinel = useRef<HTMLDivElement>(null);
+
+  const setVisible = (next: number) => {
+    if (controlled) onVisibleChange?.(next);
+    else setInternal(next);
+  };
 
   // Al cambiar la búsqueda o los filtros volvemos a la primera tanda.
   useEffect(() => {
-    setVisible(pageSize);
-  }, [resetKey, pageSize, posts.length]);
+    if (!controlled) setInternal(pageSize);
+  }, [resetKey, pageSize, controlled]);
 
   const shown = useMemo(() => posts.slice(0, visible), [posts, visible]);
   const hasMore = visible < posts.length;
@@ -38,13 +53,14 @@ export function ProgressiveFeed({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          setVisible((v) => Math.min(v + pageSize, posts.length));
+          setVisible(Math.min(visible + pageSize, posts.length));
         }
       },
       { rootMargin: "320px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, pageSize, posts.length, visible]);
 
   return (
@@ -55,7 +71,7 @@ export function ProgressiveFeed({
         <div ref={sentinel} className="mt-10 flex flex-col items-center gap-3">
           <button
             type="button"
-            onClick={() => setVisible((v) => Math.min(v + pageSize, posts.length))}
+            onClick={() => setVisible(Math.min(visible + pageSize, posts.length))}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-5 py-2.5 text-[0.9375rem] font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary active:scale-95 md:text-sm"
           >
             <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
