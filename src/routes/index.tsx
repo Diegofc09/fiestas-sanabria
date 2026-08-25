@@ -1,7 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
+
 
 import { listPublishedPosts } from "@/lib/posts.functions";
 import { listPostMetrics } from "@/lib/saved.functions";
@@ -18,7 +21,7 @@ import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
-import { matchesQuery, setSearchOpen, setSearchQuery, useSearchQuery } from "@/lib/search-store";
+import { matchesQuery, setSearchOpen, setSearchQuery } from "@/lib/search-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,9 +75,24 @@ const homeQuery = queryOptions({
   queryFn: () => listPublishedPosts({ data: { limit: 60 } }) as Promise<PostSummary[]>,
 });
 
+// Búsqueda, filtros, orden, vista y nº de resultados cargados viven en la URL:
+// así se pueden compartir, recargar y no se pierden al cargar más resultados.
+const homeSearchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  cat: fallback(z.string(), "all").default("all"),
+  phase: fallback(z.string(), "all").default("all"),
+  sort: fallback(z.string(), "upcoming").default("upcoming"),
+  view: fallback(z.string(), "cards").default("cards"),
+  n: fallback(z.number().int(), 0).default(0),
+});
+
 export const Route = createFileRoute("/")({
+  validateSearch: zodValidator(homeSearchSchema),
+  search: { middlewares: [stripSearchParams({ q: "", cat: "all", phase: "all", sort: "upcoming", view: "cards", n: 0 })] },
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
   head: () => ({
+
+
     meta: [
       { title: "FiestasSanabria — Próximas fiestas y eventos de Sanabria" },
       {
@@ -99,11 +117,38 @@ function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
   const { data: metrics } = useQuery(metricsQuery);
   const { savedIds } = useSavedPosts();
-  const query = useSearchQuery();
-  const [category, setCategory] = useState<PostCategory | "all">("all");
-  const [phase, setPhase] = useState<PhaseFilter>("all");
-  const [sort, setSort] = useState<SortMode>("upcoming");
-  const [view, setView] = useState<ViewMode>("cards");
+  const navigate = useNavigate({ from: "/" });
+  const search = Route.useSearch();
+
+  const query = search.q.slice(0, 120);
+  const category = (CATEGORIES.some((c) => c.value === search.cat) ? search.cat : "all") as
+    | PostCategory
+    | "all";
+  const phase = (["upcoming", "ongoing", "finished"].includes(search.phase)
+    ? search.phase
+    : "all") as PhaseFilter;
+  const sort = (SORT_OPTIONS.some(([v]) => v === search.sort) ? search.sort : "upcoming") as SortMode;
+  const view = (search.view === "calendar" ? "calendar" : "cards") as ViewMode;
+  const visibleCount = search.n > 0 ? search.n : undefined;
+
+  const patchSearch = useCallback(
+    (patch: Record<string, string | number>) => {
+      navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    },
+    [navigate],
+  );
+
+  // Mantiene la cabecera/pie sincronizados con la búsqueda que viaja en la URL.
+  useEffect(() => {
+    if (query) setSearchQuery(query);
+    else setSearchOpen(false);
+  }, [query]);
+
+  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 });
+  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
+  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
+  const setView = (value: ViewMode) => patchSearch({ view: value });
+
 
   // Secciones con al menos una publicación vigente (las vacías se ocultan).
   const availableCategories = useMemo(() => {
@@ -197,7 +242,10 @@ function HomePage() {
             type="search"
             autoFocus
             value={query}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              patchSearch({ q: e.target.value, n: 0 });
+            }}
             onFocus={() => setSearchOpen(true)}
             placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
             aria-label="Buscar publicaciones"
@@ -346,7 +394,10 @@ function HomePage() {
           <ProgressiveFeed
             posts={filtered}
             resetKey={`${query}|${category}|${phase}|${sort}`}
+            visible={visibleCount}
+            onVisibleChange={(n) => patchSearch({ n })}
           />
+
         </div>
       )}
         </>
