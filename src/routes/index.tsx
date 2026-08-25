@@ -90,6 +90,8 @@ export const Route = createFileRoute("/")({
   validateSearch: zodValidator(homeSearchSchema),
   search: { middlewares: [stripSearchParams({ q: "", cat: "all", phase: "all", sort: "upcoming", view: "cards", n: 0 })] },
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
+  head: () => ({
+
 
     meta: [
       { title: "FiestasSanabria — Próximas fiestas y eventos de Sanabria" },
