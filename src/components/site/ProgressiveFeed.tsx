@@ -24,7 +24,7 @@ export function ProgressiveFeed({
   posts: PostSummary[];
   pageSize?: number;
   resetKey?: string;
-  visible?: number;
+  visible?: number | undefined;
   onVisibleChange?: (visible: number) => void;
 }) {
   const controlled = onVisibleChange !== undefined;
