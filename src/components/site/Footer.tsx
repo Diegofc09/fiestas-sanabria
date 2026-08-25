@@ -42,14 +42,6 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                to="/calendario"
-                className="text-ink-foreground/80 transition-colors hover:text-primary"
-              >
-                Calendario
-              </Link>
-            </li>
           </ul>
         </div>
 
