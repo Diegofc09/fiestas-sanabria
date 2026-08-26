@@ -1,5 +1,5 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
+import { Calendar, CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -237,34 +237,40 @@ function HomePage() {
             <h1 className="mt-6 animate-fade-in font-[family-name:var(--font-display)] text-4xl font-bold leading-none tracking-tight sm:text-6xl">
               Fiestas<span className="text-primary">Sanabria</span>
             </h1>
-            <p
-              className="mt-4 max-w-md animate-fade-in text-[0.9375rem] font-light text-muted-foreground md:text-base"
-              style={{ animationDelay: "80ms", animationFillMode: "both" }}
-            >
-              Busca fiestas, eventos y anuncios de la comarca de Sanabria.
-            </p>
           </>
         )}
 
-        <label
+        <div
           className={cn(
-            "flex w-full max-w-xl items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5 transition-all duration-300 focus-within:border-primary focus-within:shadow-[0_10px_30px_-24px_var(--foreground)]",
+            "flex w-full max-w-xl items-center gap-3",
             !query && "mt-8 animate-fade-in",
           )}
           style={!query ? { animationDelay: "140ms", animationFillMode: "both" } : undefined}
         >
-          <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-          <input
-            type="search"
-            autoFocus
-            value={query}
-            onChange={(e) => setDraft(e.target.value)}
-            onFocus={() => setSearchOpen(true)}
-            placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
-            aria-label="Buscar publicaciones"
-            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
-          />
-        </label>
+          <label
+            className="flex min-w-0 flex-1 items-center gap-2.5 rounded-full border border-border bg-card px-5 py-3.5 transition-all duration-300 focus-within:border-primary focus-within:shadow-[0_10px_30px_-24px_var(--foreground)]"
+          >
+            <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+            <input
+              type="search"
+              autoFocus
+              value={query}
+              onChange={(e) => setDraft(e.target.value)}
+              onFocus={() => setSearchOpen(true)}
+              placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
+              aria-label="Buscar publicaciones"
+              className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+            />
+          </label>
+
+          <Link
+            to="/calendario"
+            aria-label="Calendario de fiestas y eventos"
+            className="hover-lift inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary hover:text-primary active:scale-95"
+          >
+            <Calendar className="h-5 w-5" />
+          </Link>
+        </div>
 
         {!query && (
           <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
