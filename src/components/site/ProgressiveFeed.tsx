@@ -3,6 +3,10 @@ import { Loader2 } from "lucide-react";
 
 import type { PostSummary } from "@/lib/posts";
 import { FeedGrid } from "./FeedCard";
+import { VirtualFeedGrid } from "./VirtualFeedGrid";
+
+// A partir de este número de tarjetas montamos sólo las filas visibles.
+const VIRTUALIZE_FROM = 24;
 
 const PAGE_SIZE = 8;
 
@@ -65,7 +69,11 @@ export function ProgressiveFeed({
 
   return (
     <div>
-      <FeedGrid posts={shown} />
+      {shown.length > VIRTUALIZE_FROM ? (
+        <VirtualFeedGrid posts={shown} />
+      ) : (
+        <FeedGrid posts={shown} />
+      )}
 
       {hasMore && (
         <div ref={sentinel} className="mt-10 flex flex-col items-center gap-3">
