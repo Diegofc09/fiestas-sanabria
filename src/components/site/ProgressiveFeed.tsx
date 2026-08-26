@@ -6,7 +6,7 @@ import { FeedGrid } from "./FeedCard";
 import { VirtualFeedGrid } from "./VirtualFeedGrid";
 
 // A partir de este número de tarjetas montamos sólo las filas visibles.
-const VIRTUALIZE_FROM = 4;
+const VIRTUALIZE_FROM = 24;
 
 const PAGE_SIZE = 8;
 
