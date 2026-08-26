@@ -1,7 +1,7 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
@@ -120,7 +120,10 @@ function HomePage() {
   const navigate = useNavigate({ from: "/" });
   const search = Route.useSearch();
 
-  const query = search.q.slice(0, 120);
+  // El input escribe en un estado local (nunca pierde teclas) y la URL se
+  // actualiza con un pequeño retardo para poder compartir/recargar la búsqueda.
+  const [draft, setDraft] = useState(search.q);
+  const query = draft.slice(0, 120);
   const category = (CATEGORIES.some((c) => c.value === search.cat) ? search.cat : "all") as
     | PostCategory
     | "all";
@@ -138,11 +141,24 @@ function HomePage() {
     [navigate],
   );
 
-  // Mantiene la cabecera/pie sincronizados con la búsqueda que viaja en la URL.
+  // Navegación externa (atrás/adelante, enlace compartido) → estado del input.
+  useEffect(() => {
+    setDraft((current) => (current === search.q ? current : search.q));
+  }, [search.q]);
+
+  // Volcado del texto a la URL, sin bloquear la escritura.
+  useEffect(() => {
+    if (draft === search.q) return;
+    const id = setTimeout(() => patchSearch({ q: draft, n: 0 }), 250);
+    return () => clearTimeout(id);
+  }, [draft, search.q, patchSearch]);
+
+  // Mantiene la cabecera/pie sincronizados con la búsqueda.
   useEffect(() => {
     if (query) setSearchQuery(query);
     else setSearchOpen(false);
   }, [query]);
+
 
   const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 });
   const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
@@ -242,10 +258,7 @@ function HomePage() {
             type="search"
             autoFocus
             value={query}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              patchSearch({ q: e.target.value, n: 0 });
-            }}
+            onChange={(e) => setDraft(e.target.value)}
             onFocus={() => setSearchOpen(true)}
             placeholder="Buscar fiestas, eventos, publicidad, noticias, merchandising…"
             aria-label="Buscar publicaciones"
