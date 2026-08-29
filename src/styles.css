@@ -171,6 +171,33 @@
   animation: fs-scale-in 0.5s var(--ease-editorial) both;
 }
 
+/* Placeholder elegante mientras carga contenido o imágenes */
+@keyframes fs-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-secondary) 88%, var(--color-foreground) 6%);
+}
+
+@utility skeleton-shine {
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-foreground) 8%, transparent),
+    transparent
+  );
+  animation: fs-shimmer 1.6s var(--ease-editorial) infinite;
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
