@@ -42,6 +42,8 @@ function useLocalFlag(key: string, id: string) {
 /* ── Tarjeta de feed tipo Instagram ─────────────────────────────────────── */
 
 function Cover({ post, priority }: { post: PostSummary; priority?: boolean | undefined }) {
+  const [loaded, setLoaded] = useState(false);
+
   if (!post.cover_image_url) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-secondary" aria-hidden="true">
@@ -53,18 +55,30 @@ function Cover({ post, priority }: { post: PostSummary; priority?: boolean | und
   }
 
   return (
-    <img
-      src={post.cover_image_url}
-      alt={post.cover_image_alt ?? post.title}
-      loading={priority ? "eager" : "lazy"}
-      // @ts-expect-error atributo estándar aún no tipado en React
-      fetchpriority={priority ? "high" : "low"}
-      decoding="async"
-      width={800}
-      height={1000}
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      className="h-full w-full object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-[1.07]"
-    />
+    <>
+      {/* Placeholder con brillo hasta que la portada termina de cargar */}
+      {!loaded && (
+        <span className="skeleton absolute inset-0 block" aria-hidden="true">
+          <span className="skeleton-shine" />
+        </span>
+      )}
+      <img
+        src={post.cover_image_url}
+        alt={post.cover_image_alt ?? post.title}
+        loading={priority ? "eager" : "lazy"}
+        // @ts-expect-error atributo estándar aún no tipado en React
+        fetchpriority={priority ? "high" : "low"}
+        decoding="async"
+        width={800}
+        height={1000}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+        className={cn(
+          "h-full w-full object-cover transition-[transform,opacity] duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-[1.07]",
+          loaded ? "opacity-100" : "opacity-0",
+        )}
+      />
+    </>
   );
 }
 
