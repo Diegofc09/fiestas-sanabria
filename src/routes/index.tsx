@@ -288,18 +288,18 @@ function HomePage() {
         {!query && (
           <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
             <p className="eyebrow text-muted-foreground">Secciones</p>
-            <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <ul className="mt-4 flex flex-wrap justify-center gap-3">
               {CATEGORIES.filter(
                 (c) => c.value !== "otros" && availableCategories.has(c.value),
               ).map((c, i) => (
                 <li
                   key={c.value}
-                  className="animate-fade-in"
+                  className="animate-fade-in w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.5rem)] sm:max-w-[200px]"
                   style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: "both" }}
                 >
                   <Link
                     to={c.path}
-                    className="hover-lift flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground hover:border-primary hover:text-primary md:text-base"
+                    className="hover-lift flex h-full min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground hover:border-primary hover:text-primary md:text-base"
                   >
                     {c.label}
                   </Link>
