@@ -49,6 +49,26 @@ export function ProgressiveFeed({
   const shown = useMemo(() => posts.slice(0, visible), [posts, visible]);
   const hasMore = visible < posts.length;
 
+  // Precarga silenciosa de las portadas de la siguiente tanda: cuando el
+  // usuario carga más, las imágenes ya están en caché (clave en móvil).
+  useEffect(() => {
+    if (typeof window === "undefined" || !hasMore) return;
+    const next = posts.slice(visible, visible + pageSize);
+    const idle =
+      (window as unknown as { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback ??
+      ((cb: () => void) => window.setTimeout(cb, 400));
+    const id = idle(() => {
+      for (const post of next) {
+        if (!post.cover_image_url) continue;
+        const img = new Image();
+        img.decoding = "async";
+        img.src = post.cover_image_url;
+      }
+    });
+    return () => window.clearTimeout(id as number);
+  }, [posts, visible, pageSize, hasMore]);
+
+
   useEffect(() => {
     if (!hasMore) return;
     const el = sentinel.current;
