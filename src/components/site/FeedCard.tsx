@@ -57,7 +57,11 @@ function Cover({ post, priority }: { post: PostSummary; priority?: boolean | und
       src={post.cover_image_url}
       alt={post.cover_image_alt ?? post.title}
       loading={priority ? "eager" : "lazy"}
+      // @ts-expect-error atributo estándar aún no tipado en React
+      fetchpriority={priority ? "high" : "low"}
       decoding="async"
+      width={800}
+      height={1000}
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       className="h-full w-full object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-[1.07]"
     />
@@ -106,7 +110,12 @@ export function FeedCard({
       </div>
 
 
-      <Link to="/articulo/$slug" params={{ slug: post.slug }} className="block flex-1">
+      <Link
+        to="/articulo/$slug"
+        params={{ slug: post.slug }}
+        preload="viewport"
+        className="block flex-1"
+      >
         <div className={cn("relative overflow-hidden", aspect)}>
           <Cover post={post} priority={priority} />
           <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
