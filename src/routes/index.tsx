@@ -17,6 +17,7 @@ import {
   type PostCategory,
   type PostSummary,
 } from "@/lib/posts";
+import { FeedSkeleton } from "@/components/site/FeedSkeleton";
 import { ProgressiveFeed } from "@/components/site/ProgressiveFeed";
 import { CalendarView } from "@/components/site/CalendarView";
 import { EmptyState } from "@/components/site/EmptyState";
@@ -110,8 +111,20 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
+  pendingComponent: HomePending,
   component: HomePage,
 });
+
+function HomePending() {
+  return (
+    <main className="mx-auto w-full max-w-6xl px-4 pt-16 pb-24">
+      <div className="mx-auto mb-10 h-12 w-full max-w-xl skeleton rounded-full">
+        <span className="skeleton-shine" aria-hidden="true" />
+      </div>
+      <FeedSkeleton count={8} />
+    </main>
+  );
+}
 
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
