@@ -177,6 +177,10 @@ function HomePage() {
   const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
   const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
   const setView = (value: ViewMode) => patchSearch({ view: value });
+  const hasActiveFilters = category !== "all" || phase !== "all" || sort !== "upcoming";
+  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 });
+
+
 
 
   // Secciones con al menos una publicación vigente (las vacías se ocultan).
