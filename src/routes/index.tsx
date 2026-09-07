@@ -389,13 +389,29 @@ function HomePage() {
 
       {filtered.length === 0 ? (
         <EmptyState
+          kicker={query ? "Búsqueda" : "Sanabria"}
           title={query ? "Sin resultados" : "Todavía no hay publicaciones"}
           description={
             query
-              ? `No hemos encontrado nada para “${query}”. Prueba con otras palabras clave.`
-              : "Estamos preparando las primeras fiestas y eventos de Sanabria. Vuelve pronto."
+              ? `No hemos encontrado nada para “${query}”. Prueba con otras palabras clave o explora una sección.`
+              : "Estamos preparando las primeras fiestas y eventos de Sanabria. Mientras tanto, echa un vistazo a estas secciones."
           }
+          suggestions={[
+            ...(category !== "all" || phase !== "all"
+              ? [
+                  {
+                    label: "Quitar filtros",
+                    onClick: () => patchSearch({ cat: "all", phase: "all", n: 0 }),
+                  },
+                ]
+              : []),
+            ...CATEGORIES.filter((c) => availableCategories.has(c.value)).map((c) => ({
+              label: c.label,
+              to: c.path,
+            })),
+          ]}
         />
+
       ) : view === "calendar" ? (
         <div className="mt-9">
           <CalendarView posts={filtered} />
