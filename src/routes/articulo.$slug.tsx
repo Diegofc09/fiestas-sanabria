@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { trackPostView } from "@/lib/analytics.functions";
 
