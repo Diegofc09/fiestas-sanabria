@@ -80,11 +80,18 @@ function ArticlePage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(articleQuery(slug));
   const { post, related } = data;
-  
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     void trackPostView({ data: { postId: post.id } }).catch(() => {});
   }, [post.id]);
+
+  // Al abrir el artículo, el foco pasa a su titular: los lectores de pantalla
+  // empiezan a leer el contenido nuevo en lugar de quedarse en el listado.
+  useEffect(() => {
+    titleRef.current?.focus({ preventScroll: true });
+  }, [slug]);
+
 
   const isEvent = supportsEvent(post.category);
 
