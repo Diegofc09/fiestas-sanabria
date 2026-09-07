@@ -1,7 +1,7 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { Calendar, CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
@@ -285,29 +285,8 @@ function HomePage() {
           </Link>
         </div>
 
-        {!query && (
-          <nav aria-label="Secciones" className="mt-10 w-full max-w-3xl">
-            <p className="eyebrow text-muted-foreground">Secciones</p>
-            <ul className="mt-4 flex flex-wrap justify-center gap-3">
-              {CATEGORIES.filter(
-                (c) => c.value !== "otros" && availableCategories.has(c.value),
-              ).map((c, i) => (
-                <li
-                  key={c.value}
-                  className="animate-fade-in w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.5rem)] sm:max-w-[200px]"
-                  style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: "both" }}
-                >
-                  <Link
-                    to={c.path}
-                    className="hover-lift flex h-full min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground hover:border-primary hover:text-primary md:text-base"
-                  >
-                    {c.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
+        {!query && <SectionsGrid available={availableCategories} />}
+
 
 
         {query && (
@@ -410,13 +389,29 @@ function HomePage() {
 
       {filtered.length === 0 ? (
         <EmptyState
+          kicker={query ? "Búsqueda" : "Sanabria"}
           title={query ? "Sin resultados" : "Todavía no hay publicaciones"}
           description={
             query
-              ? `No hemos encontrado nada para “${query}”. Prueba con otras palabras clave.`
-              : "Estamos preparando las primeras fiestas y eventos de Sanabria. Vuelve pronto."
+              ? `No hemos encontrado nada para “${query}”. Prueba con otras palabras clave o explora una sección.`
+              : "Estamos preparando las primeras fiestas y eventos de Sanabria. Mientras tanto, echa un vistazo a estas secciones."
           }
+          suggestions={[
+            ...(category !== "all" || phase !== "all"
+              ? [
+                  {
+                    label: "Quitar filtros",
+                    onClick: () => patchSearch({ cat: "all", phase: "all", n: 0 }),
+                  },
+                ]
+              : []),
+            ...CATEGORIES.filter((c) => availableCategories.has(c.value)).map((c) => ({
+              label: c.label,
+              to: c.path,
+            })),
+          ]}
         />
+
       ) : view === "calendar" ? (
         <div className="mt-9">
           <CalendarView posts={filtered} />
@@ -438,6 +433,79 @@ function HomePage() {
 
   );
 }
+
+function SectionsGrid({ available }: { available: Set<PostCategory> }) {
+  const items = CATEGORIES.filter((c) => c.value !== "otros" && available.has(c.value));
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
+    const keys = ["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp", "Home", "End"];
+    if (!keys.includes(event.key)) return;
+    const links = Array.from(listRef.current?.querySelectorAll("a") ?? []);
+    if (links.length === 0) return;
+    const current = links.indexOf(document.activeElement as HTMLAnchorElement);
+    if (current === -1) return;
+    event.preventDefault();
+    const last = links.length - 1;
+    const next =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? last
+          : event.key === "ArrowRight" || event.key === "ArrowDown"
+            ? (current + 1) % links.length
+            : (current - 1 + links.length) % links.length;
+    links[next]?.focus();
+  };
+
+  if (items.length === 0) {
+    return (
+      <div className="mt-10 w-full max-w-3xl">
+        <EmptyState
+          kicker="Secciones"
+          title="Aún no hay secciones con contenido"
+          description="En cuanto se publiquen las primeras fiestas, eventos o noticias aparecerán aquí como secciones para explorar."
+          suggestions={[]}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <nav aria-labelledby="secciones-heading" className="mt-10 w-full max-w-3xl">
+      <p id="secciones-heading" className="eyebrow text-muted-foreground">
+        Secciones
+      </p>
+      <ul
+        ref={listRef}
+        onKeyDown={onKeyDown}
+        aria-describedby="secciones-ayuda"
+        className="mt-4 flex flex-wrap justify-center gap-3"
+      >
+        {items.map((c, i) => (
+          <li
+            key={c.value}
+            className="animate-fade-in w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.5rem)] sm:max-w-[200px]"
+            style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: "both" }}
+          >
+            <Link
+              to={c.path}
+              aria-label={`Ver la sección ${c.label}`}
+              className="hover-lift flex h-full min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:text-base"
+            >
+              {c.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <p id="secciones-ayuda" className="sr-only">
+        Usa las flechas del teclado para moverte entre secciones, Inicio y Fin para ir a la primera o
+        la última, y Enter para abrirla.
+      </p>
+    </nav>
+  );
+}
+
 
 function ViewButton({
   active,
