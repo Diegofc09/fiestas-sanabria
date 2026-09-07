@@ -6,6 +6,7 @@ import { authorLabel, categoryLabel, formatDateShort, timelineDate, type PostSum
 import { formatRating } from "@/lib/engagement";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
 import { cn } from "@/lib/utils";
+import { FEED_CARD_ATTR, rememberOpenedPost } from "@/lib/feed-focus";
 import { useEngagement } from "./CommentTeaser";
 import { EventPhaseBadge } from "./EventPhaseBadge";
 import { Reveal } from "./Reveal";
@@ -128,7 +129,10 @@ export function FeedCard({
         to="/articulo/$slug"
         params={{ slug: post.slug }}
         preload="viewport"
-        className="block flex-1"
+        onClick={() => rememberOpenedPost(post.slug)}
+        aria-label={`Abrir: ${post.title}`}
+        className="block flex-1 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        {...{ [FEED_CARD_ATTR]: post.slug }}
       >
         <div className={cn("relative overflow-hidden", aspect)}>
           <Cover post={post} priority={priority} />

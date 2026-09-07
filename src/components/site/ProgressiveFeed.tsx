@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import type { PostSummary } from "@/lib/posts";
+import { FEED_CARD_ATTR, takeOpenedPost } from "@/lib/feed-focus";
 import { FeedGrid } from "./FeedCard";
 import { VirtualFeedGrid } from "./VirtualFeedGrid";
 
@@ -48,6 +49,31 @@ export function ProgressiveFeed({
 
   const shown = useMemo(() => posts.slice(0, visible), [posts, visible]);
   const hasMore = visible < posts.length;
+  const [announcement, setAnnouncement] = useState("");
+  const gridRef = useRef<HTMLDivElement>(null);
+  const previousShown = useRef(shown.length);
+
+  // Anuncio para lectores de pantalla cuando entra una tanda nueva.
+  useEffect(() => {
+    if (shown.length > previousShown.current) {
+      const added = shown.length - previousShown.current;
+      setAnnouncement(
+        `${added} publicaciones más cargadas. Mostrando ${shown.length} de ${posts.length}.`,
+      );
+    }
+    previousShown.current = shown.length;
+  }, [shown.length, posts.length]);
+
+  // Al volver de un artículo, el foco regresa a la tarjeta que se abrió.
+  useEffect(() => {
+    const slug = takeOpenedPost();
+    if (!slug) return;
+    const target = gridRef.current?.querySelector<HTMLElement>(
+      `[${FEED_CARD_ATTR}="${CSS.escape(slug)}"]`,
+    );
+    target?.focus({ preventScroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Precarga silenciosa de las portadas de la siguiente tanda: cuando el
   // usuario carga más, las imágenes ya están en caché (clave en móvil).
@@ -88,7 +114,11 @@ export function ProgressiveFeed({
   }, [hasMore, pageSize, posts.length, visible]);
 
   return (
-    <div>
+    <div ref={gridRef}>
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </p>
+
       {shown.length > VIRTUALIZE_FROM ? (
         <VirtualFeedGrid posts={shown} />
       ) : (
@@ -100,7 +130,8 @@ export function ProgressiveFeed({
           <button
             type="button"
             onClick={() => setVisible(Math.min(visible + pageSize, posts.length))}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-5 py-2.5 text-[0.9375rem] font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary active:scale-95 md:text-sm"
+            aria-label={`Cargar ${Math.min(pageSize, posts.length - shown.length)} publicaciones más (${shown.length} de ${posts.length} mostradas)`}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-5 py-2.5 text-[0.9375rem] font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95 md:text-sm"
           >
             <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
             Cargar más

@@ -177,6 +177,10 @@ function HomePage() {
   const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
   const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
   const setView = (value: ViewMode) => patchSearch({ view: value });
+  const hasActiveFilters = category !== "all" || phase !== "all" || sort !== "upcoming";
+  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 });
+
+
 
 
   // Secciones con al menos una publicación vigente (las vacías se ocultan).
@@ -298,23 +302,26 @@ function HomePage() {
 
       {query && (
         <>
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-
-
-
+      <div
+        className="mt-8 flex flex-wrap items-center justify-between gap-3"
+        role="group"
+        aria-label="Filtros y orden de resultados"
+      >
         <div className="flex flex-wrap items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+                aria-label={`Filtrar por categoría. Seleccionada: ${categoryLabelFor(category)}`}
+                className={FILTER_BUTTON_CLASS}
               >
                 Categoría
                 <span className="text-muted-foreground">{categoryLabelFor(category)}</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-52">
+              <DropdownMenuLabel>Categoría</DropdownMenuLabel>
               <DropdownMenuRadioGroup
                 value={category}
                 onValueChange={(v) => setCategory(v as PostCategory | "all")}
@@ -333,11 +340,12 @@ function HomePage() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground md:text-sm"
+                aria-label={`Ordenar resultados. Selección actual: ${sortLabelFor(sort, phase)}`}
+                className={FILTER_BUTTON_CLASS}
               >
                 Ordenar por
                 <span className="text-muted-foreground">{sortLabelFor(sort, phase)}</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
@@ -367,6 +375,18 @@ function HomePage() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              aria-label="Limpiar los filtros aplicados"
+              className={cn(FILTER_BUTTON_CLASS, "text-primary")}
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+              Limpiar filtros
+            </button>
+          )}
         </div>
 
         <div
@@ -375,17 +395,22 @@ function HomePage() {
           aria-label="Cambiar vista"
         >
           <ViewButton active={view === "cards"} onClick={() => setView("cards")} label="Tarjetas">
-            <LayoutGrid className="h-4 w-4" />
+            <LayoutGrid className="h-4 w-4" aria-hidden="true" />
           </ViewButton>
           <ViewButton
             active={view === "calendar"}
             onClick={() => setView("calendar")}
             label="Calendario"
           >
-            <CalendarDays className="h-4 w-4" />
+            <CalendarDays className="h-4 w-4" aria-hidden="true" />
           </ViewButton>
         </div>
       </div>
+
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        {resultsAnnouncement}
+      </p>
+
 
       {filtered.length === 0 ? (
         <EmptyState

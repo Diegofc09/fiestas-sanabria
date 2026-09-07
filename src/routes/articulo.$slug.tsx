@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { trackPostView } from "@/lib/analytics.functions";
 
@@ -80,11 +80,18 @@ function ArticlePage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(articleQuery(slug));
   const { post, related } = data;
-  
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     void trackPostView({ data: { postId: post.id } }).catch(() => {});
   }, [post.id]);
+
+  // Al abrir el artículo, el foco pasa a su titular: los lectores de pantalla
+  // empiezan a leer el contenido nuevo en lugar de quedarse en el listado.
+  useEffect(() => {
+    titleRef.current?.focus({ preventScroll: true });
+  }, [slug]);
+
 
   const isEvent = supportsEvent(post.category);
 
@@ -117,7 +124,13 @@ function ArticlePage() {
         </div>
 
 
-        <h1 className="mt-4 text-[2.1rem] leading-[1.06] sm:text-5xl md:text-[3.25rem]">{post.title}</h1>
+        <h1
+          ref={titleRef}
+          tabIndex={-1}
+          className="mt-4 text-[2.1rem] leading-[1.06] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:text-5xl md:text-[3.25rem]"
+        >
+          {post.title}
+        </h1>
 
         {post.excerpt && (
           <p className="mt-5 border-l-2 border-primary pl-4 font-[family-name:var(--font-serif)] text-lg leading-relaxed text-muted-foreground md:text-xl">
