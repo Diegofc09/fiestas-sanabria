@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 
 import type { PostSummary } from "@/lib/posts";
 import { FEED_CARD_ATTR, takeOpenedPost } from "@/lib/feed-focus";
@@ -118,7 +118,7 @@ export function ProgressiveFeed({
 
 
   useEffect(() => {
-    if (!hasMore) return;
+    if (!hasMore || failed) return;
     const el = sentinel.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
 
@@ -133,7 +133,7 @@ export function ProgressiveFeed({
     observer.observe(el);
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasMore, pageSize, posts.length, visible]);
+  }, [hasMore, pageSize, posts.length, visible, failed]);
 
   return (
     <div ref={gridRef}>
@@ -147,7 +147,31 @@ export function ProgressiveFeed({
         <FeedGrid posts={shown} />
       )}
 
-      {hasMore && (
+      {failed && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/5 px-5 py-6 text-center"
+        >
+          <AlertTriangle className="h-5 w-5 text-destructive" aria-hidden="true" />
+          <p className="text-[0.9375rem] font-medium text-foreground">{failed}</p>
+          <p className="text-[0.8125rem] font-light text-muted-foreground">
+            Revisa tu conexión y vuelve a intentarlo.
+          </p>
+          <button
+            ref={retryRef}
+            type="button"
+            onClick={retry}
+            aria-label="Reintentar la carga de más publicaciones"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-secondary px-5 py-2.5 text-[0.9375rem] font-medium text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:text-sm"
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            Reintentar
+          </button>
+        </div>
+      )}
+
+      {hasMore && !failed && (
         <div ref={sentinel} className="mt-10 flex flex-col items-center gap-3">
           <button
             type="button"
@@ -163,6 +187,7 @@ export function ProgressiveFeed({
           </p>
         </div>
       )}
+
 
       {!hasMore && posts.length > pageSize && (
         <p className="mt-10 text-center text-[0.8125rem] font-light text-muted-foreground animate-fade-in">
