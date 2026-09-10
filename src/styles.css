@@ -207,6 +207,20 @@
   }
 }
 
+/* Preferencia manual de accesibilidad: reducir animaciones */
+.fs-reduce-motion,
+.fs-reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.fs-reduce-motion .hover-lift:hover {
+  transform: none !important;
+}
+
+
 
 
 /* ── Tema oscuro: negro ─────────────────────────────────────────────────── */
