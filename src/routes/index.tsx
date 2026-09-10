@@ -150,12 +150,16 @@ function HomePage() {
   const view = (search.view === "calendar" ? "calendar" : "cards") as ViewMode;
   const visibleCount = search.n > 0 ? search.n : undefined;
 
+  // Los cambios de filtro/orden/vista crean entrada en el historial: atrás y
+  // adelante devuelven exactamente el mismo listado. El texto y el nº de
+  // resultados cargados se reemplazan para no llenar el historial de pasos.
   const patchSearch = useCallback(
-    (patch: Record<string, string | number>) => {
-      navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    (patch: Record<string, string | number>, replace = true) => {
+      navigate({ search: (prev) => ({ ...prev, ...patch }), replace });
     },
     [navigate],
   );
+
 
   // Navegación externa (atrás/adelante, enlace compartido) → estado del input.
   useEffect(() => {
