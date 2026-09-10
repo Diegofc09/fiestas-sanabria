@@ -235,6 +235,27 @@ function HomePage() {
     return list;
   }, [posts, category, phase, query, sort, metricFor, savedIds]);
 
+  // Anuncio para lectores de pantalla cada vez que cambian filtros o resultados.
+  const [resultsAnnouncement, setResultsAnnouncement] = useState("");
+  useEffect(() => {
+    if (!query) {
+      setResultsAnnouncement("");
+      return;
+    }
+    const partes = [
+      filtered.length === 0
+        ? "Sin resultados"
+        : `${filtered.length} ${filtered.length === 1 ? "publicación" : "publicaciones"}`,
+      `categoría ${categoryLabelFor(category)}`,
+      `orden ${sortLabelFor(sort, phase)}`,
+      view === "calendar" ? "vista de calendario" : "vista de tarjetas",
+    ];
+    const id = setTimeout(() => setResultsAnnouncement(`${partes.join(", ")}.`), 300);
+    return () => clearTimeout(id);
+  }, [filtered.length, category, phase, sort, view, query]);
+
+
+
   return (
     <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
       {/* El buscador permanece montado siempre: al escribir no se remonta ni pierde el foco. */}
