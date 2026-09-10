@@ -131,7 +131,7 @@ function HomePending() {
 
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
-  const { data: metrics } = useQuery(metricsQuery);
+  const { data: metrics, isError: metricsError, refetch: refetchMetrics } = useQuery(metricsQuery);
   const { savedIds } = useSavedPosts();
   const navigate = useNavigate({ from: "/" });
   const search = Route.useSearch();
@@ -180,12 +180,13 @@ function HomePage() {
   }, [query]);
 
 
-  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 });
-  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
-  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
-  const setView = (value: ViewMode) => patchSearch({ view: value });
+  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 }, false);
+  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 }, false);
+  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 }, false);
+  const setView = (value: ViewMode) => patchSearch({ view: value }, false);
   const hasActiveFilters = category !== "all" || phase !== "all" || sort !== "upcoming";
-  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 });
+  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 }, false);
+
 
 
 
