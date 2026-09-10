@@ -131,7 +131,7 @@ function HomePending() {
 
 function HomePage() {
   const { data: posts } = useSuspenseQuery(homeQuery);
-  const { data: metrics } = useQuery(metricsQuery);
+  const { data: metrics, isError: metricsError, refetch: refetchMetrics } = useQuery(metricsQuery);
   const { savedIds } = useSavedPosts();
   const navigate = useNavigate({ from: "/" });
   const search = Route.useSearch();
@@ -150,12 +150,16 @@ function HomePage() {
   const view = (search.view === "calendar" ? "calendar" : "cards") as ViewMode;
   const visibleCount = search.n > 0 ? search.n : undefined;
 
+  // Los cambios de filtro/orden/vista crean entrada en el historial: atrás y
+  // adelante devuelven exactamente el mismo listado. El texto y el nº de
+  // resultados cargados se reemplazan para no llenar el historial de pasos.
   const patchSearch = useCallback(
-    (patch: Record<string, string | number>) => {
-      navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    (patch: Record<string, string | number>, replace = true) => {
+      navigate({ search: (prev) => ({ ...prev, ...patch }), replace });
     },
     [navigate],
   );
+
 
   // Navegación externa (atrás/adelante, enlace compartido) → estado del input.
   useEffect(() => {
@@ -176,12 +180,13 @@ function HomePage() {
   }, [query]);
 
 
-  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 });
-  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 });
-  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 });
-  const setView = (value: ViewMode) => patchSearch({ view: value });
+  const setCategory = (value: PostCategory | "all") => patchSearch({ cat: value, n: 0 }, false);
+  const setPhase = (value: PhaseFilter) => patchSearch({ phase: value, n: 0 }, false);
+  const setSort = (value: SortMode) => patchSearch({ sort: value, n: 0 }, false);
+  const setView = (value: ViewMode) => patchSearch({ view: value }, false);
   const hasActiveFilters = category !== "all" || phase !== "all" || sort !== "upcoming";
-  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 });
+  const clearFilters = () => patchSearch({ cat: "all", phase: "all", sort: "upcoming", n: 0 }, false);
+
 
 
 

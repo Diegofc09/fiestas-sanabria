@@ -3,6 +3,8 @@ import { Instagram } from "lucide-react";
 import { CATEGORIES } from "@/lib/posts";
 import { useSearchQuery } from "@/lib/search-store";
 import { hasCategoryContent, useActiveCategories } from "@/hooks/useActiveCategories";
+import { MotionToggle } from "@/components/site/MotionToggle";
+
 import { cn } from "@/lib/utils";
 
 
@@ -78,9 +80,13 @@ export function Footer() {
             </li>
 
           </ul>
+          <div className="mt-6">
+            <MotionToggle className="text-ink-foreground/80" />
+          </div>
           <p className="mt-8 text-[0.8125rem] text-ink-foreground/55 md:text-xs">
             © {new Date().getFullYear()} FiestasSanabria
           </p>
+
         </div>
       </div>
     </footer>
