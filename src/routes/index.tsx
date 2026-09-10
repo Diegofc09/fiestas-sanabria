@@ -1,5 +1,5 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { Calendar, CalendarDays, ChevronDown, LayoutGrid, Search } from "lucide-react";
+import { Calendar, CalendarDays, ChevronDown, LayoutGrid, Search, X } from "lucide-react";
 import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -59,6 +59,9 @@ const PHASE_OPTIONS: [Exclude<PhaseFilter, "all">, string][] = [
   ["ongoing", "En curso"],
   ["finished", "Terminada"],
 ];
+
+const FILTER_BUTTON_CLASS =
+  "inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[0.8125rem] font-medium text-foreground transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:text-sm";
 
 function categoryLabelFor(value: PostCategory | "all"): string {
   return value === "all" ? "Todo" : categoryLabel(value);
@@ -571,7 +574,7 @@ function ViewButton({
       aria-pressed={active}
       title={label}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors md:text-sm",
+        "inline-flex min-h-9 items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:text-sm",
         active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >
