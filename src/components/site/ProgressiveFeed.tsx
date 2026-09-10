@@ -25,27 +25,49 @@ export function ProgressiveFeed({
   resetKey,
   visible: visibleProp,
   onVisibleChange,
+  error,
+  onRetry,
 }: {
   posts: PostSummary[];
   pageSize?: number;
   resetKey?: string;
   visible?: number | undefined;
   onVisibleChange?: (visible: number) => void;
+  error?: unknown;
+  onRetry?: () => void;
 }) {
   const controlled = onVisibleChange !== undefined;
   const [internal, setInternal] = useState(pageSize);
   const visible = Math.max(pageSize, (controlled ? visibleProp : internal) ?? pageSize);
   const sentinel = useRef<HTMLDivElement>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
+
+  const failed = loadError ?? (error ? "No hemos podido cargar más publicaciones." : null);
 
   const setVisible = (next: number) => {
-    if (controlled) onVisibleChange?.(next);
-    else setInternal(next);
+    try {
+      if (controlled) onVisibleChange?.(next);
+      else setInternal(next);
+      setLoadError(null);
+    } catch {
+      setLoadError("No hemos podido cargar más publicaciones.");
+    }
+  };
+
+  const retry = () => {
+    setLoadError(null);
+    onRetry?.();
+    setVisible(Math.min(visible + pageSize, posts.length));
+    retryRef.current?.focus();
   };
 
   // Al cambiar la búsqueda o los filtros volvemos a la primera tanda.
   useEffect(() => {
+    setLoadError(null);
     if (!controlled) setInternal(pageSize);
   }, [resetKey, pageSize, controlled]);
+
 
   const shown = useMemo(() => posts.slice(0, visible), [posts, visible]);
   const hasMore = visible < posts.length;
